@@ -6,7 +6,5 @@
     "directory": "./dist",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
-  },
-  // Required by Workers Builds preview deploys (`npx wrangler preview`).
-  "previews": {}
+  }
 }
