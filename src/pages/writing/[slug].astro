@@ -1,0 +1,70 @@
+---
+import type { InferGetStaticPropsType } from "astro";
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import Pills from "../../components/Pills.astro";
+import { getPosts, formatDate, vtName } from "../../lib/content";
+import { SITE } from "../../lib/site";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props;
+const { title, summary, pubDate, updatedDate, skills } = entry.data;
+const { Content } = await render(entry);
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description: summary,
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate ?? pubDate).toISOString(),
+    author: { "@type": "Person", name: SITE.name, url: `${SITE.url}/about/` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE.url}/` },
+      { "@type": "ListItem", position: 2, name: "Writing", item: `${SITE.url}/writing/` },
+      { "@type": "ListItem", position: 3, name: title, item: canonical },
+    ],
+  },
+];
+---
+
+<Base title={title} description={summary} ogType="article" jsonLd={jsonLd}>
+  <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"}>
+    <p class="label mt-md">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    </p>
+  </PageHead>
+  <section class="edge-b">
+    <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
+      <div class="lg:col-span-4">
+        <p class="max-w-prose">{summary}</p>
+        {
+          skills.length > 0 && (
+            <div class="mt-sm">
+              <Pills skills={skills} label="Topics" />
+            </div>
+          )
+        }
+      </div>
+      <div class="lg:col-span-8">
+        <div class="prose">
+          <Content />
+        </div>
+        <p class="mt-lg"><a class="hit" href="/writing/">All writing</a></p>
+      </div>
+    </div>
+  </section>
+</Base>

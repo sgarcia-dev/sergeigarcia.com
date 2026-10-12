@@ -1,13 +1,19 @@
 # Agent rules for this repo
 
 Run `npm run build` before claiming any work is done. It must pass with zero
-`astro check` errors.
+`astro check` errors. Run `npm run test:e2e` (axe on every route, light and
+dark) before any UI change is done.
 
 ## Layout
 
-- Content lives in `src/content/` (`posts`, `projects`), schemas in `src/content.config.ts`.
+- Content lives in `src/content/` (`work`, `projects`, `posts`), schemas in `src/content.config.ts`.
+  Query it through `src/lib/content.ts` (drafts are filtered there).
+- Site constants (name, email, links, nav) live in `src/lib/site.ts`.
 - Design tokens live only in `src/styles/global.css` under `@theme`.
-- Read `DESIGN.md` before any UI work (once it exists).
+- Read `DESIGN.md` before any UI work. It lists the tokens, components,
+  motion rules and the banned patterns with what to do instead.
+- Facts Sergei still has to confirm are in `CONTENT-TODO.md`. Deferred work is in `TODO.md`.
+- Never invent facts, metrics or dates. Public, NDA-safe content only.
 
 ## Astro 7 patterns to avoid
 

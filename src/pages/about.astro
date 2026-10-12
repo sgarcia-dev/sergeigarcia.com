@@ -1,0 +1,105 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import { SITE } from "../lib/site";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: `${SITE.url}/about/`,
+  name: "About Sergei Garcia",
+  mainEntity: {
+    "@type": "Person",
+    name: SITE.name,
+    jobTitle: SITE.jobTitle,
+    url: SITE.url,
+    email: `mailto:${SITE.email}`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Dublin",
+      addressCountry: "IE",
+    },
+    knowsLanguage: ["en", "es"],
+    sameAs: [SITE.links.linkedin, SITE.links.github],
+  },
+};
+---
+
+<Base
+  title="About"
+  description="About Sergei Garcia, a software engineer in Dublin, Ireland who builds web products, mentors other developers and speaks English and Spanish."
+  ogType="profile"
+  jsonLd={jsonLd}
+>
+  <PageHead band="cobalt" title="About" />
+
+  <div class="shell py-sm lg:py-md">
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">
+      <h2 id="about-bio" class="label lg:col-span-5">Bio</h2>
+      <div class="prose lg:col-span-7">
+        <p>
+          I'm Sergei Garcia, a software engineer in Dublin, Ireland. I bring a design and UX view to building web
+          products. Most of my work has been on the front end with React and TypeScript, and I also work across the
+          full stack.
+        </p>
+        <p>
+          I started in consulting, building apps for agriculture and healthcare. Since then I have worked on travel,
+          education, research and social products. At Typing.com I helped move the front end to React. Through Toptal
+          I built interfaces for St. Jude Children's Research Hospital and Northeastern University. At Reddit I worked
+          on how translated content is shown on the web.
+        </p>
+        <p>
+          I like turning unclear requirements into useful software, and helping teams agree on a direction they can
+          build. I care about readable code, accessible interfaces, and explanations that help people understand both
+          the work and the reasons behind it. I also use AI tools in my daily development.
+        </p>
+      </div>
+    </section>
+
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-teaching">
+      <h2 id="about-teaching" class="label lg:col-span-5">Teaching and mentoring</h2>
+      <div class="prose lg:col-span-7">
+        <p>
+          Teaching has been part of my career alongside building software. At Thinkful I mentored full-stack students
+          one to one, helped with portfolios and interview preparation, and created workshops on web design,
+          JavaScript debugging, browser tools and performance. In 2017 I taught front end development at Desafio
+          Latam and prepared practical course materials.
+        </p>
+        <p>
+          In engineering teams I do the same through code reviews, hands-on guidance and conversations about technical
+          decisions. I start from what the person wants to learn and what they already know, then work through real
+          problems together.
+        </p>
+      </div>
+    </section>
+
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-languages">
+      <h2 id="about-languages" class="label lg:col-span-5">Languages</h2>
+      <div class="prose lg:col-span-7">
+        <p>English and Spanish.</p>
+      </div>
+    </section>
+
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-contact">
+      <h2 id="about-contact" class="label lg:col-span-5">Contact</h2>
+      <div class="lg:col-span-7">
+        <p class="prose mb-md">The best way to reach me is by email.</p>
+        <ul role="list" class="flex flex-wrap gap-sm">
+          <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a class="hit" href={SITE.links.linkedin} rel="me">LinkedIn</a></li>
+          <li><a class="hit" href={SITE.links.github} rel="me">GitHub</a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  /* Thin rules between about sections, in the page rule color. */
+  .about-section {
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+  .about-section:last-child {
+    border-bottom: 0;
+  }
+</style>

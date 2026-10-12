@@ -1,0 +1,88 @@
+---
+/** Facts about a role or project as a definition list: role, company, period, location, clients, skills, links. */
+import Pills from "./Pills.astro";
+
+interface Props {
+  role: string;
+  period: string;
+  company?: string;
+  location?: string;
+  clients?: string[];
+  skills?: string[];
+  links?: { label: string; url: string }[];
+}
+const { role, period, company, location, clients = [], skills = [], links = [] } = Astro.props;
+---
+
+<dl class="case-meta">
+  <div>
+    <dt class="label">Role</dt>
+    <dd class="mt-2xs">{role}</dd>
+  </div>
+  {
+    company && (
+      <div>
+        <dt class="label">Company</dt>
+        <dd class="mt-2xs">{company}</dd>
+      </div>
+    )
+  }
+  <div>
+    <dt class="label">Period</dt>
+    <dd class="mt-2xs">{period}</dd>
+  </div>
+  {
+    location && (
+      <div>
+        <dt class="label">Location</dt>
+        <dd class="mt-2xs">{location}</dd>
+      </div>
+    )
+  }
+  {
+    clients.length > 0 && (
+      <div>
+        <dt class="label">Clients</dt>
+        <dd class="mt-2xs">{clients.join(", ")}</dd>
+      </div>
+    )
+  }
+  {
+    skills.length > 0 && (
+      <div>
+        <dt class="label">Skills</dt>
+        <dd class="mt-xs">
+          <Pills skills={skills} label="Skills" />
+        </dd>
+      </div>
+    )
+  }
+  {
+    links.length > 0 && (
+      <div>
+        <dt class="label">Links</dt>
+        <dd class="mt-xs">
+          <ul role="list" class="flex flex-wrap gap-sm">
+            {links.map((l) => (
+              <li>
+                <a class="hit" href={l.url} rel="noopener">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </div>
+    )
+  }
+</dl>
+
+<style>
+  .case-meta {
+    border-top: var(--rule-thin) solid var(--rule-color);
+  }
+  .case-meta > div {
+    padding-block: var(--spacing-sm);
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+/** Skill pills: small bordered mono tags. Shows at most 5. */
+interface Props {
+  skills: string[];
+  label?: string;
+}
+const { skills, label = "Tech used" } = Astro.props;
+const shown = skills.slice(0, 5);
+---
+
+{
+  shown.length > 0 && (
+    <ul role="list" class="pill-list" aria-label={label}>
+      {shown.map((s) => (
+        <li class="pill">{s}</li>
+      ))}
+    </ul>
+  )
+}

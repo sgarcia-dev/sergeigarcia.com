@@ -1,0 +1,30 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import WorkRow from "../../components/WorkRow.astro";
+import { getWork } from "../../lib/content";
+
+const work = await getWork();
+---
+
+<Base
+  title="Work"
+  description="Roles and engagements from Sergei Garcia: what he built, who for, and the tools he used."
+>
+  <PageHead title="Work" band="yellow">
+    <p class="mt-md max-w-prose text-lg">
+      The roles and engagements I have held as a software engineer, newest first.
+    </p>
+  </PageHead>
+  <section class="edge-b" aria-label="Work history">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-4">
+        <p class="label">{work.length} {work.length === 1 ? "role" : "roles"}</p>
+        <p class="mt-xs max-w-prose">Open any role for what I did, who I worked with and what I used.</p>
+      </div>
+      <ul role="list" class="list lg:col-span-8">
+        {work.map((entry) => <WorkRow entry={entry} />)}
+      </ul>
+    </div>
+  </section>
+</Base>

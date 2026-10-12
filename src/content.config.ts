@@ -1,29 +1,64 @@
-import { defineCollection } from "astro:content";
+import { defineCollection, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+
+const link = z.object({
+  label: z.string(),
+  url: z.url(),
+});
+
+/*
+  Shared fields. `period` is the human label shown on the site ("2021 to 2023").
+  `startDate` / `endDate` are optional machine dates for sorting and JSON-LD.
+  `order` sorts lists (lower first). `skills`: only the first 5 are shown.
+*/
+const base = ({ image }: SchemaContext) => ({
+  title: z.string(),
+  summary: z.string().max(200),
+  period: z.string(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+  role: z.string(),
+  company: z.string().optional(),
+  skills: z.array(z.string()).max(8).default([]),
+  cover: image().optional(),
+  coverAlt: z.string().optional(),
+  links: z.array(link).default([]),
+  order: z.number().int(),
+  draft: z.boolean().default(false),
+});
+
+const work = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/work" }),
+  schema: ({ image }) =>
+    z.object({
+      ...base({ image }),
+      company: z.string(),
+      location: z.string().optional(),
+      clients: z.array(z.string()).default([]),
+    }),
+});
+
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  schema: ({ image }) =>
+    z.object({
+      ...base({ image }),
+      // True for internal or confidential work: shows a typographic card, never a screenshot.
+      confidential: z.boolean().default(false),
+    }),
+});
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    summary: z.string().max(200),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
+    skills: z.array(z.string()).max(8).default([]),
     draft: z.boolean().default(false),
   }),
 });
 
-const projects = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    year: z.number().int(),
-    tags: z.array(z.string()).default([]),
-    url: z.url().optional(),
-    repo: z.url().optional(),
-    draft: z.boolean().default(false),
-  }),
-});
-
-export const collections = { posts, projects };
+export const collections = { work, projects, posts };

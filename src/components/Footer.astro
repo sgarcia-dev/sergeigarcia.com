@@ -1,0 +1,15 @@
+---
+import { SITE } from "../lib/site";
+---
+
+<footer class="band-black edge-t">
+  <div class="shell flex flex-col gap-sm py-md md:flex-row md:items-center md:justify-between">
+    <p class="label">Sergei Garcia, {SITE.location}</p>
+    <ul role="list" class="flex flex-wrap gap-sm">
+      <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}>Email</a></li>
+      <li><a class="hit" href={SITE.links.linkedin} rel="me noopener">LinkedIn</a></li>
+      <li><a class="hit" href={SITE.links.github} rel="me noopener">GitHub</a></li>
+      <li><a class="hit" href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>
