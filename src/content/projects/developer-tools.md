@@ -2,19 +2,13 @@
 cover: "../../assets/covers/developer-tools.jpg"
 coverAlt: "Illustration: a builder at a workbench handing tools to teammates"
 coverKind: "illustration"
-gallery:
-  - src: "../../assets/screenshots/vsc-ai-utilities.png"
-    alt: "The public GitHub page of vsc-ai-utilities, my VS Code extension for AI-assisted coding."
-galleryCaption: "vsc-ai-utilities, the public extension, on GitHub."
 title: "Tools that make the whole team faster"
-summary: "When I spot daily friction for my teammates, I build the tool that removes it. Two VS Code extensions and a Chrome DevTools extension, all started without being asked."
+summary: "When I spot daily friction for my teammates, I build the tool that removes it. A VS Code extension and a Chrome DevTools extension, both started without being asked."
 period: "2024 to 2026"
 role: "Author and lead developer"
 company: "Reddit"
-skills: ["TypeScript", "JavaScript", "Chrome extensions", "VS Code Extension API", "Vite"]
-links:
-  - label: "vsc-ai-utilities on GitHub"
-    url: "https://github.com/sgarcia-dev/vsc-ai-utilities"
+skills: ["TypeScript", "VS Code Extension API", "Chrome extensions", "Vite", "Vitest"]
+links: []
 order: 10
 confidential: false
 draft: false
@@ -22,7 +16,7 @@ draft: false
 
 ## The habit
 
-I notice the small chores that slow people down, and I build a tool to remove them. Nobody asked for these. I saw the same steps repeated every day, by me and by my teammates, and I decided they should take one click instead of many. Three tools came out of that habit, and they are described below.
+I notice the small chores that slow people down, and I build a tool to remove them. Nobody asked for these. I saw the same steps repeated every day, by me and by my teammates, and I decided they should take one click instead of many. Two tools came out of that habit, and they are described below.
 
 ## The problem
 
@@ -37,21 +31,18 @@ I spend most of my day in VS Code and in the browser, and a lot of it pairing wi
 
 ## My role
 
-I designed, built and released all three tools, and decided what they should do. The first is public. The other two are internal, so this page describes them without code or screenshots.
+I designed, built and released both tools, and decided what they should do. Both are internal, so this page describes what they do, without code or screenshots.
 
-## The public VS Code extension
+## The VS Code extension
 
-**vsc-ai-utilities** is a small extension for my own AI workflow, and its code is on GitHub. It is plain JavaScript with one module per command. Helpers return a result or an error object instead of throwing. Settings live in VS Code's normal configuration, so users can edit their own presets. Every choice goes through a QuickPick menu.
+One extension that puts the team's everyday commands one click away, inside the editor. It started as a single file and grew into strict TypeScript with a clear service layer for git, VS Code, task running and logging. It detects the project on its own, so there is nothing to set up.
 
-It has six commands, one job each. They copy AI-ready context to the clipboard: file paths in several formats (GitHub link, Markdown link, relative or absolute), Aider commands, and git diffs for chosen files, a branch or a recent commit.
-
-## The team VS Code extension
-
-I built a larger extension for a team of front end engineers on a big web codebase. It started as a single file and grew into strict TypeScript with a webpack build and a clear service layer for git, VS Code, task running and logging.
-
-- It runs tests for the current file (once, in watch mode or in the debugger), for every modified file (in sequence or in parallel), and for end-to-end runs by tag. It uses native VS Code tasks and terminals and detects the project on its own.
-- It opens code on GitHub in one command.
-- It copies a git diff for AI tools. That idea started in my personal extension and moved into the team one.
+- **Run scripts for the file you are in.** Pick a script and it runs against the current file, no typing paths.
+- **Run tests.** For the current file (once, in watch mode or in the debugger), for every file you changed (one after another or in parallel), or end-to-end tests by tag.
+- **Set up the debugger for you.** It writes the debug configuration automatically, so stepping through a test or the app takes one command.
+- **Switch environments.** Common environment commands live in one menu instead of a wiki page.
+- **Hand context to AI tools.** Copy file paths and git diffs in a format an AI assistant can use.
+- **Open the code on GitHub** in one command.
 
 ## The Chrome DevTools extension
 
@@ -66,7 +57,7 @@ Chrome APIs sit behind small interfaces (ports and adapters), so the main logic 
 
 ## Outcome
 
-The public extension became my daily way to hand context to AI assistants. The team extension reached a 1.0 release and then a 2.0 rewrite, shipped as versioned packages. Engineers got a one-command way to run the tests for their own changes locally instead of waiting on CI. The Chrome extension shipped as an internal 1.0 release and was demoed at an internal hackathon. I do not have adoption numbers, so I will not quote any.
+The VS Code extension reached a 1.0 release and then a 2.0 rewrite, shipped as versioned packages. Engineers got a one-command way to run the tests for their own changes locally instead of waiting on CI. The Chrome extension shipped as an internal 1.0 release and was demoed at an internal hackathon. I do not have adoption numbers, so I will not quote any.
 
 ## What I learned
 
