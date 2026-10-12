@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
+import Icon from "../components/Icon.astro";
 import { SITE } from "../lib/site";
 
 const jsonLd = {
@@ -85,9 +86,9 @@ const jsonLd = {
       <div class="lg:col-span-7">
         <p class="prose mb-md">The best way to reach me is by email.</p>
         <ul role="list" class="flex flex-wrap gap-sm">
-          <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
-          <li><a class="hit" href={SITE.links.linkedin} rel="me">LinkedIn</a></li>
-          <li><a class="hit" href={SITE.links.github} rel="me">GitHub</a></li>
+          <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
+          <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
+          <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
         </ul>
       </div>
     </section>

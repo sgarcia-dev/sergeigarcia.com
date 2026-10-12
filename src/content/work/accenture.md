@@ -7,6 +7,8 @@ period: "Aug 2014 to Apr 2016"
 skills: ["Ionic", "Cordova", "AngularJS", "Couchbase", "ArcGIS"]
 links: []
 order: 110
+cover: "../../assets/screenshots/companies/accenture.png"
+coverAlt: "Accenture's home page, October 2026"
 ---
 
 I started my career here, building a hybrid agriculture app with Ionic, Cordova, AngularJS, Couchbase and ArcGIS, and a responsive healthcare website. I also built an iOS demo with C# and Xamarin Forms.

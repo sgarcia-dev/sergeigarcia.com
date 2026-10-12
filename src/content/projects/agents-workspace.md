@@ -1,4 +1,7 @@
 ---
+cover: "../../assets/covers/agents-workspace.jpg"
+coverAlt: "Illustration: a conductor directing four robot helpers"
+coverKind: "illustration"
 title: "The Agents workspace"
 summary: "A plain-text, git-tracked home for how I work with AI coding tools, so context, decisions and rules carry over between sessions and between tools."
 period: "2026 to now"

@@ -5,6 +5,7 @@ import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import CaseMeta from "../../components/CaseMeta.astro";
 import Media from "../../components/Media.astro";
+import Gallery from "../../components/Gallery.astro";
 import { getProjects, vtName } from "../../lib/content";
 
 export async function getStaticPaths() {
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, company, role, period, skills, links } = entry.data;
+const { title, summary, company, role, period, skills, links, gallery, galleryCaption } = entry.data;
 const { Content } = await render(entry);
 ---
 
@@ -34,6 +35,11 @@ const { Content } = await render(entry);
         <div class="prose mt-xl">
           <Content />
         </div>
+        {gallery.length > 0 && (
+          <div class="mt-xl">
+            <Gallery items={gallery} caption={galleryCaption} />
+          </div>
+        )}
         <p class="mt-lg"><a class="hit" href="/projects/">All projects</a></p>
       </div>
     </div>

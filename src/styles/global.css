@@ -308,6 +308,19 @@
     }
   }
 
+  /* Row content with a small thumbnail: stacked on phones, thumbnail on the right from md. */
+  .row-body {
+    display: grid;
+    gap: var(--spacing-sm);
+    align-items: start;
+  }
+  @media (min-width: 48rem) {
+    .row-body {
+      grid-template-columns: minmax(0, 1fr) var(--container-rail);
+      gap: var(--spacing-md);
+    }
+  }
+
   /* A row title that links to its page. The underline appears on hover and focus. */
   .row-link {
     color: inherit;
@@ -338,6 +351,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: var(--spacing-xs);
     min-height: 2.75rem;
     border: 2px solid var(--hit-line);
     background: var(--hit-bg);

@@ -1,33 +1,22 @@
 ---
 /**
- * Visual anchor for a project page. A framed screenshot when there is a cover;
- * otherwise a yellow typographic card (always for confidential work).
+ * Visual anchor for a project page: the cover in a 16:9 frame, or a yellow
+ * typographic card (always for confidential work, which never shows screenshots).
  */
-import { Picture } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
+import Thumb from "./Thumb.astro";
 
 interface Props {
   entry: CollectionEntry<"projects">;
 }
 const { entry } = Astro.props;
-const { title, company, cover, coverAlt, confidential } = entry.data;
-// The type card repeats no title: the page heading already says it.
-const coverImage = confidential ? undefined : cover;
+const { title, company, cover, coverAlt, confidential, coverKind } = entry.data;
+const coverImage = confidential && coverKind !== "illustration" ? undefined : cover;
 ---
 
 {
   coverImage ? (
-    <figure class="frame">
-      <Picture
-        src={coverImage}
-        formats={["avif", "webp"]}
-        widths={[720, 1080, 1440]}
-        sizes="(min-width: 64rem) 60vw, 100vw"
-        alt={coverAlt ?? title}
-        loading="eager"
-        pictureAttributes={{ class: "block" }}
-      />
-    </figure>
+    <Thumb image={coverImage} alt={coverAlt ?? title} size="lg" ratio="wide" eager />
   ) : (
     <figure class="type-card band-yellow">
       <p class="font-display text-h2 tracking-tight">{company ?? "Personal project"}</p>
