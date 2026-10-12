@@ -1,0 +1,75 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import Pills from "../../components/Pills.astro";
+import { getPosts, getAllPosts, formatDate, vtName } from "../../lib/content";
+
+const posts = await getPosts();
+const drafts = posts.length === 0 ? await getAllPosts() : [];
+---
+
+<Base
+  title="Writing"
+  description="Notes from Sergei Garcia on building software, working with AI coding agents and shipping front ends."
+>
+  <PageHead title="Writing" band="tomato">
+    <p class="mt-md max-w-prose text-lg">
+      Notes on building software and working with AI coding agents.
+    </p>
+  </PageHead>
+  <section class="edge-b" aria-label="Posts">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-4">
+        <p class="label">{posts.length === 0 ? "No posts yet" : `${posts.length} ${posts.length === 1 ? "post" : "posts"}`}</p>
+        <p class="mt-xs max-w-prose">
+          {posts.length === 0 ? "The first post is on its way." : "Newest first."}
+        </p>
+      </div>
+      <ul role="list" class="list lg:col-span-8">
+        {
+          posts.length === 0 ? (
+            <li class="row">
+              <p class="label">Soon</p>
+              <div>
+                <h2 class="font-title text-xl">First post coming soon</h2>
+                {drafts.length > 0 && (
+                  <ul role="list" class="mt-sm grid gap-xs">
+                    {drafts.map((d) => (
+                      <li class="flex flex-wrap items-baseline gap-x-md gap-y-xs">
+                        <span>{d.data.title}</span>
+                        <span class="label tag">Coming soon</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </li>
+          ) : (
+            posts.map((post) => (
+              <li class="row">
+                <p class="label">{formatDate(post.data.pubDate)}</p>
+                <div>
+                  <h2 class="font-title text-xl">
+                    <a
+                      class="row-link inline-block"
+                      href={`/writing/${post.id}/`}
+                      style={`view-transition-name: ${vtName("posts", post.id)}`}
+                    >
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  <p class="mt-xs max-w-prose">{post.data.summary}</p>
+                  {post.data.skills.length > 0 && (
+                    <div class="mt-sm">
+                      <Pills skills={post.data.skills} label="Topics" />
+                    </div>
+                  )}
+                </div>
+              </li>
+            ))
+          )
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

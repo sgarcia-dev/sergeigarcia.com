@@ -1,0 +1,50 @@
+---
+import type { InferGetStaticPropsType } from "astro";
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import CaseMeta from "../../components/CaseMeta.astro";
+import Media from "../../components/Media.astro";
+import { getProjects, vtName } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props;
+const { title, summary, company, role, period, skills, links } = entry.data;
+const { Content } = await render(entry);
+---
+
+<Base title={title} description={summary} ogType="article">
+  <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)}>
+    <p class="mt-md max-w-prose text-lg">{summary}</p>
+  </PageHead>
+  <section class="edge-b">
+    <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
+      <div class="lg:col-span-4">
+        <div class="meta-col">
+          <CaseMeta role={role} company={company} period={period} skills={skills} links={links} />
+        </div>
+      </div>
+      <div class="lg:col-span-8">
+        <Media entry={entry} />
+        <div class="prose mt-xl">
+          <Content />
+        </div>
+        <p class="mt-lg"><a class="hit" href="/projects/">All projects</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  @media (min-width: 64rem) {
+    .meta-col {
+      position: sticky;
+      top: var(--spacing-md);
+    }
+  }
+</style>

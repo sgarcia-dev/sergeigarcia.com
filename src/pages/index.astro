@@ -1,27 +1,190 @@
 ---
 import Base from "../layouts/Base.astro";
+import Pills from "../components/Pills.astro";
+import { SITE } from "../lib/site";
+import { getWork, getProjects, getPosts, getAllPosts, vtName, formatDate } from "../lib/content";
+
+const work = await getWork();
+const projects = await getProjects();
+const posts = await getPosts();
+const upcoming = posts.length === 0 ? (await getAllPosts()).slice(0, 1) : [];
+
+const featuredWork = work.slice(0, 4);
+const featuredProjects = projects.slice(0, 4);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: "en",
+  author: { "@type": "Person", name: SITE.name, url: `${SITE.url}/about/` },
+};
 ---
 
-<Base
-  title="Sergei Garcia"
-  description="Sergei Garcia is a senior software engineer. Site coming soon."
->
-  <main class="mx-auto max-w-column px-6 py-24 md:py-40">
-    <h1 class="font-serif text-display">Sergei Garcia</h1>
-    <p class="mt-6 text-muted">Senior software engineer. Site coming soon.</p>
-    <ul class="mt-10 flex gap-6">
-      <li>
-        <a
-          class="underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-accent"
-          href="https://www.linkedin.com/in/sergeigarcia">LinkedIn</a
-        >
-      </li>
-      <li>
-        <a
-          class="underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-accent"
-          href="https://github.com/sgarcia-dev">GitHub</a
-        >
-      </li>
-    </ul>
-  </main>
+<Base title={SITE.title} fullTitle description={SITE.description} jsonLd={jsonLd} home>
+  <section class="edge-b grid lg:grid-cols-12" aria-label="Introduction">
+    <div class="band-yellow flex flex-col justify-end px-sm py-lg lg:col-span-7 lg:px-lg lg:py-xl">
+      <h1 class="name font-display text-display tracking-tight lg:text-display-lg">
+        <span class="block">Sergei</span>
+        <span class="block">Garcia</span>
+      </h1>
+    </div>
+    <div class="band-cobalt hero-aside px-sm py-lg lg:col-span-5 lg:px-lg lg:py-xl">
+      <p class="font-title text-xl">Senior software engineer</p>
+      <p class="mt-sm text-lg font-medium">Front end, full stack, AI-assisted development.</p>
+      <p class="label mt-xs">Based in {SITE.location}</p>
+      <p class="mt-md max-w-prose text-lg">
+        I build fast, accessible web products and the tooling that helps teams ship them. Lately I design AI agent
+        workflows that check their own work.
+      </p>
+      <ul role="list" class="mt-md flex flex-col gap-sm">
+        <li><a class="hit hit-primary w-full" href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li><a class="hit w-full" href={SITE.links.linkedin} rel="me noopener">LinkedIn</a></li>
+        <li><a class="hit w-full" href={SITE.links.github} rel="me noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="work" class="edge-b" aria-labelledby="work-h">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="section-head lg:col-span-5">
+        <h2 id="work-h" class="font-display text-h2 tracking-tight">Work</h2>
+        <p class="mt-sm max-w-prose text-muted">Over ten years of front-end and full-stack roles, from consulting to product teams.</p>
+      </div>
+      <div class="lg:col-span-7">
+        <ul role="list" class="list">
+          {
+            featuredWork.map((entry) => (
+              <li class="row">
+                <p class="label">{entry.data.period}</p>
+                <div>
+                  <h3 class="font-title text-xl">
+                    <a
+                      class="row-link"
+                      href={`/work/${entry.id}/`}
+                      style={`view-transition-name: ${vtName("work", entry.id)}`}
+                    >
+                      {entry.data.company}
+                    </a>
+                  </h3>
+                  <p class="mt-2xs font-medium">{entry.data.title}</p>
+                  <p class="mt-xs max-w-prose">{entry.data.summary}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-md"><a class="hit" href="/work/">All work history</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="edge-b" aria-labelledby="projects-h">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="section-head lg:col-span-5">
+        <h2 id="projects-h" class="font-display text-h2 tracking-tight">Projects</h2>
+        <p class="mt-sm max-w-prose text-muted">Case studies: the problem, what I owned, the decisions and what changed.</p>
+      </div>
+      <div class="lg:col-span-7">
+        <ul role="list" class="list">
+          {
+            featuredProjects.map((entry) => (
+              <li class="row">
+                <p class="label">{entry.data.period}</p>
+                <div>
+                  <h3 class="font-title text-xl">
+                    <a
+                      class="row-link"
+                      href={`/projects/${entry.id}/`}
+                      style={`view-transition-name: ${vtName("projects", entry.id)}`}
+                    >
+                      {entry.data.title}
+                    </a>
+                  </h3>
+                  <p class="mt-xs max-w-prose">{entry.data.summary}</p>
+                  <div class="mt-sm">
+                    <Pills skills={entry.data.skills} />
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-md"><a class="hit" href="/projects/">All projects</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="writing" class="band-tomato edge-b" aria-labelledby="writing-h">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg">
+      <h2 id="writing-h" class="font-display text-h2 tracking-tight lg:col-span-5">Writing</h2>
+      <div class="lg:col-span-7">
+        <ul role="list" class="list">
+          {
+            posts.slice(0, 3).map((post) => (
+              <li class="row">
+                <p class="label">{formatDate(post.data.pubDate)}</p>
+                <h3 class="font-title text-xl">
+                  <a
+                    class="row-link"
+                    href={`/writing/${post.id}/`}
+                    style={`view-transition-name: ${vtName("posts", post.id)}`}
+                  >
+                    {post.data.title}
+                  </a>
+                </h3>
+              </li>
+            ))
+          }
+          {
+            upcoming.map((post) => (
+              <li class="flex flex-wrap items-baseline gap-x-md gap-y-xs py-md">
+                <h3 class="font-title text-xl">{post.data.title}</h3>
+                <p class="label tag">Coming soon</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-sm"><a class="hit" href="/writing/">All writing</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="band-cobalt" aria-labelledby="about-h">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <h2 id="about-h" class="font-display text-h2 tracking-tight lg:col-span-5">About</h2>
+      <div class="lg:col-span-7">
+        <p class="max-w-prose text-lg">
+          I am a senior software engineer in Dublin. I have spent over ten years on the front end, mostly React and
+          TypeScript, with full-stack work along the way. I also teach and mentor engineers, in English and Spanish.
+        </p>
+        <p class="mt-md"><a class="hit hit-primary" href="/about/">More about me</a></p>
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .name {
+    view-transition-name: site-name;
+  }
+  /* Section headings stay in view while the long list scrolls past (no motion). */
+  @media (min-width: 64rem) {
+    .section-head {
+      position: sticky;
+      top: var(--spacing-md);
+      align-self: start;
+    }
+  }
+  .hero-aside {
+    border-top: var(--rule-thick) solid var(--color-black);
+  }
+  @media (min-width: 64rem) {
+    .hero-aside {
+      border-top: 0;
+      border-left: var(--rule-thick) solid var(--color-black);
+    }
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import type { InferGetStaticPropsType } from "astro";
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import CaseMeta from "../../components/CaseMeta.astro";
+import { getWork, vtName } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const work = await getWork();
+  return work.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props;
+const { title, summary, company, role, period, location, clients, skills, links } = entry.data;
+const { Content } = await render(entry);
+// Titles are often just the role, so add the company to keep every page title unique.
+const pageTitle = title.includes(company) ? title : `${title} at ${company}`;
+---
+
+<Base title={pageTitle} description={summary}>
+  <PageHead title={company} band="yellow" vt={vtName("work", entry.id)}>
+    <p class="font-title mt-md max-w-prose text-xl">{title}</p>
+    <p class="mt-xs max-w-prose text-lg">{role !== title ? `${role}, ${period}` : period}</p>
+  </PageHead>
+  <section class="edge-b">
+    <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
+      <div class="lg:col-span-4">
+        <CaseMeta
+          role={role}
+          company={company}
+          period={period}
+          location={location}
+          clients={clients}
+          skills={skills}
+          links={links}
+        />
+      </div>
+      <div class="lg:col-span-8">
+        <div class="prose">
+          <Content />
+        </div>
+        <p class="mt-lg"><a class="hit" href="/work/">All work</a></p>
+      </div>
+    </div>
+  </section>
+</Base>

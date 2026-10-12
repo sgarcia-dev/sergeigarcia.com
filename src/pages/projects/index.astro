@@ -1,0 +1,30 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import ProjectRow from "../../components/ProjectRow.astro";
+import { getProjects } from "../../lib/content";
+
+const projects = await getProjects();
+---
+
+<Base
+  title="Projects"
+  description="Case studies from Sergei Garcia: tools, products and systems he designed and built."
+>
+  <PageHead title="Projects" band="cobalt">
+    <p class="mt-md max-w-prose text-lg">
+      Things I designed and built, with the problem, my part and what shipped.
+    </p>
+  </PageHead>
+  <section class="edge-b" aria-label="Project list">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-4">
+        <p class="label">{projects.length} {projects.length === 1 ? "project" : "projects"}</p>
+        <p class="mt-xs max-w-prose">Open any project for the full case study.</p>
+      </div>
+      <ul role="list" class="list lg:col-span-8">
+        {projects.map((entry) => <ProjectRow entry={entry} />)}
+      </ul>
+    </div>
+  </section>
+</Base>
