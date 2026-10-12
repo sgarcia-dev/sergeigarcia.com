@@ -1,15 +1,11 @@
 ---
-cover: "../../assets/screenshots/learngenomics.png"
-coverAlt: "The LearnGenomics.dev home page, one of the St. Jude related sites I worked on, captured in October 2026."
 title: "St. Jude Cloud website rebuild"
-summary: "Rebuilt the public website for St. Jude Cloud, a pediatric research data platform, as a Vue and Nuxt design system with accessibility and speed built in."
+summary: "Built a complete, launch-ready rebuild of the St. Jude Cloud website, a pediatric research data platform, as a Vue and Nuxt design system with accessibility and speed built in."
 period: "2025"
 role: "Frontend Developer"
 company: "St. Jude Children's Research Hospital (via Toptal)"
 skills: ["Vue 3", "Nuxt 3", "Tailwind CSS", "Storybook", "Accessibility"]
-links:
-  - label: "LearnGenomics.dev"
-    url: "https://learngenomics.dev"
+links: []
 order: 50
 confidential: false
 draft: false
@@ -43,7 +39,7 @@ I was a frontend developer on the team, hired through Toptal. I built the new si
 
 ## Outcome
 
-A rebuilt, design-system-driven website for St. Jude Cloud, with accessibility and performance treated as part of the work, plus updated docs and learning sites for the wider platform.
+I delivered the full rebuild: every page and component finished, tested and ready to launch, with accessibility and performance built in from the start. The client team that asked for it pushed hard to ship it, but as of late 2026 the hospital has not launched the new site, so the public St. Jude Cloud site still runs the older design. The updated Sprocket and LearnGenomics.dev work is in the same position. Launch decisions sat with the client, and large healthcare organizations move slowly.
 
 ## What I learned
 
@@ -51,3 +47,4 @@ A rebuilt, design-system-driven website for St. Jude Cloud, with accessibility a
 - Putting content in data files lets non-developers add pages without a release.
 - Starting with real HTML elements, like buttons, beats patching things up with ARIA later.
 - Testing a lightweight option before reaching for a library kept the site fast.
+- Finished is not the same as shipped. Next time I would push earlier for a launch plan and an owner on the client side.
