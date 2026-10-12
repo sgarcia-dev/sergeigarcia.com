@@ -9,3 +9,6 @@ dist/
 npm-debug.log*
 test-results/
 playwright-report/
+
+# Local symlink to private-to-machine project memory (~/agents/projects/personal-website)
+agents
