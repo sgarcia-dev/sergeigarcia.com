@@ -43,7 +43,7 @@ Spacing tokens: `2xs` 4px, `xs` 8px, `sm` 16px, `md` 24px, `lg` 48px, `xl` 80px,
 `title` (18ch). Breakpoints: `md` 48rem, `lg` 64rem.
 
 Rules: `--rule-thick` 3px between bands, `--rule-thin` 2px between list rows.
-Radius is always 0.
+Radius is always 0. One exception: the small round headshot in the home hero (`.avatar`), with a 3px black ring.
 
 ## Components
 
@@ -59,7 +59,14 @@ Radius is always 0.
   shows on hover and focus.
 - **Hit** (`.hit`, `.hit-primary`, `.hit-nav`, `.hit-logo`): every button-like
   link. 2px border, hard 4px shadow, mono bold text, min height 44px. Hover moves
-  it 2px into its shadow; press moves it fully in.
+  it 2px into its shadow; press moves it fully in. `.hit-logo` keeps the plain
+  default style (Sergei rejected cobalt and yellow fills). It shows the SG mark
+  only on phones, and mark plus "Sergei Garcia" from `md`.
+- **Hero** (home): yellow name band plus cobalt aside, content capped at `page`
+  width, with the fills running to the edges via a gradient on `.hero`. The name
+  is capped at 13rem.
+- **Post row** (`<PostRow>`): a post with its cover thumbnail. `featured` shows
+  the cover large with a "Read the post" button (the newest post on home).
 - **Label** (`.label`): mono bold 13px for dates and meta.
 - **Tag** (`.tag`): filled black status tag ("Coming soon"). Not clickable, no shadow.
 - **Pill** (`.pill`, `<Pills>`): bordered mono skill tag, transparent fill, at most 5.
