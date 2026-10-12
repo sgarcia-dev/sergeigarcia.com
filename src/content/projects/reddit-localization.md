@@ -2,17 +2,21 @@
 cover: "../../assets/covers/reddit-localization.jpg"
 coverAlt: "Illustration: people around a globe trading paper planes, each marked with a different script"
 coverKind: "illustration"
-title: "Reddit localization and machine translation checks"
-summary: "Helping Reddit's web app handle more languages: one clear runbook, smoother language launches, build reviews for translation risk, and repeatable checks for machine translation."
+title: "Breaking Reddit's language barrier with AI translation"
+summary: "Helping remove the language barrier between Reddit users with AI-translated posts in 40+ languages: one clear runbook, smoother language launches and real-browser checks."
 period: "2026"
 role: "Senior Software Engineer, web localization work"
 company: "Reddit"
 skills: ["Localization", "Web components", "Build tooling", "End-to-end testing", "Documentation"]
 links: []
-order: 20
+order: 10
 confidential: true
 draft: false
 ---
+
+## The goal
+
+Remove the language barrier between Reddit users. Someone who only reads Spanish, Hindi or Portuguese should be able to read a great English thread, and join it, in their own language. AI translation makes that possible. My job was to help it work well on the web.
 
 ## The problem
 

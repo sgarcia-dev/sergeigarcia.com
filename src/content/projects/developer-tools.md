@@ -9,7 +9,7 @@ role: "Author and lead developer"
 company: "Reddit"
 skills: ["TypeScript", "VS Code Extension API", "Chrome extensions", "Vite", "Vitest"]
 links: []
-order: 10
+order: 20
 confidential: false
 draft: false
 ---
