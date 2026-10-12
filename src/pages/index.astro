@@ -2,12 +2,13 @@
 import Base from "../layouts/Base.astro";
 import WorkRow from "../components/WorkRow.astro";
 import ProjectRow from "../components/ProjectRow.astro";
+import PostRow from "../components/PostRow.astro";
 import Icon from "../components/Icon.astro";
 import { Picture } from "astro:assets";
 import { SITE } from "../lib/site";
 import headshot from "../assets/about/headshot.jpg";
 import { PERSON, PERSON_ID } from "../lib/seo";
-import { getWork, getProjects, getPosts, getAllPosts, vtName, formatDate } from "../lib/content";
+import { getWork, getProjects, getPosts, getAllPosts } from "../lib/content";
 
 const work = await getWork();
 const projects = await getProjects();
@@ -106,25 +107,13 @@ const jsonLd = [
 
   <section id="writing" class="band-tomato edge-b" aria-labelledby="writing-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg">
-      <h2 id="writing-h" class="font-display text-h2 tracking-tight lg:col-span-5">Writing</h2>
+      <div class="section-head lg:col-span-5">
+        <h2 id="writing-h" class="font-display text-h2 tracking-tight">Writing</h2>
+        <p class="mt-sm max-w-prose">How I work with AI agents, build front ends and keep teams moving.</p>
+      </div>
       <div class="lg:col-span-7">
         <ul role="list" class="list">
-          {
-            posts.slice(0, 3).map((post) => (
-              <li class="row">
-                <p class="label">{formatDate(post.data.pubDate)}</p>
-                <h3 class="font-title text-xl">
-                  <a
-                    class="row-link inline-block"
-                    href={`/writing/${post.id}/`}
-                    style={`view-transition-name: ${vtName("posts", post.id)}`}
-                  >
-                    {post.data.title}
-                  </a>
-                </h3>
-              </li>
-            ))
-          }
+          {posts.slice(0, 3).map((post, i) => <PostRow post={post} level="h3" featured={i === 0} />)}
           {
             upcoming.map((post) => (
               <li class="flex flex-wrap items-baseline gap-x-md gap-y-xs py-md">

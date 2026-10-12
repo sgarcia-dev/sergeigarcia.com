@@ -1,0 +1,72 @@
+---
+/**
+ * One post in a list: date on the rail, then the linked title, summary, topics and
+ * a small cover thumbnail on the right. `featured` shows the cover large on top
+ * with a "Read the post" button, for the newest post on the home page.
+ */
+import type { CollectionEntry } from "astro:content";
+import Pills from "./Pills.astro";
+import Thumb from "./Thumb.astro";
+import { formatDate, vtName } from "../lib/content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  level?: "h2" | "h3";
+  featured?: boolean;
+}
+const { post, level = "h2", featured = false } = Astro.props;
+const { title, summary, pubDate, skills, cover, coverAlt } = post.data;
+const href = `/writing/${post.id}/`;
+const Heading = level;
+---
+
+{
+  featured ? (
+    <li class="py-md">
+      {cover && (
+        <a href={href} class="block" tabindex="-1" aria-hidden="true">
+          <Thumb image={cover} alt="" size="md" ratio="wide" />
+        </a>
+      )}
+      <p class="label mt-md">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      </p>
+      <Heading class="font-title text-xl mt-xs">
+        <a class="row-link inline-block" href={href} style={`view-transition-name: ${vtName("posts", post.id)}`}>
+          {title}
+        </a>
+      </Heading>
+      <p class="mt-xs max-w-prose">{summary}</p>
+      {skills.length > 0 && (
+        <div class="mt-sm">
+          <Pills skills={skills.slice(0, 4)} label="Topics" />
+        </div>
+      )}
+      <p class="mt-md">
+        <a class="hit hit-primary" href={href}>Read the post</a>
+      </p>
+    </li>
+  ) : (
+    <li class="row">
+      <p class="label">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      </p>
+      <div class="row-body">
+        <div>
+          <Heading class="font-title text-xl">
+            <a class="row-link inline-block" href={href} style={`view-transition-name: ${vtName("posts", post.id)}`}>
+              {title}
+            </a>
+          </Heading>
+          <p class="mt-xs max-w-prose">{summary}</p>
+          {skills.length > 0 && (
+            <div class="mt-sm">
+              <Pills skills={skills} label="Topics" />
+            </div>
+          )}
+        </div>
+        {cover && <Thumb image={cover} alt={coverAlt ?? title} ratio="wide" />}
+      </div>
+    </li>
+  )
+}

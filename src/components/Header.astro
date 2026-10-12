@@ -14,6 +14,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
   <div class="shell flex flex-col gap-sm py-sm md:flex-row md:items-center md:justify-between">
     <a href="/" class:list={["hit hit-logo self-start", !home && "vt-site-name"]} aria-label="Sergei Garcia, home">
       <Logo class="logo-mark" />
+      <span class="logo-name label">Sergei Garcia</span>
     </a>
     <nav aria-label="Primary">
       <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
@@ -36,6 +37,15 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     display: block;
     height: 1.5rem;
     width: auto;
+  }
+  /* The name shows from tablet width up. On phones the chip is just the mark. */
+  .logo-name {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .logo-name {
+      display: inline-block;
+    }
   }
   .vt-site-name {
     view-transition-name: site-name;

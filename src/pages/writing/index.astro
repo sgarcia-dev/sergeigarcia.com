@@ -1,8 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
-import Pills from "../../components/Pills.astro";
-import { getPosts, getAllPosts, formatDate, vtName } from "../../lib/content";
+import PostRow from "../../components/PostRow.astro";
+import { getPosts, getAllPosts } from "../../lib/content";
 
 const posts = await getPosts();
 const drafts = posts.length === 0 ? await getAllPosts() : [];
@@ -45,28 +45,7 @@ const drafts = posts.length === 0 ? await getAllPosts() : [];
               </div>
             </li>
           ) : (
-            posts.map((post) => (
-              <li class="row">
-                <p class="label">{formatDate(post.data.pubDate)}</p>
-                <div>
-                  <h2 class="font-title text-xl">
-                    <a
-                      class="row-link inline-block"
-                      href={`/writing/${post.id}/`}
-                      style={`view-transition-name: ${vtName("posts", post.id)}`}
-                    >
-                      {post.data.title}
-                    </a>
-                  </h2>
-                  <p class="mt-xs max-w-prose">{post.data.summary}</p>
-                  {post.data.skills.length > 0 && (
-                    <div class="mt-sm">
-                      <Pills skills={post.data.skills} label="Topics" />
-                    </div>
-                  )}
-                </div>
-              </li>
-            ))
+            posts.map((post) => <PostRow post={post} />)
           )
         }
       </ul>
