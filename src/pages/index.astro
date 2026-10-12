@@ -3,7 +3,9 @@ import Base from "../layouts/Base.astro";
 import WorkRow from "../components/WorkRow.astro";
 import ProjectRow from "../components/ProjectRow.astro";
 import Icon from "../components/Icon.astro";
+import { Picture } from "astro:assets";
 import { SITE } from "../lib/site";
+import headshot from "../assets/about/headshot.jpg";
 import { PERSON, PERSON_ID } from "../lib/seo";
 import { getWork, getProjects, getPosts, getAllPosts, vtName, formatDate } from "../lib/content";
 
@@ -34,6 +36,17 @@ const jsonLd = [
   <section class="hero edge-b" aria-label="Introduction">
     <div class="hero-inner grid lg:grid-cols-12">
       <div class="band-yellow flex flex-col justify-end px-sm py-lg lg:col-span-7 lg:px-lg lg:py-xl">
+        <Picture
+          src={headshot}
+          formats={["avif", "webp"]}
+          widths={[64, 128, 192]}
+          sizes="4.5rem"
+          alt="Photo of Sergei Garcia"
+          loading="eager"
+          decoding="async"
+          class="avatar"
+          pictureAttributes={{ class: "block mb-sm lg:mb-md" }}
+        />
         <h1 class="name font-display text-display tracking-tight lg:text-display-lg">
           <span class="block">Sergei</span>
           <span class="block">Garcia</span>
@@ -162,6 +175,22 @@ const jsonLd = [
   @media (min-width: 64rem) {
     .hero {
       background: linear-gradient(to right, var(--color-yellow) 50%, var(--color-cobalt) 50%);
+    }
+  }
+  /* Small round headshot above the name: there so people know who they are reading
+     about, small enough not to compete with the name. */
+  :global(.avatar) {
+    display: block;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: var(--rule-thick) solid var(--color-black);
+    object-fit: cover;
+  }
+  @media (min-width: 64rem) {
+    :global(.avatar) {
+      width: 4.5rem;
+      height: 4.5rem;
     }
   }
   .hero-aside {

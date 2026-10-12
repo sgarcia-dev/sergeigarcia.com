@@ -381,10 +381,16 @@
     padding-inline: var(--spacing-2xs);
     width: 100%;
   }
+  /* The logo chip: just the SG mark, white on cobalt, so it balances the yellow hero. */
   .hit-logo {
     min-height: 0;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-cobalt);
+    color: var(--color-white);
+  }
+  .hit-logo:hover {
+    background: var(--color-yellow);
+    color: var(--color-black);
   }
   @media (min-width: 48rem) {
     .hit-nav {

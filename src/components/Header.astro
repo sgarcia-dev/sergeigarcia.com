@@ -12,9 +12,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
 
 <header class="edge-b">
   <div class="shell flex flex-col gap-sm py-sm md:flex-row md:items-center md:justify-between">
-    <a href="/" class="hit hit-primary hit-logo self-start" aria-label="Sergei Garcia, home">
+    <a href="/" class:list={["hit hit-logo self-start", !home && "vt-site-name"]} aria-label="Sergei Garcia, home">
       <Logo class="logo-mark" />
-      <span class:list={["label inline-block", !home && "vt-site-name"]}>Sergei Garcia</span>
     </a>
     <nav aria-label="Primary">
       <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
