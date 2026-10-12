@@ -40,8 +40,9 @@ const { items, caption } = Astro.props;
     gap: var(--spacing-md);
     align-items: start;
   }
+  /* Phone shot beside a desktop shot; a single desktop shot takes the full width. */
   @media (min-width: 48rem) {
-    .gallery-grid {
+    .gallery-grid:has(> [data-tall]) {
       grid-template-columns: 1fr 3fr;
     }
   }

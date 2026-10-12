@@ -44,8 +44,10 @@ const projects = defineCollection({
   schema: ({ image }) =>
     z.object({
       ...base({ image }),
-      // True for internal or confidential work: shows a typographic card, never a screenshot.
+      // True for internal or confidential work: never shows a screenshot.
       confidential: z.boolean().default(false),
+      // "illustration" covers are commissioned art, safe to show even for confidential work.
+      coverKind: z.enum(["screenshot", "illustration"]).default("screenshot"),
       gallery: z.array(z.object({ src: image(), alt: z.string() })).default([]),
       galleryCaption: z.string().optional(),
     }),

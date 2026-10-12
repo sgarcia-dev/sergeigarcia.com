@@ -1,6 +1,11 @@
 ---
-cover: "../../assets/screenshots/typing-com.png"
-coverAlt: "The Typing.com home page, captured in October 2026."
+cover: "../../assets/covers/typing-com-react-rewrite.jpg"
+coverAlt: "Illustration: a cracked keyboard key being repainted as new"
+coverKind: "illustration"
+gallery:
+  - src: "../../assets/screenshots/typing-com.png"
+    alt: "The Typing.com home page, captured in October 2026."
+galleryCaption: "Typing.com today, October 2026."
 title: "Typing.com React rewrite"
 summary: "Led the move of Typing.com's teacher tools from Backbone.js to React, with a shared component library and quality checks built in."
 period: "2021 to 2023"

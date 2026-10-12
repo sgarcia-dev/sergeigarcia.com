@@ -1,6 +1,11 @@
 ---
-cover: "../../assets/screenshots/vsc-ai-utilities.png"
-coverAlt: "The public GitHub page of vsc-ai-utilities, my VS Code extension for AI-assisted coding."
+cover: "../../assets/covers/developer-tools.jpg"
+coverAlt: "Illustration: laying the last plank of a bridge while teammates cross"
+coverKind: "illustration"
+gallery:
+  - src: "../../assets/screenshots/vsc-ai-utilities.png"
+    alt: "The public GitHub page of vsc-ai-utilities, my VS Code extension for AI-assisted coding."
+galleryCaption: "vsc-ai-utilities, the public extension, on GitHub."
 title: "Tools that make the whole team faster"
 summary: "When I spot daily friction for my teammates, I build the tool that removes it. Two VS Code extensions and a Chrome DevTools extension, all started without being asked."
 period: "2024 to 2026"

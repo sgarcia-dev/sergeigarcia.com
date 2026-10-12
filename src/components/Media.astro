@@ -10,8 +10,8 @@ interface Props {
   entry: CollectionEntry<"projects">;
 }
 const { entry } = Astro.props;
-const { title, company, cover, coverAlt, confidential } = entry.data;
-const coverImage = confidential ? undefined : cover;
+const { title, company, cover, coverAlt, confidential, coverKind } = entry.data;
+const coverImage = confidential && coverKind !== "illustration" ? undefined : cover;
 ---
 
 {

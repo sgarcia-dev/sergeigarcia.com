@@ -15,8 +15,8 @@ interface Props {
   compact?: boolean;
 }
 const { entry, level = "h2", compact = false } = Astro.props;
-const { title, summary, period, role, company, skills, cover, coverAlt, confidential } = entry.data;
-const image = confidential ? undefined : cover;
+const { title, summary, period, role, company, skills, cover, coverAlt, confidential, coverKind } = entry.data;
+const image = confidential && coverKind !== "illustration" ? undefined : cover;
 const fallback = company ?? "Personal project";
 const Heading = level;
 ---
