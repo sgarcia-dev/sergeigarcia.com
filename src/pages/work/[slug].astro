@@ -4,6 +4,7 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import CaseMeta from "../../components/CaseMeta.astro";
+import Thumb from "../../components/Thumb.astro";
 import { getWork, vtName } from "../../lib/content";
 
 export async function getStaticPaths() {
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, company, role, period, location, clients, skills, links } = entry.data;
+const { title, summary, company, role, period, location, clients, skills, links, cover, coverAlt } = entry.data;
 const { Content } = await render(entry);
 // Titles are often just the role, so add the company to keep every page title unique.
 const pageTitle = title.includes(company) ? title : `${title} at ${company}`;
@@ -38,6 +39,11 @@ const pageTitle = title.includes(company) ? title : `${title} at ${company}`;
         />
       </div>
       <div class="lg:col-span-8">
+        {cover && (
+          <div class="mb-xl max-w-prose">
+            <Thumb image={cover} alt={coverAlt ?? `${company} home page`} size="md" eager />
+          </div>
+        )}
         <div class="prose">
           <Content />
         </div>

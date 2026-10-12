@@ -9,6 +9,8 @@ endDate: 2026-09-30
 skills: ["TypeScript", "Lit", "GraphQL", "Playwright", "Node.js"]
 links: []
 order: 10
+cover: "../../assets/screenshots/companies/reddit.png"
+coverAlt: "Reddit's home page, October 2026"
 ---
 
 I worked on how translated content appears on the Reddit website. I built the controls readers use to switch between translated and original text, the language menus, the feedback dialogs and the translation settings. Later I took over engineering ownership of the web translation experience.

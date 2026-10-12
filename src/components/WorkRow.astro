@@ -1,36 +1,45 @@
 ---
-/** One work role in a list: period on the rail, linked company, title and role, summary, skills. */
+/** One work role in a list: period on the rail, linked company, title and role, summary, skills, thumbnail. */
 import type { CollectionEntry } from "astro:content";
 import Pills from "./Pills.astro";
+import Thumb from "./Thumb.astro";
 import { vtName } from "../lib/content";
 
 interface Props {
   entry: CollectionEntry<"work">;
+  /** Heading level: h2 on /work/, h3 inside a home page section. */
+  level?: "h2" | "h3";
+  /** Home page variant: no role suffix, no skills. */
+  compact?: boolean;
 }
-const { entry } = Astro.props;
-const { title, summary, period, role, company, skills } = entry.data;
+const { entry, level = "h2", compact = false } = Astro.props;
+const { title, summary, period, role, company, skills, cover, coverAlt } = entry.data;
+const Heading = level;
 ---
 
 <li class="row">
   <p class="label">{period}</p>
-  <div>
-    <h2 class="font-title text-xl">
-      <a
-        class="row-link inline-block"
-        href={`/work/${entry.id}/`}
-        style={`view-transition-name: ${vtName("work", entry.id)}`}>{company}</a
-      >
-    </h2>
-    <p class="mt-xs">
-      <strong class="font-bold">{title}</strong>{role !== title && <>, {role}</>}
-    </p>
-    <p class="mt-xs max-w-prose">{summary}</p>
-    {
-      skills.length > 0 && (
-        <div class="mt-sm">
-          <Pills skills={skills} />
-        </div>
-      )
-    }
+  <div class="row-body">
+    <div>
+      <Heading class="font-title text-xl">
+        <a
+          class="row-link inline-block"
+          href={`/work/${entry.id}/`}
+          style={`view-transition-name: ${vtName("work", entry.id)}`}>{company}</a
+        >
+      </Heading>
+      <p class="mt-xs">
+        <strong class="font-bold">{title}</strong>{!compact && role !== title && <>, {role}</>}
+      </p>
+      <p class="mt-xs max-w-prose">{summary}</p>
+      {
+        !compact && skills.length > 0 && (
+          <div class="mt-sm">
+            <Pills skills={skills} />
+          </div>
+        )
+      }
+    </div>
+    <Thumb image={cover} alt={coverAlt ?? `${company} home page`} ratio="wide" fallback={company} />
   </div>
 </li>

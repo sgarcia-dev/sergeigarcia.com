@@ -9,6 +9,8 @@ endDate: 2023-10-10
 skills: ["React", "Tailwind", "Storybook", "Headless UI", "React Query"]
 links: []
 order: 30
+cover: "../../assets/screenshots/companies/teaching-com.png"
+coverAlt: "Typing.com's home page, October 2026"
 ---
 
 I led React migrations for Typing.com's teacher portal and for an internal customer service tool. I worked next to a PHP and Laravel back end.

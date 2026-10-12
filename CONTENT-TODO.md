@@ -8,8 +8,8 @@ unconfirmed, conflicting in the sources, or worth adding. Fix the Markdown in
 
 - Confirm the localization specifics now on the site: runbook consolidation and knowledge transfer, coordinating new language launches, reviewing build changes for translation risk, machine translation quality and end-to-end checks (`work/reddit.md`, `projects/reddit-localization.md`).
 - Localization case study period says "2026". Confirm the years.
-- Developer tooling years ("2024 to 2026") and the VS Code extensions years ("2024 to 2025"). Confirm both.
-- The team VS Code extension reached 1.0 and 2.0, and the Chrome extension was demoed at a hackathon. OK to say publicly?
+- The merged developer tools case study (`projects/developer-tools.md`) says "2024 to 2026". The old VS Code extensions page said "2024 to 2025". Confirm the years.
+- In the developer tools case study: the team VS Code extension reached 1.0 and 2.0, and the Chrome extension was demoed at a hackathon. OK to say publicly?
 - Any usage or adoption number you want to add (none is shown today).
 
 ## Titles
@@ -29,6 +29,7 @@ unconfirmed, conflicting in the sources, or worth adding. Fix the Markdown in
 ## St. Jude
 
 - Is the rebuilt St. Jude Cloud site live, and which parts shipped? The case study does not claim it launched.
+- The case study now shows local screenshots of the unshipped rebuild (`src/assets/screenshots/stjude/`), captioned as running locally. Confirm you are happy showing them.
 - The case study shows a LearnGenomics.dev screenshot and links to learngenomics.dev. Confirm your work is what is live there.
 - A screenshot of stjude.cloud and sprocket.bio were also captured (`src/assets/screenshots/`) but are not used, because it is not confirmed that the live pages are your work.
 
@@ -36,5 +37,4 @@ unconfirmed, conflicting in the sources, or worth adding. Fix the Markdown in
 
 - Typing.com screenshot shows today's home page. Fine to show, or prefer a typographic card?
 - Agents workspace: "more than 1,400 commits since June 2026" and "adapters for six AI tools" are dated 2026-10-12. Keep or remove?
-- Launch post (draft): check the process details, especially the number of mockup rounds and who built them.
 - About page: the teaching approach sentence is from your own account. Check the wording.

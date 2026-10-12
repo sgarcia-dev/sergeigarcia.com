@@ -6,7 +6,7 @@ has a next step. Facts to confirm live in `CONTENT-TODO.md`, not here.
 ## Before go-live
 
 - **Review the preview.** Sergei reviews the `build/v1` preview URL, then merge to `main`.
-- **Publish the launch post.** Read `src/content/posts/how-i-built-this-site-with-ai-agents.md`, edit, set `draft: false`.
+- **Publish the first post.** Read `src/content/posts/agents-workspace-tour.md`, edit, set `draft: false`.
 - **Email forwarding.** Set up `hello@sergeigarcia.com` in Cloudflare Email Routing (needs Sergei's go-ahead). Until then the address bounces.
 - **Production checks.** After the merge, run the e2e test against `https://sergeigarcia.com` too (a preview vs production 404 difference was reported in Oct 2026).
 
@@ -23,6 +23,7 @@ has a next step. Facts to confirm live in `CONTENT-TODO.md`, not here.
 - **More motion.** Only if it earns its place: a one-time first-load reveal. Nothing beyond the view transitions ships today.
 - **Full-text RSS.** The feed has summaries only. Render post HTML into `content` when posts exist.
 - **Search, comments, newsletter.** Pagefind after about 15 posts; Giscus and Buttondown later.
+- **Project covers.** Drop AI covers into src/assets/covers/<slug>.png and set `cover` in each project's frontmatter.
 
 ## Hosting notes
 

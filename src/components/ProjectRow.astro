@@ -1,36 +1,72 @@
 ---
-/** One project in a list: period on the rail, linked title, role (and company), summary, skills. */
+/**
+ * One project in a list: period on the rail, then a 16:9 cover (screenshot or
+ * typographic card), linked title, role, summary and skills. `compact` swaps the
+ * big cover for the small thumbnail used on the home page.
+ */
 import type { CollectionEntry } from "astro:content";
 import Pills from "./Pills.astro";
+import Thumb from "./Thumb.astro";
 import { vtName } from "../lib/content";
 
 interface Props {
   entry: CollectionEntry<"projects">;
+  level?: "h2" | "h3";
+  compact?: boolean;
 }
-const { entry } = Astro.props;
-const { title, summary, period, role, company, skills } = entry.data;
+const { entry, level = "h2", compact = false } = Astro.props;
+const { title, summary, period, role, company, skills, cover, coverAlt, confidential } = entry.data;
+const image = confidential ? undefined : cover;
+const fallback = company ?? "Personal project";
+const Heading = level;
 ---
 
 <li class="row">
   <p class="label">{period}</p>
-  <div>
-    <h2 class="font-title text-xl">
-      <a
-        class="row-link inline-block"
-        href={`/projects/${entry.id}/`}
-        style={`view-transition-name: ${vtName("projects", entry.id)}`}>{title}</a
-      >
-    </h2>
-    <p class="mt-xs">
-      {company ? <><strong class="font-bold">{company}</strong>, {role}</> : role}
-    </p>
-    <p class="mt-xs max-w-prose">{summary}</p>
-    {
-      skills.length > 0 && (
-        <div class="mt-sm">
-          <Pills skills={skills} />
+  {
+    compact ? (
+      <div class="row-body">
+        <div>
+          <Heading class="font-title text-xl">
+            <a
+              class="row-link inline-block"
+              href={`/projects/${entry.id}/`}
+              style={`view-transition-name: ${vtName("projects", entry.id)}`}
+            >
+              {title}
+            </a>
+          </Heading>
+          <p class="mt-xs max-w-prose">{summary}</p>
+          <div class="mt-sm">
+            <Pills skills={skills} />
+          </div>
         </div>
-      )
-    }
-  </div>
+        <Thumb image={image} alt={coverAlt ?? title} ratio="wide" fallback={fallback} />
+      </div>
+    ) : (
+      <div>
+        <div class="max-w-prose">
+          <Thumb image={image} alt={coverAlt ?? title} size="md" ratio="wide" fallback={fallback} />
+        </div>
+        <Heading class="font-title text-xl mt-md">
+          <a
+            class="row-link inline-block"
+            href={`/projects/${entry.id}/`}
+            style={`view-transition-name: ${vtName("projects", entry.id)}`}
+          >
+            {title}
+          </a>
+        </Heading>
+        <p class="mt-xs">
+          {company ? <><strong class="font-bold">{company}</strong>, {role}</> : role}
+        </p>
+        <p class="mt-xs max-w-prose">{summary}</p>
+        {skills.length > 0 && (
+          <div class="mt-sm">
+            <Pills skills={skills} />
+          </div>
+        )}
+      </div>
+    )
+  }
 </li>

@@ -46,6 +46,8 @@ const projects = defineCollection({
       ...base({ image }),
       // True for internal or confidential work: shows a typographic card, never a screenshot.
       confidential: z.boolean().default(false),
+      gallery: z.array(z.object({ src: image(), alt: z.string() })).default([]),
+      galleryCaption: z.string().optional(),
     }),
 });
 

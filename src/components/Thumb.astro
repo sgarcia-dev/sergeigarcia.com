@@ -1,0 +1,104 @@
+---
+/**
+ * A screenshot in a frame. `size="sm"` is the calm list thumbnail (rail width,
+ * thin frame); `size="lg"` is the page image. `ratio="wide"` crops to 16:9 from
+ * the top. Without an image it shows a typographic card in the same frame.
+ */
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  image?: ImageMetadata;
+  alt?: string;
+  size?: "sm" | "md" | "lg";
+  ratio?: "natural" | "wide";
+  /** Text for the typographic fallback card. */
+  fallback?: string;
+  eager?: boolean;
+}
+const { image, alt = "", size = "sm", ratio = "natural", fallback, eager = false } = Astro.props;
+const widths = size === "sm" ? [176, 352] : size === "md" ? [640, 960, 1280] : [720, 1080, 1440];
+const sizes =
+  size === "sm" ? "11rem" : size === "md" ? "(min-width: 64rem) 40rem, 100vw" : "(min-width: 64rem) 60vw, 100vw";
+---
+
+{
+  image ? (
+    <figure class:list={["shot", `shot-${size}`, ratio === "wide" && "shot-wide"]}>
+      <Picture
+        src={image}
+        formats={["avif", "webp"]}
+        widths={widths}
+        sizes={sizes}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        pictureAttributes={{ class: "block" }}
+      />
+    </figure>
+  ) : (
+    fallback && (
+      <div class:list={["shot", `shot-${size}`, "shot-wide", "shot-card", "band-yellow"]} aria-hidden="true">
+        <p class="font-display tracking-tight">{fallback}</p>
+      </div>
+    )
+  )
+}
+
+<style>
+  .shot {
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 8px 8px 0 var(--edge);
+    background: var(--color-white);
+    overflow: hidden;
+  }
+  .shot-sm {
+    width: var(--container-rail);
+    border-width: var(--rule-thin);
+    box-shadow: 4px 4px 0 var(--edge);
+  }
+  .shot :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .shot-wide {
+    aspect-ratio: 16 / 9;
+  }
+  .shot-wide :global(picture),
+  .shot-wide :global(img) {
+    height: 100%;
+  }
+  .shot-wide :global(img) {
+    object-fit: cover;
+    object-position: top center;
+  }
+  .shot-card {
+    display: flex;
+    align-items: flex-end;
+    padding: var(--spacing-sm);
+    background: var(--color-yellow);
+    color: var(--color-black);
+  }
+  .shot-card p {
+    font-size: var(--text-xl);
+    line-height: 1.05;
+  }
+  /* In lists the card stays quiet: page colors, not yellow. */
+  .shot-sm.shot-card {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    padding: var(--spacing-xs);
+  }
+  .shot-sm.shot-card p {
+    font-size: var(--text-base);
+  }
+  .shot-md.shot-card,
+  .shot-lg.shot-card {
+    padding: var(--spacing-md);
+  }
+  .shot-md.shot-card p,
+  .shot-lg.shot-card p {
+    font-size: var(--text-h2);
+  }
+</style>

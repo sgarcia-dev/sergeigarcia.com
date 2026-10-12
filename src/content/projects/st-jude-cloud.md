@@ -1,4 +1,12 @@
 ---
+cover: "../../assets/screenshots/stjude/stjude-home-1440.png"
+coverAlt: "My St. Jude Cloud home page rebuild, running locally."
+gallery:
+  - src: "../../assets/screenshots/stjude/stjude-home-mobile.png"
+    alt: "The rebuilt home page on a phone, running locally."
+  - src: "../../assets/screenshots/stjude/stjude-about-1440.png"
+    alt: "The rebuilt About page, running locally."
+galleryCaption: "My rebuild, running locally. The hospital has not launched it."
 title: "St. Jude Cloud website rebuild"
 summary: "Built a complete, launch-ready rebuild of the St. Jude Cloud website, a pediatric research data platform, as a Vue and Nuxt design system with accessibility and speed built in."
 period: "2025"
