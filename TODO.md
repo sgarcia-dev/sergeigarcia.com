@@ -29,3 +29,4 @@ has a next step. Facts to confirm live in `CONTENT-TODO.md`, not here.
 
 - Production deploys run `npx wrangler deploy` from Workers Builds on push to `main`. Branch previews run `npx wrangler preview` (needs the `previews` block in `wrangler.jsonc`).
 - If a deploy fails with a Cloudflare API 504, retry the build from the dashboard or push again.
+- 2026-10-12: Workers Builds production deploys hit repeated Cloudflare API 504s, with and without the previews block. Fallback: `npx wrangler login` once, then `npm run deploy` locally.
