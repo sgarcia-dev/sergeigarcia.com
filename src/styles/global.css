@@ -1,40 +1,562 @@
 @import "tailwindcss";
 
-/* Placeholder tokens. Final palette and fonts are decided in DESIGN.md. */
-@theme {
+/*
+  Design tokens for sergeigarcia.com. Source: mockup D1 (Fraunces display,
+  yellow / cobalt / tomato color blocks). Read DESIGN.md before changing anything.
+  The Tailwind default theme is fully reset: only these tokens exist.
+*/
+
+/* Fonts: self-hosted, latin subset only. */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../../node_modules/@fontsource/archivo/files/archivo-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../../node_modules/@fontsource/archivo/files/archivo-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("../../node_modules/@fontsource/archivo/files/archivo-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2") format("woff2");
+}
+
+@theme static {
   --*: initial;
 
-  --spacing: 0.25rem;
+  /* Colors. Three flat fills plus black, white and chalk. No gradients. */
+  --color-bg: var(--c-bg);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-yellow: #ffd400;
+  --color-cobalt: #1f3fd1;
+  --color-tomato: #ff5a36;
+  --color-black: #0a0a0a;
+  --color-white: #ffffff;
+  --color-chalk: #f4f4ee;
 
-  --breakpoint-sm: 40rem;
+  /* Fonts */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Type scale */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.4;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.5;
+  --text-xl: clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem);
+  --text-xl--line-height: 1.15;
+  --text-h2: clamp(2.5rem, 1.2rem + 6vw, 4.5rem);
+  --text-h2--line-height: 0.95;
+  --text-display: clamp(3.5rem, 26vw, 12rem);
+  --text-display--line-height: 0.92;
+  --text-display-lg: clamp(7rem, 14.5vw, 18rem);
+  --text-display-lg--line-height: 0.92;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.02em;
+  --leading-body: 1.6;
+
+  /* Spacing */
+  --spacing-2xs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 5rem;
+  --spacing-2xl: 8rem;
+
+  /* Layout */
+  --container-page: 90rem;
+  --container-prose: 40rem;
+  --container-rail: 11rem;
+  --container-title: 18ch;
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
 
-  --color-paper: #f7f5f0;
-  --color-ink: #1c1b19;
-  --color-muted: #55524b;
-  --color-accent: #1f6b4f;
+  /* Borders */
+  --rule-thick: 3px;
+  --rule-thin: 2px;
+  --radius-none: 0;
 
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  /* The only shadow, for interactive elements only. Its color follows the band. */
+  --shadow-hard: 4px 4px 0 var(--hit-line);
 
-  --text-base: 1.125rem;
-  --text-base--line-height: 1.6;
-  --text-display: clamp(2.75rem, 2rem + 4vw, 5rem);
-  --text-display--line-height: 1.05;
-
-  --container-column: 38rem;
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 90ms;
+  --duration-page: 220ms;
 }
 
+/* Page level (paper) values. Bands override what they need. */
 :root {
+  --c-bg: #ffffff;
+  --c-ink: #0a0a0a;
+  --c-muted: #3f3f3f;
+  --edge: var(--c-ink);
+  --rule-color: var(--c-ink);
+  --focus: var(--c-ink);
+  --hit-bg: var(--c-bg);
+  --hit-ink: var(--c-ink);
+  --hit-line: var(--c-ink);
+  --hit-hover-bg: #ffd400;
+  --hit-hover-ink: #0a0a0a;
+  --primary-bg: #ffd400;
+  --primary-ink: #0a0a0a;
+  --primary-hover-bg: var(--c-ink);
+  --primary-hover-ink: var(--c-bg);
+  --pill-line: var(--c-ink);
+  --link: var(--c-ink);
   color-scheme: light dark;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-paper: #131412;
-    --color-ink: #ece9e4;
-    --color-muted: #a5a39b;
-    --color-accent: #6fc29b;
+    --c-bg: #0d0d12;
+    --c-ink: #f2f0ea;
+    --c-muted: #c4c2bc;
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    /* Footer sits at the bottom on short pages. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  main {
+    flex: 1 0 auto;
+  }
+  ::selection {
+    background: var(--color-yellow);
+    color: var(--color-black);
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+  [id] {
+    scroll-margin-top: var(--spacing-sm);
+  }
+  a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+  }
+}
+
+@layer components {
+  /* Bands: flat fills; each sets its own text, rule, focus and control colors. */
+  .band-yellow {
+    background: var(--color-yellow);
+    color: var(--color-black);
+    --rule-color: var(--color-black);
+    --focus: var(--color-black);
+    --pill-line: var(--color-black);
+    --c-muted: var(--color-black);
+    --hit-bg: var(--color-yellow);
+    --hit-ink: var(--color-black);
+    --hit-line: var(--color-black);
+    --hit-hover-bg: var(--color-black);
+    --hit-hover-ink: var(--color-yellow);
+    --primary-bg: var(--color-black);
+    --primary-ink: var(--color-yellow);
+    --primary-hover-bg: var(--color-white);
+    --primary-hover-ink: var(--color-black);
+  }
+  .band-cobalt {
+    background: var(--color-cobalt);
+    color: var(--color-white);
+    --rule-color: var(--color-white);
+    --focus: var(--color-white);
+    --pill-line: var(--color-white);
+    --c-muted: var(--color-white);
+    --hit-bg: var(--color-black);
+    --hit-ink: var(--color-white);
+    --hit-line: var(--color-white);
+    --hit-hover-bg: var(--color-white);
+    --hit-hover-ink: var(--color-black);
+    --primary-bg: var(--color-yellow);
+    --primary-ink: var(--color-black);
+    --primary-hover-bg: var(--color-white);
+    --primary-hover-ink: var(--color-black);
+  }
+  .band-tomato {
+    background: var(--color-tomato);
+    color: var(--color-black);
+    --rule-color: var(--color-black);
+    --focus: var(--color-black);
+    --pill-line: var(--color-black);
+    --c-muted: var(--color-black);
+    --hit-bg: var(--color-tomato);
+    --hit-ink: var(--color-black);
+    --hit-line: var(--color-black);
+    --hit-hover-bg: var(--color-black);
+    --hit-hover-ink: var(--color-white);
+    --primary-bg: var(--color-black);
+    --primary-ink: var(--color-white);
+    --primary-hover-bg: var(--color-white);
+    --primary-hover-ink: var(--color-black);
+  }
+  .band-black {
+    background: var(--color-black);
+    color: var(--color-chalk);
+    --rule-color: var(--color-chalk);
+    --focus: var(--color-yellow);
+    --pill-line: var(--color-chalk);
+    --c-muted: var(--color-chalk);
+    --hit-bg: var(--color-black);
+    --hit-ink: var(--color-chalk);
+    --hit-line: var(--color-chalk);
+    --hit-hover-bg: var(--color-yellow);
+    --hit-hover-ink: var(--color-black);
+    --primary-bg: var(--color-yellow);
+    --primary-ink: var(--color-black);
+    --primary-hover-bg: var(--color-chalk);
+    --primary-hover-ink: var(--color-black);
+  }
+
+  /* Page shell: one max width and gutter for every section. */
+  .shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: var(--container-page);
+    padding-inline: var(--spacing-sm);
+  }
+  @media (min-width: 64rem) {
+    .shell {
+      padding-inline: var(--spacing-lg);
+    }
+  }
+
+  /* Thick edges between bands use the page ink so they show in light and dark. */
+  .edge-b {
+    border-bottom: var(--rule-thick) solid var(--edge);
+  }
+  .edge-t {
+    border-top: var(--rule-thick) solid var(--edge);
+  }
+
+  /* Lists of rows separated by thin rules in the band's rule color. */
+  .list {
+    border-top: var(--rule-thin) solid var(--rule-color);
+  }
+  .row {
+    display: grid;
+    gap: var(--spacing-2xs);
+    padding-block: var(--spacing-md);
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+  .row-end {
+    display: grid;
+    gap: var(--spacing-2xs);
+    padding-block: var(--spacing-sm);
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+  @media (min-width: 48rem) {
+    .row {
+      grid-template-columns: var(--container-rail) minmax(0, 1fr);
+      gap: var(--spacing-md);
+    }
+    .row-end {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--spacing-md);
+    }
+  }
+
+  /* A row title that links to its page. The underline appears on hover and focus. */
+  .row-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .row-link:hover,
+  .row-link:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.12em;
+  }
+
+  /* Display: Fraunces 900 at optical size 144. Titles: Fraunces 700, automatic optical size. */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+  }
+  .font-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-optical-sizing: auto;
+    font-variation-settings: normal;
+  }
+
+  /* Every button-like control: 2px border, no radius, hard shadow. */
+  .hit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border: 2px solid var(--hit-line);
+    background: var(--hit-bg);
+    color: var(--hit-ink);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    /* Not var(--shadow-hard): that token resolves --hit-line at :root, so each band would lose its own shadow color. */
+    box-shadow: 4px 4px 0 var(--hit-line);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+  }
+  .hit:hover {
+    background: var(--hit-hover-bg);
+    color: var(--hit-hover-ink);
+  }
+  .hit-primary {
+    background: var(--primary-bg);
+    color: var(--primary-ink);
+  }
+  .hit-primary:hover {
+    background: var(--primary-hover-bg);
+    color: var(--primary-hover-ink);
+  }
+  .hit[aria-current="page"] {
+    background: var(--color-black);
+    color: var(--color-yellow);
+    border-color: var(--hit-line);
+  }
+  .hit-nav {
+    padding-inline: var(--spacing-2xs);
+    width: 100%;
+  }
+  .hit-logo {
+    min-height: 0;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
+  }
+  @media (min-width: 48rem) {
+    .hit-nav {
+      padding-inline: var(--spacing-md);
+      width: auto;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hit {
+      transition:
+        transform var(--duration-fast) ease-out,
+        box-shadow var(--duration-fast) ease-out,
+        background-color var(--duration-fast) ease-out;
+    }
+    .hit:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--hit-line);
+    }
+    .hit:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--hit-line);
+    }
+  }
+
+  .skip {
+    position: absolute;
+    left: var(--spacing-sm);
+    top: var(--spacing-sm);
+    z-index: 10;
+    transform: translateY(-300%);
+  }
+  .skip:focus {
+    transform: none;
+  }
+
+  /* Small mono label for dates and meta. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: var(--font-weight-bold);
+  }
+  /* Filled static tag ("Coming soon", "Draft"). Not interactive, so no shadow. */
+  .tag {
+    display: inline-block;
+    border: 2px solid var(--color-black);
+    background: var(--color-black);
+    color: var(--color-white);
+    padding: var(--spacing-2xs) var(--spacing-xs);
+  }
+  /* Skill pill: small bordered mono tag, transparent fill, follows the band. */
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  .pill {
+    display: inline-block;
+    border: var(--rule-thin) solid var(--pill-line);
+    padding: 0 var(--spacing-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.7;
+    font-weight: var(--font-weight-normal);
+  }
+
+  /* Screenshot frame: thick ink border plus the hard shadow, no radius. */
+  .frame {
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 8px 8px 0 var(--edge);
+    background: var(--color-white);
+  }
+  .frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* Typographic card for confidential work that cannot be shown. */
+  .type-card {
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 8px 8px 0 var(--edge);
+    padding: var(--spacing-lg) var(--spacing-md);
+    min-height: calc(var(--spacing-2xl) * 2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+
+  /* Long-form text (case studies, posts, about). */
+  .prose {
+    max-width: var(--container-prose);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+  .prose > * + * {
+    margin-top: var(--spacing-sm);
+  }
+  .prose h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-sm);
+    border-top: var(--rule-thin) solid var(--rule-color);
+  }
+  .prose h3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    margin-top: var(--spacing-md);
+  }
+  .prose > :first-child {
+    margin-top: 0;
+  }
+  .prose h2 + *,
+  .prose h3 + * {
+    margin-top: var(--spacing-xs);
+  }
+  .prose a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  .prose a:hover {
+    background: var(--color-yellow);
+    color: var(--color-black);
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: var(--spacing-md);
+  }
+  .prose ul {
+    list-style: square;
+  }
+  .prose ol {
+    list-style: decimal;
+  }
+  .prose li + li {
+    margin-top: var(--spacing-2xs);
+  }
+  .prose strong {
+    font-weight: 700;
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+  .prose pre {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    padding: var(--spacing-sm);
+    border: var(--rule-thin) solid var(--rule-color);
+    overflow-x: auto;
+  }
+  .prose blockquote {
+    border-left: var(--rule-thick) solid var(--rule-color);
+    padding-left: var(--spacing-sm);
+  }
+}
+
+/* Cross-document view transitions. Only when motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--duration-page);
+    animation-timing-function: var(--ease-out);
+  }
+  ::view-transition-group(*) {
+    animation-duration: var(--duration-page);
+    animation-timing-function: var(--ease-out);
+  }
+  /* Keep text snapshots in proportion while a title changes size and line breaks. */
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    height: 100%;
+    object-fit: contain;
+    object-position: left center;
   }
 }

@@ -1,0 +1,17 @@
+---
+/**
+ * Sergei's SG mark, inlined so it takes `currentColor` on every band.
+ * Decorative by default: the wrapping link carries the accessible name.
+ */
+import raw from "../assets/logo/sg-logo.svg?raw";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+const svg = raw
+  .replace(/\s(role|aria-label)="[^"]*"/g, "")
+  .replace("<svg", `<svg aria-hidden="true" focusable="false" class="${className}"`);
+---
+
+<Fragment set:html={svg} />

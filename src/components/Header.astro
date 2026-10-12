@@ -1,0 +1,44 @@
+---
+import { NAV } from "../lib/site";
+import Logo from "./Logo.astro";
+
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="edge-b">
+  <div class="shell flex flex-col gap-sm py-sm md:flex-row md:items-center md:justify-between">
+    <a href="/" class="hit hit-primary hit-logo self-start" aria-label="Sergei Garcia, home">
+      <Logo class="logo-mark" />
+      <span class:list={["label", !home && "vt-site-name"]}>Sergei Garcia</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
+        {
+          NAV.map((item) => (
+            <li>
+              <a class="hit hit-nav" href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  :global(.logo-mark) {
+    display: block;
+    height: 1.5rem;
+    width: auto;
+  }
+  .vt-site-name {
+    view-transition-name: site-name;
+  }
+</style>

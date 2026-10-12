@@ -1,0 +1,37 @@
+---
+/**
+ * Visual anchor for a project page. A framed screenshot when there is a cover;
+ * otherwise a yellow typographic card (always for confidential work).
+ */
+import { Picture } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+const { entry } = Astro.props;
+const { title, company, cover, coverAlt, confidential } = entry.data;
+// The type card repeats no title: the page heading already says it.
+const coverImage = confidential ? undefined : cover;
+---
+
+{
+  coverImage ? (
+    <figure class="frame">
+      <Picture
+        src={coverImage}
+        formats={["avif", "webp"]}
+        widths={[720, 1080, 1440]}
+        sizes="(min-width: 64rem) 60vw, 100vw"
+        alt={coverAlt ?? title}
+        loading="eager"
+        pictureAttributes={{ class: "block" }}
+      />
+    </figure>
+  ) : (
+    <figure class="type-card band-yellow">
+      <p class="font-display text-h2 tracking-tight">{company ?? "Personal project"}</p>
+      <p class="label">{confidential ? "Internal work, so there are no screenshots." : "Write-up only. The code is private."}</p>
+    </figure>
+  )
+}
