@@ -4,6 +4,7 @@ import WorkRow from "../components/WorkRow.astro";
 import ProjectRow from "../components/ProjectRow.astro";
 import Icon from "../components/Icon.astro";
 import { SITE } from "../lib/site";
+import { PERSON, PERSON_ID } from "../lib/seo";
 import { getWork, getProjects, getPosts, getAllPosts, vtName, formatDate } from "../lib/content";
 
 const work = await getWork();
@@ -14,15 +15,19 @@ const upcoming = posts.length === 0 ? (await getAllPosts()).slice(0, 1) : [];
 const featuredWork = work.slice(0, 4);
 const featuredProjects = projects.slice(0, 4);
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: SITE.name,
-  url: SITE.url,
-  description: SITE.description,
-  inLanguage: "en",
-  author: { "@type": "Person", name: SITE.name, url: `${SITE.url}/about/` },
-};
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE.name,
+    url: `${SITE.url}/`,
+    description: SITE.description,
+    inLanguage: "en",
+    author: { "@id": PERSON_ID },
+    publisher: { "@id": PERSON_ID },
+  },
+  PERSON,
+];
 ---
 
 <Base title={SITE.title} fullTitle description={SITE.description} jsonLd={jsonLd} home>

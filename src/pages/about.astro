@@ -4,28 +4,19 @@ import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import { Picture } from "astro:assets";
 import { SITE } from "../lib/site";
+import { PERSON, breadcrumbs } from "../lib/seo";
 import family from "../assets/about/family.jpg";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ProfilePage",
-  url: `${SITE.url}/about/`,
-  name: "About Sergei Garcia",
-  mainEntity: {
-    "@type": "Person",
-    name: SITE.name,
-    jobTitle: SITE.jobTitle,
-    url: SITE.url,
-    email: `mailto:${SITE.email}`,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Dublin",
-      addressCountry: "IE",
-    },
-    knowsLanguage: ["en", "es"],
-    sameAs: [SITE.links.linkedin, SITE.links.github],
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: `${SITE.url}/about/`,
+    name: "About Sergei Garcia",
+    mainEntity: PERSON,
   },
-};
+  breadcrumbs([{ name: "About", path: "/about/" }]),
+];
 ---
 
 <Base

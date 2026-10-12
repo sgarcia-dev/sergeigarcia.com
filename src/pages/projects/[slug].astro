@@ -7,6 +7,8 @@ import CaseMeta from "../../components/CaseMeta.astro";
 import Media from "../../components/Media.astro";
 import Gallery from "../../components/Gallery.astro";
 import { getProjects, vtName } from "../../lib/content";
+import { SITE } from "../../lib/site";
+import { AUTHOR_REF, breadcrumbs, shareImage } from "../../lib/seo";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -15,11 +17,33 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, company, role, period, skills, links, gallery, galleryCaption } = entry.data;
+const { title, summary, company, role, period, skills, links, gallery, galleryCaption, cover, coverAlt, confidential, coverKind } =
+  entry.data;
 const { Content } = await render(entry);
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const showCover = cover && !(confidential && coverKind !== "illustration");
+const ogImage = showCover ? await shareImage(cover) : undefined;
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description: summary,
+    author: AUTHOR_REF,
+    about: company,
+    keywords: skills.join(", "),
+    ...(ogImage ? { image: new URL(ogImage, SITE.url).href } : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  },
+  breadcrumbs([
+    { name: "Projects", path: "/projects/" },
+    { name: title, path: Astro.url.pathname },
+  ]),
+];
 ---
 
-<Base title={title} description={summary} ogType="article">
+<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
   <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)}>
     <p class="mt-md max-w-prose text-lg">{summary}</p>
   </PageHead>

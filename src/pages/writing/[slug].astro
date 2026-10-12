@@ -7,6 +7,7 @@ import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
+import { AUTHOR_REF, shareImage } from "../../lib/seo";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -19,6 +20,7 @@ const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.
 const { Content } = await render(entry);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = cover ? await shareImage(cover) : undefined;
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -27,7 +29,8 @@ const jsonLd = [
     description: summary,
     datePublished: pubDate.toISOString(),
     dateModified: (updatedDate ?? pubDate).toISOString(),
-    author: { "@type": "Person", name: SITE.name, url: `${SITE.url}/about/` },
+    author: AUTHOR_REF,
+    ...(ogImage ? { image: new URL(ogImage, SITE.url).href } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   },
   {
@@ -42,7 +45,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={summary} ogType="article" jsonLd={jsonLd}>
+<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
   <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"}>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
