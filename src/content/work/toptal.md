@@ -8,6 +8,8 @@ skills: ["Vue", "Nuxt", "React", "Next.js", "Tailwind"]
 clients: ["St. Jude Children's Research Hospital", "Northeastern University", "Marmalade", "AquascapeAI"]
 links: []
 order: 20
+cover: "../../assets/screenshots/companies/toptal.png"
+coverAlt: "Toptal's home page, October 2026"
 ---
 
 Through Toptal I built front ends for four clients.

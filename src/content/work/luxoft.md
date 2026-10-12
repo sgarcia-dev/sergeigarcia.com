@@ -7,6 +7,8 @@ period: "2017 to 2019"
 skills: ["React", "Redux", "Node.js", "GraphQL", "Jest"]
 links: []
 order: 80
+cover: "../../assets/screenshots/companies/luxoft.png"
+coverAlt: "Luxoft's home page, October 2026"
 ---
 
 I worked on a legacy booking flow and built features with React, Redux, Node.js and Express. I also wrote browser automation with Selenium and Puppeteer.
