@@ -1,6 +1,6 @@
 ---
 cover: "../../assets/covers/typing-com-react-rewrite.jpg"
-coverAlt: "Illustration: a cracked keyboard key being repainted as new"
+coverAlt: "Illustration: a builder swapping cracked grey keyboard keys for bright new ones"
 coverKind: "illustration"
 gallery:
   - src: "../../assets/screenshots/typing-com.png"

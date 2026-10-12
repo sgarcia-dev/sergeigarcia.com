@@ -2,7 +2,9 @@
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
+import { Picture } from "astro:assets";
 import { SITE } from "../lib/site";
+import family from "../assets/about/family.jpg";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -28,49 +30,80 @@ const jsonLd = {
 
 <Base
   title="About"
-  description="About Sergei Garcia, a software engineer in Dublin, Ireland who builds web products, mentors other developers and speaks English and Spanish."
+  description="About Sergei Garcia, a software engineer from Mexico living in Dublin, Ireland. 13+ years building web products, a designer's eye, and a love of teaching."
   ogType="profile"
   jsonLd={jsonLd}
 >
   <PageHead band="cobalt" title="About" />
 
   <div class="shell py-sm lg:py-md">
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">
-      <h2 id="about-bio" class="label lg:col-span-5">Bio</h2>
+    <section class="about-section grid gap-md py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">
+      <div class="lg:col-span-5">
+        <h2 id="about-bio" class="label">Hi, I'm Sergei</h2>
+        <figure class="photo mt-sm">
+          <Picture
+            src={family}
+            formats={["avif", "webp"]}
+            widths={[400, 640, 960]}
+            sizes="(min-width: 64rem) 28rem, 100vw"
+            alt="Sergei with his wife and daughter, smiling on a lakeside hike in Ireland"
+            loading="eager"
+            decoding="async"
+            pictureAttributes={{ class: "block" }}
+          />
+          <figcaption class="label mt-xs">With my wife and daughter, out exploring Ireland.</figcaption>
+        </figure>
+      </div>
       <div class="prose lg:col-span-7">
         <p>
-          I'm Sergei Garcia, a software engineer in Dublin, Ireland. I bring a design and UX view to building web
-          products. Most of my work has been on the front end with React and TypeScript, and I also work across the
-          full stack.
+          I'm a software engineer from Mexico. Last year my family and I moved to Dublin, Ireland for work, and we love
+          it here. I have been building software for more than 13 years, mostly on the front end with React and
+          TypeScript, and across the full stack when the work needs it.
         </p>
         <p>
           I started in consulting, building apps for agriculture and healthcare. Since then I have worked on travel,
-          education, research and social products. At Typing.com I helped move the front end to React. Through Toptal
-          I built interfaces for St. Jude Children's Research Hospital and Northeastern University. At Reddit I worked
-          on how translated content is shown on the web.
-        </p>
-        <p>
-          I like turning unclear requirements into useful software, and helping teams agree on a direction they can
-          build. I care about readable code, accessible interfaces, and explanations that help people understand both
-          the work and the reasons behind it. I also use AI tools in my daily development.
+          education, research and social products. At Typing.com I led the move of the front end to React. Through
+          Toptal I built interfaces for St. Jude Children's Research Hospital and Northeastern University. At Reddit I
+          worked on how translated posts are shown to people around the world.
         </p>
       </div>
     </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-teaching">
-      <h2 id="about-teaching" class="label lg:col-span-5">Teaching and mentoring</h2>
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-strengths">
+      <h2 id="about-strengths" class="label lg:col-span-5">What I bring</h2>
       <div class="prose lg:col-span-7">
         <p>
-          Teaching has been part of my career alongside building software. At Thinkful I mentored full-stack students
-          one to one, helped with portfolios and interview preparation, and created workshops on web design,
-          JavaScript debugging, browser tools and performance. In 2017 I taught front end development at Desafio
-          Latam and prepared practical course materials.
+          <strong>A project manager's habits.</strong> I studied project management before I ever wrote code
+          professionally. That happy accident stuck: I think about scope, deadlines and the people waiting on the work,
+          and I'm good at turning a fuzzy idea into a plan a team can actually ship.
         </p>
         <p>
-          In engineering teams I do the same through code reviews, hands-on guidance and conversations about technical
-          decisions. I start from what the person wants to learn and what they already know, then work through real
-          problems together.
+          <strong>A designer's eye.</strong> I originally wanted to study graphic design, and I never stopped caring
+          about it. I bring that to UI and UX work: clear layouts, motion that helps, accessibility, and the small
+          details people feel without naming.
         </p>
+        <p>
+          <strong>A teacher's patience.</strong> I teach every chance I get. I have mentored developers one to one,
+          taught bootcamp classes at Desafio Latam, run workshops for Thinkful students, and given enterprise training.
+          I start from what the person already knows, then we work through real problems together.
+        </p>
+      </div>
+    </section>
+
+    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-life">
+      <h2 id="about-life" class="label lg:col-span-5">Outside work</h2>
+      <div class="prose lg:col-span-7">
+        <p>
+          People tell me I'm cheerful and positive, and I try to lead with empathy. When I'm not working you will
+          usually find me:
+        </p>
+        <ul>
+          <li>taking my wife and daughter on trips so we can see the world together</li>
+          <li>tinkering with electronics and taking apart whatever new gadget just came out</li>
+          <li>keeping up with what's new in tech and AI, and trying it myself</li>
+          <li>teaching someone something</li>
+        </ul>
+        <p>The soundtrack is usually classic rock or disco.</p>
       </div>
     </section>
 
@@ -89,6 +122,11 @@ const jsonLd = {
           <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
           <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
           <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
+          <li>
+            <a class="hit" href={SITE.resume} download="Sergei Garcia - Resume.pdf"
+              ><Icon name="download" />Resume (PDF)</a
+            >
+          </li>
         </ul>
       </div>
     </section>
@@ -102,5 +140,17 @@ const jsonLd = {
   }
   .about-section:last-child {
     border-bottom: 0;
+  }
+  /* The family photo: thick frame like the screenshots, no shadow (it is not a control). */
+  .photo :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--rule-thick) solid var(--edge);
+  }
+  @media (min-width: 64rem) {
+    .photo {
+      max-width: 28rem;
+    }
   }
 </style>

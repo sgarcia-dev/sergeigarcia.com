@@ -1,6 +1,6 @@
 ---
 cover: "../../assets/covers/developer-tools.jpg"
-coverAlt: "Illustration: laying the last plank of a bridge while teammates cross"
+coverAlt: "Illustration: a builder at a workbench handing tools to teammates"
 coverKind: "illustration"
 gallery:
   - src: "../../assets/screenshots/vsc-ai-utilities.png"

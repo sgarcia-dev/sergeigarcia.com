@@ -8,6 +8,7 @@ export const SITE = {
   location: "Dublin, Ireland",
   jobTitle: "Senior Software Engineer",
   ogImage: "/og-default.png",
+  resume: "/resume/sergei-garcia-resume.pdf",
   links: {
     linkedin: "https://www.linkedin.com/in/sergeigarcia",
     github: "https://github.com/sgarcia-dev",

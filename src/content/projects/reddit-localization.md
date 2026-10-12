@@ -1,6 +1,6 @@
 ---
 cover: "../../assets/covers/reddit-localization.jpg"
-coverAlt: "Illustration: one speech bubble branching into many"
+coverAlt: "Illustration: people around a globe trading paper planes, each marked with a different script"
 coverKind: "illustration"
 title: "Reddit localization and machine translation checks"
 summary: "Helping Reddit's web app handle more languages: one clear runbook, smoother language launches, build reviews for translation risk, and repeatable checks for machine translation."

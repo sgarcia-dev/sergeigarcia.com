@@ -8,7 +8,7 @@ period: "2026 to now"
 role: "Creator and sole maintainer"
 skills: ["Git", "Markdown", "Shell scripting", "Model Context Protocol", "AI agents"]
 links: []
-order: 60
+order: 30
 confidential: false
 draft: false
 ---

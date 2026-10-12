@@ -14,7 +14,7 @@ role: "Frontend Developer"
 company: "St. Jude Children's Research Hospital (via Toptal)"
 skills: ["Vue 3", "Nuxt 3", "Tailwind CSS", "Storybook", "Accessibility"]
 links: []
-order: 50
+order: 90
 confidential: false
 draft: false
 ---
