@@ -2,7 +2,7 @@
 title: "Senior Software Engineer"
 company: "Reddit"
 role: "Senior Software Engineer, web lead for the translations team"
-summary: "Web lead for Reddit's translations team: owned the web experience for machine-translated posts across 40+ languages, made it faster and built its tests, tools and AI workflows."
+summary: "Web lead for Reddit's translations team: owned the web experience for machine-translated posts across 40+ countries and 20+ languages, made it faster and built its tests, tools and AI workflows."
 period: "Nov 2023 to Sep 2026"
 startDate: 2023-11-01
 endDate: 2026-09-30
@@ -13,7 +13,7 @@ cover: "../../assets/screenshots/companies/reddit.png"
 coverAlt: "Reddit's home page, October 2026"
 ---
 
-At Reddit I was the web lead for the translations team, and I held that role until I left Reddit. Our work helps people find and read conversations in their own language, across 40+ languages and millions of users. I started by building translation features on the web and grew into owning the whole web translation experience: setting its technical direction, planning the work and making the calls on trade-offs.
+At Reddit I was the web lead for the translations team, and I held that role until I left Reddit. Our work helps people find and read conversations in their own language, across 40+ countries, 20+ languages and millions of users. I started by building translation features on the web and grew into owning the whole web translation experience: setting its technical direction, planning the work and making the calls on trade-offs.
 
 ### What I did
 

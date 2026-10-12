@@ -16,7 +16,7 @@ draft: false
 
 ## The goal
 
-Remove the language barrier between Reddit users. Someone who only reads Spanish, Hindi or Portuguese should be able to read a great English thread, and join it, in their own language. Reddit uses AI translation to make that possible across 40+ languages and millions of users. My job was to make it work well on the web.
+Remove the language barrier between Reddit users. Someone who only reads Spanish, Hindi or Portuguese should be able to read a great English thread, and join it, in their own language. Reddit uses AI translation to make that possible across 40+ countries, 20+ languages and millions of users. My job was to make it work well on the web.
 
 ## My role
 
