@@ -23,3 +23,8 @@ has a next step. Facts to confirm live in `CONTENT-TODO.md`, not here.
 - **More motion.** Only if it earns its place: a one-time first-load reveal. Nothing beyond the view transitions ships today.
 - **Full-text RSS.** The feed has summaries only. Render post HTML into `content` when posts exist.
 - **Search, comments, newsletter.** Pagefind after about 15 posts; Giscus and Buttondown later.
+
+## Hosting notes
+
+- Production deploys run `npx wrangler deploy` from Workers Builds on push to `main`. Branch previews run `npx wrangler preview` (needs the `previews` block in `wrangler.jsonc`).
+- If a deploy fails with a Cloudflare API 504, retry the build from the dashboard or push again.
