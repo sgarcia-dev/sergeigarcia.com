@@ -29,7 +29,7 @@ AAA); ratios are in the mockup notes and checked by axe in CI.
 |---|---|---|
 | Display (name, h1, h2) | Fraunces 900, `opsz` 144, tracking `-0.02em` | `.font-display` with `text-display`, `text-display-lg`, `text-h2` |
 | Titles (h3, list titles) | Fraunces 700, auto optical size | `.font-title` with `text-xl` |
-| Body | Bricolage Grotesque (variable, 400 / 500 / 700) | `text-base` (17px, 1.6), `text-lg` (20px, 1.5) |
+| Body | Space Grotesk (variable) for long-form; the home page sets its text in JetBrains Mono at 340 (`.home-mono`) | `text-base` (17px, 1.6), `text-lg` (20px, 1.5) |
 | Labels, dates, pills, buttons | JetBrains Mono 400 / 700 | `.label`, `text-xs` (13px) |
 
 Fonts are self-hosted from Fontsource, latin subset only. Only the Fraunces file

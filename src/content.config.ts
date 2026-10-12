@@ -55,14 +55,18 @@ const projects = defineCollection({
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
-  schema: z.object({
-    title: z.string(),
-    summary: z.string().max(200),
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    skills: z.array(z.string()).max(8).default([]),
-    draft: z.boolean().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      summary: z.string().max(200),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      skills: z.array(z.string()).max(8).default([]),
+      // Optional cover image shown at the top of the post page.
+      cover: image().optional(),
+      coverAlt: z.string().optional(),
+      draft: z.boolean().default(false),
+    }),
 });
 
 export const collections = { work, projects, posts };

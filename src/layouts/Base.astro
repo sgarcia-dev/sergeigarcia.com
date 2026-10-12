@@ -61,7 +61,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   <body>
     <a href="#main" class="hit skip">Skip to content</a>
     <Header home={home} />
-    <main id="main">
+    <main id="main" class:list={[home && "home-mono"]}>
       <slot />
     </main>
     <Footer />

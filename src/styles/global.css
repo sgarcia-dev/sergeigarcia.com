@@ -14,29 +14,24 @@
   font-weight: 100 900;
   src: url("../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2") format("woff2-variations");
 }
-/* Body: Bricolage Grotesque, variable weight (the default optical size suits body text). Chosen over Archivo,
-   which read as generic next to Fraunces. */
+/* Reading text: Space Grotesk, variable weight. Lighter than Recursive (tried first),
+   so it does not overpower the Fraunces headings. */
 @font-face {
-  font-family: "Bricolage Grotesque";
+  font-family: "Space Grotesk";
   font-style: normal;
   font-display: swap;
-  font-weight: 200 800;
-  src: url("../../node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2")
+  font-weight: 300 700;
+  src: url("../../node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2")
     format("woff2-variations");
 }
+/* Mono: JetBrains Mono, variable weight, so normal text can sit at a lighter 340. */
 @font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
   font-display: swap;
-  font-weight: 400;
-  src: url("../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2") format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 700;
-  src: url("../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2") format("woff2");
+  font-weight: 100 800;
+  src: url("../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2")
+    format("woff2-variations");
 }
 
 @theme static {
@@ -55,10 +50,12 @@
 
   /* Fonts */
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --font-weight-normal: 400;
+  /* Normal-weight mono text sits lighter so it balances the display face. */
+  --font-weight-mono: 340;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
 
@@ -247,6 +244,14 @@
     --primary-ink: var(--color-black);
     --primary-hover-bg: var(--color-chalk);
     --primary-hover-ink: var(--color-black);
+  }
+
+  /* The home page has little text, so it all sets in the mono face. Long-form pages keep
+     Space Grotesk for easier reading. */
+  .home-mono {
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-mono);
+    letter-spacing: -0.01em;
   }
 
   /* Page shell: one max width and gutter for every section. */
@@ -443,7 +448,7 @@
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     line-height: 1.7;
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-mono);
   }
 
   /* Screenshot frame: thick ink border plus the hard shadow, no radius. */
@@ -526,10 +531,12 @@
   }
   .prose code {
     font-family: var(--font-mono);
+    font-weight: var(--font-weight-mono);
     font-size: 0.9em;
   }
   .prose pre {
     font-family: var(--font-mono);
+    font-weight: var(--font-weight-mono);
     font-size: var(--text-xs);
     padding: var(--spacing-sm);
     border: var(--rule-thin) solid var(--rule-color);

@@ -2,17 +2,23 @@
 title: "Full-Stack Mentor and Course Instructor"
 company: "Thinkful (now Chegg Skills)"
 role: "Full-Stack Mentor and Course Instructor"
-summary: "Mentored full-stack students one to one and created practical workshops on web design, JavaScript debugging and browser performance."
+summary: "Mentored full-stack students one to one and taught 10+ workshops on web design, JavaScript debugging and browser performance, rated 9.5/10 on average."
 period: "2018 to 2020"
-skills: ["React", "Node.js", "Express", "MongoDB", "Chrome DevTools"]
+skills: ["React", "Node.js", "Express", "MongoDB", "Chrome DevTools", "JavaScript", "HTML", "CSS"]
 links: []
 order: 60
 cover: "../../assets/screenshots/companies/thinkful.png"
 coverAlt: "Chegg Skills's home page, October 2026"
 ---
 
-I mentored students learning full-stack development, including portfolio guidance and interview preparation, and taught the MongoDB, Express, React and Node.js stack.
+Thinkful runs online programs that teach people to become software developers. I worked there part time and remotely, mentoring students one to one through its full-stack program and teaching live workshops.
 
-I also created workshops on web design and UX, HTML and CSS, JavaScript debugging, Chrome DevTools, browser rendering and animation.
+### What I did
+
+- Mentored students through a full-stack program built on MongoDB, Express, React and Node.js.
+- Helped students improve their coding practices, build their portfolios and prepare for networking and technical interviews.
+- Created and taught more than 10 workshops on web design and UX, HTML and CSS, browser rendering and performance, animation, JavaScript debugging with Chrome DevTools, and full-stack development.
+- Earned an average workshop rating of 9.5/10 from students.
+- Received 100% student satisfaction for my mentoring.
 
 Thinkful was later acquired by Chegg and is now Chegg Skills.

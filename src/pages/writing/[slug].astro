@@ -4,6 +4,7 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
+import Thumb from "../../components/Thumb.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
 
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, pubDate, updatedDate, skills } = entry.data;
+const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.data;
 const { Content } = await render(entry);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -59,7 +60,14 @@ const jsonLd = [
           )
         }
       </div>
-      <div class="lg:col-span-8">
+      <div class="post-body lg:col-span-8">
+        {
+          cover && (
+            <div class="mb-lg max-w-prose">
+              <Thumb image={cover} alt={coverAlt ?? ""} size="lg" ratio="wide" eager />
+            </div>
+          )
+        }
         <div class="prose">
           <Content />
         </div>
@@ -68,3 +76,45 @@ const jsonLd = [
     </div>
   </section>
 </Base>
+
+<style>
+  /* Let wide content (code blocks, tables) scroll inside the column instead of
+     stretching the grid past the screen on phones. */
+  .post-body {
+    min-width: 0;
+  }
+  /* Markdown images in posts get the same frame as page images. */
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-block: var(--spacing-md);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-white);
+  }
+  /* Simple ruled tables. */
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-base);
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--spacing-2xs) var(--spacing-xs) var(--spacing-2xs) 0;
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+  .prose :global(th) {
+    font-weight: 700;
+    border-bottom-width: var(--rule-thick);
+  }
+  /* On phones, a slightly smaller code font lets the folder tree fit without scrolling. */
+  @media (max-width: 40rem) {
+    .prose :global(pre) {
+      font-size: 0.6875rem;
+      padding: var(--spacing-xs);
+    }
+  }
+</style>

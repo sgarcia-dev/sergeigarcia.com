@@ -4,7 +4,7 @@ company: "Toptal"
 role: "Freelance Software Engineer"
 summary: "Freelance front end work through Toptal for research and product teams, including a research hospital, a university and two AI product startups."
 period: "2023 to 2025"
-skills: ["Vue", "Nuxt", "React", "Next.js", "Tailwind"]
+skills: ["Vue", "Nuxt", "React", "Next.js", "Tailwind", "TypeScript", "Astro", "Figma"]
 clients: ["St. Jude Children's Research Hospital", "Northeastern University", "Marmalade", "AquascapeAI"]
 links: []
 order: 20
@@ -12,9 +12,15 @@ cover: "../../assets/screenshots/companies/toptal.png"
 coverAlt: "Toptal's home page, October 2026"
 ---
 
-Through Toptal I built front ends for four clients.
+Toptal is a network that matches freelance engineers with companies. Through it I worked part time for four clients, building front ends for research websites and AI products. For St. Jude Children's Research Hospital I was the only front end engineer across three projects.
 
-- **St. Jude Children's Research Hospital.** Frontend work on a research website using Nuxt, Vue and Tailwind, based on a Figma design system. This included filtering, pagination, responsive layouts, accessibility and performance checks. I also redesigned a research tool's website and rebuilt a learning site with Next.js and MDX.
-- **Northeastern University.** React, TypeScript and Tailwind screens for an AI product research app, with charts, filters and an assistant interface, plus hosting on AWS S3.
-- **Marmalade.** New components, layout redesigns and refactoring for an AI-powered product discovery platform.
-- **AquascapeAI.** Pages and components for an image-generation website using Astro, React and Tailwind, including forms, sign-in screens and Vercel setup.
+### What I did
+
+- **St. Jude Cloud (2025).** Built the new website from scratch with Nuxt, Vue and Tailwind. I turned the Figma designs into a design system and built a lightweight JSON-driven CMS with a block-based page renderer and generated announcement and publication pages with filters and pagination. I ran accessibility rounds (screen reader, contrast) and Lighthouse performance rounds. The rebuild was finished, but the hospital did not launch it.
+- **Sprocket (2025).** Redesigned the website for Sprocket, St. Jude's open-source genomics workflow engine. I also overhauled its generated documentation: I untangled the templates, added a themeable design system with reusable components and a light mode, and fixed long-standing layout bugs.
+- **LearnGenomics.dev (2025).** Rebuilt and redesigned the learning site on a Next.js and MDX documentation template, fixing its bugs, accessibility and usability.
+- **Northeastern University, College of Engineering (2023 to 2024).** Built the React, TypeScript and Tailwind front end of an AI product-research app for footwear and apparel brands: sentiment-analysis dashboards, a concept-evaluation flow and a ChatGPT-powered assistant. I set up hosting on AWS S3 and organized the team's planning to hit an MVP demo deadline.
+- **Marmalade (2024).** Built new components, banners and layout redesigns, and refactored code, for an AI-driven discovery platform for independent brands (Next.js, TypeScript, Tailwind, Apollo GraphQL).
+- **AquascapeAI (2024).** Built the front end of an AI aquarium-design generator from scratch with Astro, React and Tailwind on Vercel, including sign-in screens and a reusable, keyboard-accessible form component library.
+
+Read the case study: [St. Jude Cloud website rebuild](/projects/st-jude-cloud/).
