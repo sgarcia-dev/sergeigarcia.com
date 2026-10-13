@@ -6,6 +6,17 @@ skills: ["AI agents", "Claude Code", "Design", "Prototyping"]
 cover: "../../assets/posts/ai-raises-the-floor/cover.jpg"
 coverAlt: "A film director in a tall chair points a megaphone at three cheerful robots running a film set: one on the camera, one holding the boom microphone, one with a clapperboard."
 draft: false
+embeds:
+  youtube:
+    id: "5EoO5413dBY"
+    title: "P(doom) music video by @_mexicat"
+    thumb: "../../assets/posts/ai-raises-the-floor/yt-5EoO5413dBY.jpg"
+  xpost:
+    url: "https://x.com/_mexicat/status/2103904518929055853"
+    author: "mexicat"
+    handle: "@_mexicat"
+    date: 2026-09-26
+    text: "a few words about this video, since some people seem to draw hasty conclusions from it"
 ---
 
 In late September a [music video](https://www.youtube.com/watch?v=5EoO5413dBY) went around. It is 2 minutes 37 seconds of fast, sharp, well-timed visuals, and it was made with Claude Opus 5.5 in Claude Code. Some people read it as "one prompt, and the AI did the rest."

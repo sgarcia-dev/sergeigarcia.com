@@ -1,0 +1,153 @@
+---
+/**
+ * Click-to-load YouTube video. Before the click the page shows a local copy of the thumbnail and
+ * makes zero requests to YouTube. One click swaps the frame for a youtube-nocookie.com iframe that
+ * starts playing. Without JavaScript, the thumbnail is a normal link to the video on YouTube.
+ *
+ * The thumbnail is a file in src/assets (download https://i.ytimg.com/vi/<id>/maxresdefault.jpg once
+ * and re-encode it), so nothing is fetched from ytimg.com at build or view time.
+ */
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** The video id, for example 5EoO5413dBY. */
+  id: string;
+  /** Used as the iframe title and in the button name. */
+  title: string;
+  /** Local copy of the thumbnail (16:9). */
+  thumb: ImageMetadata;
+  /** Start time in seconds. */
+  start?: number;
+}
+const { id, title, thumb, start } = Astro.props;
+const watchUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(id)}${start ? `&t=${start}s` : ""}`;
+---
+
+<div class="yt" data-yt data-id={id} data-title={title} data-start={start}>
+  <a class="yt-link" href={watchUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch on YouTube: ${title} (opens in a new tab)`}>
+    <Picture
+      src={thumb}
+      formats={["avif", "webp"]}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 64rem) 40rem, 100vw"
+      alt=""
+      loading="lazy"
+      decoding="async"
+      pictureAttributes={{ class: "block" }}
+    />
+  </a>
+  <span class="yt-badge" aria-hidden="true"><Icon name="play" size="xl" /></span>
+  <button type="button" class="yt-play" data-yt-play aria-label={`Play video: ${title}`} hidden></button>
+</div>
+
+<script is:inline>
+  (function () {
+    // Show the buttons (they stay hidden without JavaScript, where the link works instead).
+    document.querySelectorAll("[data-yt-play][hidden]").forEach(function (button) {
+      button.hidden = false;
+      var link = button.parentNode.querySelector(".yt-link");
+      if (link) {
+        link.setAttribute("tabindex", "-1");
+        link.setAttribute("aria-hidden", "true");
+      }
+    });
+    if (window.__ytFacade) return;
+    window.__ytFacade = true;
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest && event.target.closest("[data-yt-play]");
+      if (!button) return;
+      var box = button.closest("[data-yt]");
+      var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(box.getAttribute("data-id")) + "?autoplay=1&playsinline=1";
+      var start = box.getAttribute("data-start");
+      if (start) src += "&start=" + encodeURIComponent(start);
+      var frame = document.createElement("iframe");
+      frame.src = src;
+      frame.title = box.getAttribute("data-title");
+      frame.loading = "lazy";
+      frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+      box.replaceChildren(frame);
+      box.classList.add("is-playing");
+      frame.focus();
+    });
+  })();
+</script>
+
+<style>
+  /* Same frame as images in posts: thick ink border and the hard shadow. 16:9 is reserved up front,
+     so swapping in the iframe never shifts the page. */
+  .yt {
+    position: relative;
+    max-width: var(--container-prose);
+    aspect-ratio: 16 / 9;
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-black);
+  }
+  .yt:has(.yt-play:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+  .yt-link,
+  .yt :global(picture),
+  .yt :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .yt :global(img) {
+    object-fit: cover;
+  }
+  .yt iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  /* A yellow chip with a black triangle, the same language as the hit buttons. */
+  .yt-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 5rem;
+    height: 3.5rem;
+    margin: -1.75rem 0 0 -2.5rem;
+    border: 3px solid var(--color-black);
+    background: var(--color-yellow);
+    color: var(--color-black);
+    box-shadow: 4px 4px 0 var(--color-black);
+    pointer-events: none;
+  }
+  .yt-play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .yt-play:focus-visible {
+    outline: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .yt-badge {
+      transition:
+        transform var(--duration-fast) ease-out,
+        box-shadow var(--duration-fast) ease-out;
+    }
+    .yt:hover .yt-badge {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--color-black);
+    }
+    .yt:has(.yt-play:active) .yt-badge {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--color-black);
+    }
+  }
+</style>

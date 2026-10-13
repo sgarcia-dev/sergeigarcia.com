@@ -6,6 +6,8 @@ import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
+import YouTubeEmbed from "../../components/YouTubeEmbed.astro";
+import XPost from "../../components/XPost.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
 import { AUTHOR_REF, shareImage } from "../../lib/seo";
@@ -17,7 +19,7 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.data;
+const { title, summary, pubDate, updatedDate, skills, cover, coverAlt, embeds } = entry.data;
 const { Content } = await render(entry);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -75,6 +77,23 @@ const jsonLd = [
         <div class="prose">
           <Content />
         </div>
+        {
+          embeds && (embeds.youtube || embeds.xpost) && (
+            <section class="sources mt-lg" aria-labelledby="sources-h">
+              <h2 id="sources-h" class="font-title text-xl">The original</h2>
+              {embeds.youtube && (
+                <div class="mt-sm">
+                  <YouTubeEmbed {...embeds.youtube} />
+                </div>
+              )}
+              {embeds.xpost && (
+                <div class="mt-md">
+                  <XPost {...embeds.xpost} />
+                </div>
+              )}
+            </section>
+          )
+        }
         <ShareLinks url={canonical} title={title} />
         <p class="mt-lg"><a class="hit" href="/writing/">All writing</a></p>
       </div>

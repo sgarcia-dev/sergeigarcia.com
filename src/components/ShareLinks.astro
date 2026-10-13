@@ -1,8 +1,10 @@
 ---
+import Icon from "./Icon.astro";
 /**
- * "Share this post": plain links to each network's own share page, plus Copy link and a
- * native Share button. No third-party scripts, nothing loads from another site. The two
- * buttons stay hidden until the small script below confirms the browser can do them.
+ * "Share this post": square icon chips (inline SVG logos, no icon font, no requests) that link to
+ * each network's own share page, plus Copy link and a native Share button. Every chip is 44px, with
+ * its name in aria-label and a title tooltip. No third-party scripts, nothing loads from another
+ * site. The two buttons stay hidden until the small script below confirms the browser can do them.
  */
 interface Props {
   /** Canonical absolute URL of the page. */
@@ -13,36 +15,50 @@ const { url, title } = Astro.props;
 const u = encodeURIComponent(url);
 const t = encodeURIComponent(title);
 
-const links = [
-  { name: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
-  { name: "Hacker News", href: `https://news.ycombinator.com/submitlink?u=${u}&t=${t}` },
-  { name: "Reddit", href: `https://www.reddit.com/submit?url=${u}&title=${t}&type=LINK` },
-  { name: "Bluesky", href: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${title}\n${url}`)}` },
-  { name: "X", href: `https://x.com/intent/tweet?url=${u}&text=${t}` },
+type IconName = "linkedin" | "hackernews" | "reddit" | "bluesky" | "x";
+const links: { name: string; icon: IconName; href: string }[] = [
+  { name: "LinkedIn", icon: "linkedin", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { name: "Hacker News", icon: "hackernews", href: `https://news.ycombinator.com/submitlink?u=${u}&t=${t}` },
+  { name: "Reddit", icon: "reddit", href: `https://www.reddit.com/submit?url=${u}&title=${t}&type=LINK` },
+  { name: "Bluesky", icon: "bluesky", href: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${title}\n${url}`)}` },
+  { name: "X", icon: "x", href: `https://x.com/intent/tweet?url=${u}&text=${t}` },
 ];
 const mail = `mailto:?subject=${t}&body=${encodeURIComponent(`${title}\r\n\r\n${url}`)}`;
 ---
 
 <aside class="share mt-lg" aria-labelledby="share-h" data-url={url} data-title={title}>
   <h2 id="share-h" class="font-title text-xl">Share this post</h2>
-  <ul role="list" class="mt-sm flex flex-wrap gap-sm">
+  <ul role="list" class="mt-sm flex flex-wrap gap-sm" data-share-row>
     {
       links.map((link) => (
         <li>
-          <a class="hit" href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${link.name} (opens in a new tab)`}>
-            {link.name}
+          <a
+            class="hit hit-icon"
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Share on ${link.name} (opens in a new tab)`}
+            title={`Share on ${link.name}`}
+          >
+            <Icon name={link.icon} size="lg" />
           </a>
         </li>
       ))
     }
     <li>
-      <a class="hit" href={mail} aria-label="Share by email">Email</a>
-    </li>
-    <li hidden data-share-item>
-      <button type="button" class="hit" data-share>Share</button>
+      <a class="hit hit-icon" href={mail} aria-label="Share by email" title="Share by email">
+        <Icon name="email" size="lg" />
+      </a>
     </li>
     <li hidden data-copy-item>
-      <button type="button" class="hit" data-copy>Copy link</button>
+      <button type="button" class="hit hit-icon" data-copy aria-label="Copy link" title="Copy link">
+        <Icon name="link" size="lg" />
+      </button>
+    </li>
+    <li hidden data-share-item>
+      <button type="button" class="hit hit-icon" data-share aria-label="Share with another app" title="Share with another app">
+        <Icon name="share" size="lg" />
+      </button>
     </li>
   </ul>
   <p class="label mt-sm" role="status" aria-live="polite" data-status></p>

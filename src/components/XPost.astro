@@ -1,0 +1,91 @@
+---
+/**
+ * A static card for a post on X. It is only text and one link: no X script, no embed, no request to
+ * X until the reader follows the link.
+ */
+import Icon from "./Icon.astro";
+import { formatDate } from "../lib/content";
+
+interface Props {
+  /** Link to the post or thread. */
+  url: string;
+  author: string;
+  /** With the @, for example "@_mexicat". */
+  handle: string;
+  date: Date;
+  text: string;
+  linkLabel?: string;
+}
+const { url, author, handle, date, text, linkLabel = "Read the full thread on X" } = Astro.props;
+---
+
+<article class="xpost" aria-label={`Post by ${author} (${handle}) on X`}>
+  <header class="xpost-head">
+    <p class="font-title xpost-name">{author}</p>
+    <p class="label xpost-handle">{handle}</p>
+    <span class="xpost-logo" aria-hidden="true"><Icon name="x" /></span>
+  </header>
+  <p class="xpost-text">{text}</p>
+  <p class="label xpost-date"><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></p>
+  <p class="xpost-link">
+    <a class="hit" href={url} target="_blank" rel="noopener noreferrer">
+      <Icon name="x" />
+      {linkLabel}
+      <span class="xpost-new">(opens in a new tab)</span>
+    </a>
+  </p>
+</article>
+
+<style>
+  .xpost {
+    max-width: var(--container-prose);
+    padding: var(--spacing-md);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  .xpost-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: var(--spacing-sm);
+    align-items: baseline;
+  }
+  .xpost-name {
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+  }
+  .xpost-handle {
+    grid-row: 2;
+    color: var(--color-muted);
+  }
+  .xpost-logo {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: start;
+  }
+  .xpost-text {
+    margin-top: var(--spacing-sm);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+  .xpost-date {
+    margin-top: var(--spacing-sm);
+    color: var(--color-muted);
+  }
+  .xpost-link {
+    margin-top: var(--spacing-sm);
+  }
+  .xpost-link :global(.hit) {
+    position: relative;
+  }
+  /* Visually hidden, read by screen readers. */
+  .xpost-new {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>
