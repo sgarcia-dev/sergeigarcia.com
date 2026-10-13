@@ -1,0 +1,571 @@
+---
+// Playground: the site's real motion and texture effects with the knobs I used to choose them.
+// Nothing here is a new effect. The bands, the glyph reveal, the marker and the hover rules are the
+// production classes and scripts. The controls only set the same <html> hooks that
+// src/components/TexturePick.astro sets on every load, plus three page-local attributes that this
+// file styles (contrast, scroll mode, pause). Nothing is stored, so leaving the page restores the
+// normal random behavior.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import Pills from "../components/Pills.astro";
+import { breadcrumbs } from "../lib/seo";
+
+const patterns = [
+  { value: "dots-fade", label: "Dots fade" },
+  { value: "dots-big", label: "Dots big" },
+  { value: "hatch", label: "Hatch" },
+  { value: "grid", label: "Grid" },
+  { value: "random", label: "Random each load" },
+];
+// [dx, dy] as TexturePick uses them: the way the texture moves. N is up.
+const compass = [
+  { key: "NW", dx: -1, dy: -1, name: "north west" },
+  { key: "N", dx: 0, dy: -1, name: "north" },
+  { key: "NE", dx: 1, dy: -1, name: "north east" },
+  { key: "W", dx: -1, dy: 0, name: "west" },
+  null,
+  { key: "E", dx: 1, dy: 0, name: "east" },
+  { key: "SW", dx: -1, dy: 1, name: "south west" },
+  { key: "S", dx: 0, dy: 1, name: "south" },
+  { key: "SE", dx: 1, dy: 1, name: "south east" },
+];
+const speeds = [
+  { value: "8.7", label: "8.7" },
+  { value: "13.9", label: "13.9 (site)" },
+  { value: "20", label: "20" },
+  { value: "28", label: "28" },
+];
+const contrasts = [
+  { value: "soft", label: "Softer" },
+  { value: "site", label: "Site" },
+  { value: "strong", label: "Stronger" },
+];
+const scrolls = [
+  { value: "fixed", label: "Fixed (site)" },
+  { value: "page", label: "Scroll with page" },
+];
+const bands = [
+  { id: "yellow", name: "Yellow band", line: "Black text, so the texture is a lighter yellow." },
+  { id: "cobalt", name: "Cobalt band", line: "White text, so the texture is a deeper blue." },
+  { id: "tomato", name: "Tomato band", line: "Black text, and the dots are kept softer here." },
+];
+const rejected = [
+  ["Plain dots", "too weak, you stopped noticing them."],
+  ["Burst", "too busy, it fought the text."],
+  ["Parallax", "less convincing than a texture pinned to the screen."],
+  ["Dither reveal on serif headings", "too loud, so it stays on mono text only."],
+  ["Scroll fade-ins", "too generic, every site has them."],
+  ["Cursor dots", "too much, and nothing to read while they moved."],
+];
+
+const jsonLd = [breadcrumbs([{ name: "Playground", path: "/playground/" }])];
+---
+
+<Base
+  title="Playground"
+  description="Play with the real motion and texture effects from sergeigarcia.com: band textures, glyph reveal, marker, row sweep and more."
+  jsonLd={jsonLd}
+>
+  <PageHead title="Playground" band="yellow">
+    <p class="mt-md max-w-prose text-lg">Every effect on this site, with the knobs I used to choose them.</p>
+    <p class="mt-sm max-w-prose">
+      <a href="/writing/ai-raises-the-floor/">Read the post about how I picked them</a>, or open the{" "}
+      <a href="https://github.com/sgarcia-dev/sergeigarcia.com/tree/lab/motion-2026-10-13">frozen lab code</a>.
+    </p>
+  </PageHead>
+
+  <section class="edge-b" aria-labelledby="pg-tex-title">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <h2 id="pg-tex-title" class="font-title text-xl">Band textures</h2>
+        <p class="mt-xs max-w-prose">
+          The site picks one pattern and one direction on every load, never the same pattern twice in a row. Reload for another pick, or choose your own here. This page
+          also textures the yellow banner at the top, so you can watch it change there too.
+        </p>
+        <noscript>
+          <p class="pg-nojs mt-sm">
+            The controls need JavaScript. Without it the bands stay flat, which is how the whole site looks without
+            JavaScript.
+          </p>
+        </noscript>
+
+        <div class="pg-panel mt-md" data-pg-panel hidden>
+          <fieldset class="pg-group">
+            <legend class="pg-legend">Pattern</legend>
+            <div class="pg-chips">
+              {
+                patterns.map((p) => (
+                  <label class="pg-chip">
+                    <input
+                      type="radio"
+                      name="pg-pattern"
+                      value={p.value}
+                      class="sr-only"
+                      checked={p.value === "random"}
+                    />
+                    <span class="hit">{p.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="pg-hint" data-pg-picked></p>
+          </fieldset>
+
+          <fieldset class="pg-group">
+            <legend class="pg-legend">Direction (the way it drifts)</legend>
+            <div class="pg-compass">
+              {
+                compass.map((c) =>
+                  c ? (
+                    <label class="pg-chip">
+                      <input
+                        type="radio"
+                        name="pg-dir"
+                        value={`${c.dx},${c.dy}`}
+                        data-key={c.key}
+                        aria-label={`${c.key} (${c.name})`}
+                        class="sr-only"
+                      />
+                      <span class="hit">{c.key}</span>
+                    </label>
+                  ) : (
+                    <span class="pg-compass-mid" aria-hidden="true" />
+                  )
+                )
+              }
+            </div>
+            <p class="pg-hint">NE and SW are off with Hatch, because moving along its lines looks still.</p>
+          </fieldset>
+
+          <fieldset class="pg-group">
+            <legend class="pg-legend">Speed (pixels per second)</legend>
+            <div class="pg-chips">
+              {
+                speeds.map((s) => (
+                  <label class="pg-chip">
+                    <input type="radio" name="pg-speed" value={s.value} class="sr-only" checked={s.value === "13.9"} />
+                    <span class="hit">{s.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="pg-group">
+            <legend class="pg-legend">Contrast</legend>
+            <div class="pg-chips">
+              {
+                contrasts.map((c) => (
+                  <label class="pg-chip">
+                    <input type="radio" name="pg-contrast" value={c.value} class="sr-only" checked={c.value === "site"} />
+                    <span class="hit">{c.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="pg-group">
+            <legend class="pg-legend">Scroll</legend>
+            <div class="pg-chips">
+              {
+                scrolls.map((s) => (
+                  <label class="pg-chip">
+                    <input type="radio" name="pg-scroll" value={s.value} class="sr-only" checked={s.value === "fixed"} />
+                    <span class="hit">{s.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="pg-group">
+            <label class="pg-chip">
+              <input type="checkbox" name="pg-pause" class="sr-only" />
+              <span class="hit">Pause motion</span>
+            </label>
+          </div>
+
+          <p class="pg-hint" data-pg-reduced hidden>
+            Your device asks for less motion, so the textures are already still. The other controls still work.
+          </p>
+          <p class="pg-status" role="status" data-pg-status></p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 xl:col-span-8">
+        {
+          bands.map((b) => (
+            <section class={`band-${b.id} pg-band`} aria-labelledby={`pg-band-${b.id}`}>
+              <h3 id={`pg-band-${b.id}`} class="font-title text-xl">{b.name}</h3>
+              <p class="mt-xs max-w-prose">{b.line}</p>
+              <p class="mt-xs max-w-prose">
+                The texture sits behind the words and never touches the border.
+              </p>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="edge-b" aria-labelledby="pg-glyph-title">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <h2 id="pg-glyph-title" class="font-title text-xl">Glyph reveal</h2>
+        <p class="mt-xs max-w-prose">
+          Mono text builds up letter by letter. It only runs on mono text, never on links, buttons, headings or
+          article body.
+        </p>
+        <p class="mt-sm">
+          <button type="button" class="hit" data-pg-replay="glyph" hidden>Replay reveal</button>
+        </p>
+        <p class="pg-hint" data-pg-reduced-note hidden>Replay is off because your device asks for less motion.</p>
+      </div>
+      <div class="pg-box lg:col-span-7 xl:col-span-8">
+        <p class="label" data-pg-glyph>Letters start blank, then pass through block characters, then land.</p>
+        <p class="label mt-xs" data-pg-glyph>Short lines are relaxed, long lines are quick.</p>
+        <p class="label mt-xs" data-pg-glyph>The text is real the whole time, so screen readers never wait for it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="edge-b" aria-labelledby="pg-marker-title">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <h2 id="pg-marker-title" class="font-title text-xl">Marker</h2>
+        <p class="mt-xs max-w-prose">A pale highlighter swipe that draws once behind a few key phrases.</p>
+        <p class="mt-sm">
+          <button type="button" class="hit" data-pg-replay="marker" hidden>Replay marker</button>
+        </p>
+        <p class="pg-hint" data-pg-reduced-note hidden>Replay is off because your device asks for less motion.</p>
+      </div>
+      <div class="pg-box lg:col-span-7 xl:col-span-8" data-pg-marks>
+        <p class="max-w-prose text-lg">
+          I would rather <span class="lv-mark">understand why someone is stuck</span> than tell them what to do, and I
+          care about <span class="lv-mark">the small details</span> people feel without naming.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="edge-b" id="pg-hover" aria-labelledby="pg-hover-title">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <h2 id="pg-hover-title" class="font-title text-xl">Try hovering</h2>
+        <p class="mt-xs max-w-prose">
+          Three small effects that only react to a pointer or the keyboard. Touch screens skip the hover ones.
+        </p>
+      </div>
+      <div class="lg:col-span-7 xl:col-span-8">
+        <p class="pg-legend">Row sweep</p>
+        <ul role="list" class="list mt-xs">
+          <li class="row">
+            <p class="label">2026</p>
+            <div>
+              <h3 class="font-title text-xl">
+                <a class="row-link inline-block" href="#pg-hover">A project row</a>
+              </h3>
+              <p class="mt-xs max-w-prose">
+                Hover or tab to the title. A yellow fill sweeps in from the left and an arrow slides in.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="pg-legend mt-md">Sticker tilt</p>
+        <div class="mt-xs">
+          <Pills skills={["Astro", "TypeScript"]} label="Two sample pills" />
+        </div>
+
+        <p class="pg-legend mt-md">Link underline</p>
+        <p class="mt-xs max-w-prose">
+          Inline links carry a yellow bar that grows into a block, like{" "}
+          <a href="/writing/ai-raises-the-floor/">this link to the post</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pg-rejected-title">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5 xl:col-span-4">
+        <h2 id="pg-rejected-title" class="font-title text-xl">What I rejected</h2>
+        <p class="mt-xs max-w-prose">I tried these live and dropped them.</p>
+      </div>
+      <ul role="list" class="list lg:col-span-7 xl:col-span-8">
+        {
+          rejected.map(([name, why]) => (
+            <li class="row-end">
+              <p>
+                <strong class="font-bold">{name}:</strong> {why}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* Page-local. These attributes are set only by the script below, so no other page is affected. */
+
+  /* Contrast: softer fades the layer toward the band fill; stronger pushes the tone further from the
+     text color (lighter on yellow and tomato, deeper on cobalt), which keeps the site's rule. */
+  html[data-pg-contrast="soft"] .tex::before {
+    opacity: 0.5;
+  }
+  html[data-pg-contrast="strong"] :is(.band-yellow, .band-tomato) > .tex::before {
+    filter: brightness(1.12);
+  }
+  html[data-pg-contrast="strong"] .band-cobalt > .tex::before {
+    filter: brightness(0.7);
+  }
+  /* Scroll mode: the layer moves with its band instead of being pinned to the screen. */
+  html[data-pg-scroll="page"][data-tex] .tex::before {
+    position: absolute;
+  }
+  html[data-pg-pause] .tex::before {
+    animation-play-state: paused;
+  }
+
+  .pg-panel[hidden],
+  [data-pg-reduced][hidden],
+  [data-pg-reduced-note][hidden],
+  button[data-pg-replay][hidden] {
+    display: none;
+  }
+  .pg-panel {
+    display: grid;
+    gap: var(--spacing-sm);
+    border: var(--rule-thin) solid var(--edge);
+    padding: var(--spacing-sm);
+  }
+  @media (min-width: 64rem) {
+    .pg-panel {
+      position: sticky;
+      top: var(--stick-top);
+      max-height: calc(100vh - var(--stick-top) - var(--spacing-sm));
+      overflow-y: auto;
+    }
+  }
+  .pg-group {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .pg-legend {
+    padding: 0;
+    margin-bottom: var(--spacing-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: var(--font-weight-bold);
+  }
+  .pg-hint {
+    margin-top: var(--spacing-xs);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    color: var(--color-muted);
+  }
+  .pg-status {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    min-height: 2.8em;
+  }
+  .pg-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  .pg-chip {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  .pg-chip .hit {
+    pointer-events: none;
+  }
+  .pg-chip input:focus-visible + .hit {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  /* Selected: the page colors swapped, so it reads in light and dark and is not mistaken for the yellow hover. */
+  .pg-chip input:checked + .hit {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  /* A chip that cannot be used right now keeps its text color (contrast) and loses its shadow. */
+  .pg-chip input:disabled + .hit {
+    border-style: dashed;
+    box-shadow: none;
+    text-decoration: line-through;
+  }
+  .pg-chip:has(input:disabled) {
+    cursor: not-allowed;
+  }
+  .pg-compass {
+    display: grid;
+    grid-template-columns: repeat(3, 3.5rem);
+    gap: var(--spacing-xs);
+  }
+  .pg-compass .pg-chip,
+  .pg-compass .hit {
+    width: 100%;
+  }
+  .pg-compass-mid {
+    align-self: center;
+    justify-self: center;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--color-ink);
+  }
+
+  /* The demo bands: boxed, all four sides ruled, so the texture is pulled in 1px on every side. */
+  .pg-band {
+    --ci-t: 1px;
+    --ci-r: 1px;
+    --ci-b: 1px;
+    --ci-l: 1px;
+    border: var(--rule-thick) solid var(--edge);
+    padding: var(--spacing-md);
+    min-height: 22rem;
+  }
+  .pg-band + .pg-band {
+    margin-top: var(--spacing-md);
+  }
+  .pg-box {
+    border: var(--rule-thin) solid var(--edge);
+    padding: var(--spacing-md);
+    align-self: start;
+  }
+  .pg-nojs {
+    font-weight: var(--font-weight-bold);
+  }
+</style>
+
+<script>
+  // Sets the same <html> hooks TexturePick.astro sets on load, so the production texture.css does the
+  // drawing. Nothing is saved: a reload or another page starts from the normal random pick again.
+  const root = document.documentElement;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const panel = document.querySelector<HTMLElement>("[data-pg-panel]");
+  const status = document.querySelector<HTMLElement>("[data-pg-status]");
+  const picked = document.querySelector<HTMLElement>("[data-pg-picked]");
+
+  // What TexturePick chose for this load, restored by "Random each load".
+  const loaded = {
+    tex: root.dataset.tex ?? "",
+    dx: root.style.getPropertyValue("--tex-dx") || "1",
+    dy: root.style.getPropertyValue("--tex-dy") || "0",
+  };
+
+  const radios = (name: string) => Array.from(document.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`));
+  const checked = (name: string) => radios(name).find((r) => r.checked);
+  const compassKey = (dx: string, dy: string) =>
+    radios("pg-dir").find((r) => r.value === `${dx},${dy}`)?.dataset.key ?? "";
+
+  function setDirection(value: string) {
+    const [dx, dy] = value.split(",");
+    root.style.setProperty("--tex-dx", dx);
+    root.style.setProperty("--tex-dy", dy);
+    root.style.setProperty("--tex-len", dx !== "0" && dy !== "0" ? "1.4142" : "1");
+  }
+
+  // Hatch lines run NE to SW, so drifting along them would look still. TexturePick leaves those two out.
+  function syncHatch() {
+    const hatch = root.dataset.tex === "hatch";
+    for (const r of radios("pg-dir")) r.disabled = hatch && (r.value === "1,-1" || r.value === "-1,1");
+    const current = checked("pg-dir");
+    if (current?.disabled) {
+      const east = radios("pg-dir").find((r) => r.value === "1,0");
+      if (east) {
+        east.checked = true;
+        setDirection(east.value);
+      }
+    }
+  }
+
+  function announce() {
+    if (!status) return;
+    const pat = checked("pg-pattern")?.value === "random" ? `${root.dataset.tex} (random pick)` : root.dataset.tex;
+    const dir = checked("pg-dir")?.dataset.key ?? "";
+    const speed = checked("pg-speed")?.value ?? "13.9";
+    const contrast = checked("pg-contrast")?.value ?? "site";
+    const scroll = checked("pg-scroll")?.value === "page" ? "scrolls with the page" : "fixed to the screen";
+    const paused = (document.querySelector<HTMLInputElement>('input[name="pg-pause"]')?.checked ?? false) ? ", paused" : "";
+    status.textContent = `Now: ${pat}, drifting ${dir} at ${speed} px/s, ${contrast} contrast, ${scroll}${paused}.`;
+  }
+
+  if (panel) {
+    panel.hidden = false;
+
+    // Start from what this load picked, and say so.
+    const startDir = radios("pg-dir").find((r) => r.value === `${loaded.dx},${loaded.dy}`);
+    if (startDir) startDir.checked = true;
+    if (picked) picked.textContent = `This load picked ${loaded.tex}, drifting ${compassKey(loaded.dx, loaded.dy)}.`;
+    syncHatch();
+    announce();
+
+    panel.addEventListener("change", (e) => {
+      const input = e.target as HTMLInputElement;
+      switch (input.name) {
+        case "pg-pattern":
+          root.dataset.tex = input.value === "random" ? loaded.tex : input.value;
+          syncHatch();
+          break;
+        case "pg-dir":
+          setDirection(input.value);
+          break;
+        case "pg-speed":
+          root.style.setProperty("--tex-speed", input.value);
+          break;
+        case "pg-contrast":
+          if (input.value === "site") delete root.dataset.pgContrast;
+          else root.dataset.pgContrast = input.value;
+          break;
+        case "pg-scroll":
+          if (input.value === "fixed") delete root.dataset.pgScroll;
+          else root.dataset.pgScroll = input.value;
+          break;
+        case "pg-pause":
+          if (input.checked) root.dataset.pgPause = "";
+          else delete root.dataset.pgPause;
+          break;
+      }
+      announce();
+    });
+
+    if (reduced) document.querySelector<HTMLElement>("[data-pg-reduced]")?.removeAttribute("hidden");
+  }
+
+  // Replay buttons. Under reduced motion the effects do not run on the site, so the buttons are off.
+  const glyphBtn = document.querySelector<HTMLButtonElement>('button[data-pg-replay="glyph"]');
+  const markerBtn = document.querySelector<HTMLButtonElement>('button[data-pg-replay="marker"]');
+  for (const btn of [glyphBtn, markerBtn]) {
+    if (!btn) continue;
+    btn.hidden = false;
+    if (reduced) {
+      btn.disabled = true;
+      btn.closest("div")?.querySelector("[data-pg-reduced-note]")?.removeAttribute("hidden");
+    }
+  }
+
+  // Glyph reveal: motion.ts owns the reveal and listens for this event on a finished block.
+  glyphBtn?.addEventListener("click", () => {
+    document.querySelectorAll<HTMLElement>("[data-pg-glyph]").forEach((el) => {
+      el.dispatchEvent(new CustomEvent("glyph-replay", { bubbles: true }));
+    });
+  });
+
+  // Marker: collapse it, then add the same .lv-in class lively.ts adds, so the real transition runs.
+  markerBtn?.addEventListener("click", () => {
+    const marks = Array.from(document.querySelectorAll<HTMLElement>("[data-pg-marks] .lv-mark"));
+    for (const m of marks) m.classList.remove("lv-in");
+    void root.offsetWidth; // let the collapsed state paint-resolve before growing it again
+    marks.forEach((m, i) => setTimeout(() => m.classList.add("lv-in"), 120 + i * 400));
+  });
+</script>

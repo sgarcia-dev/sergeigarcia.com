@@ -124,6 +124,14 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
 
 Nothing else moves.
 
+The public `/playground` page (`src/pages/playground.astro`) lets visitors try these
+effects. It reuses the production classes and scripts and adds no effects of its
+own. Its controls only set the `<html>` hooks `texture.css` already reads
+(`data-tex`, `--tex-dx`, `--tex-dy`, `--tex-len`, `--tex-speed`), plus three
+page-local attributes it styles itself (contrast, scroll mode, pause). If you change
+how a texture, the glyph reveal or the marker works, check the playground still
+behaves.
+
 ## Banned patterns, and what to do instead
 
 | Do not | Do this instead |

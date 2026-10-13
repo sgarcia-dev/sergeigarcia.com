@@ -191,6 +191,18 @@ function setupGlyph() {
 
 if (!reduced && root.classList.contains("js-motion")) setupGlyph();
 
+// Playground hook: a "glyph-replay" event on a finished block plays its reveal once more. Nothing on
+// the site dispatches it except /playground, so it changes nothing elsewhere.
+if (!reduced && root.classList.contains("js-motion")) {
+  document.addEventListener("glyph-replay", (e) => {
+    const el = e.target;
+    if (el instanceof HTMLElement && el.dataset.dc === "done") {
+      el.dataset.dc = "pending";
+      reveal(el);
+    }
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Header: CSS scroll timelines compact it. Without them (or with reduced motion, as an instant
 // switch) toggle .is-compact from a 1px sentinel 80px down the page. No scroll listener.
