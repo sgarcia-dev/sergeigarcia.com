@@ -8,5 +8,5 @@ export default defineConfig({
   trailingSlash: "always",
   build: { format: "directory" },
   integrations: [sitemap()],
-  vite: { plugins: [tailwindcss()], server: { fs: { allow: ["..", "../sergeigarcia.com"] } } },
+  vite: { plugins: [tailwindcss()] },
 });
