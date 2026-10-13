@@ -326,7 +326,12 @@ html[data-ph="on"] {
       background-color: inherit; /* the band's own fill, so it covers the band's lower content */
       pointer-events: none;
       opacity: 0;
-      animation: ph-in linear both;
+      /* Longhands, not the `animation` shorthand: the production CSS minifier drops a
+         shorthand that is followed by animation-timeline, which silently killed this. */
+      animation-name: ph-in;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root block);
       animation-range: var(--ph-start) var(--ph-end);
     }
@@ -378,7 +383,12 @@ html[data-ph="on"] {
       background: var(--color-ink);
       transform: scaleX(0);
       transform-origin: left;
-      animation: read-grow linear both;
+      /* Longhands, not the `animation` shorthand: the production CSS minifier drops a
+         shorthand that is followed by animation-timeline, which silently killed this. */
+      animation-name: read-grow;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root block);
     }
   }
