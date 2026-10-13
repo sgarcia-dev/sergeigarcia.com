@@ -121,6 +121,13 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   never a fixed number.
 - **Reading bar**: 4px, `--color-ink`, top of the viewport, posts and case
   studies only.
+- **Read time** (`src/lib/readingTime.ts`, `src/scripts/readtime.ts`, `src/styles/readtime.css`),
+  posts and case studies only. A static "N min read" label in the page head (words / 250,
+  minimum 1). With JS, an aria-hidden chip shows minutes left, with an emoji that bounces on every
+  change and text that swaps through the glyph blocks. It sits in the header after the nav, or in
+  the shrunk page strip. Below 56rem it hangs under the header as a tab so the header height never
+  changes. Prototype switches, remembered per tab: `?rtpos=header|strip`, `?rtemoji=grow|trip|moon|none`,
+  `?rtcopy=cheer|coach|quiet`, `?rtswap=glyph|plain`. Not yet picked by Sergei.
 - **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale
   marker that draws once behind a few key phrases (`.lv-mark`), a yellow sweep on
   list row hover and focus, sticker tilt on the headshot, photo chip and skill

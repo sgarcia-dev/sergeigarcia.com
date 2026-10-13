@@ -4,8 +4,10 @@ import Logo from "./Logo.astro";
 
 interface Props {
   home?: boolean;
+  /** Posts and case studies only: renders the live "minutes left" chip (see src/scripts/readtime.ts). */
+  readMinutes?: number;
 }
-const { home = false } = Astro.props;
+const { home = false, readMinutes } = Astro.props;
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
@@ -17,7 +19,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
       <Logo class="logo-mark" />
       <span class="logo-name label">Sergei Garcia</span>
     </a>
-    <nav aria-label="Primary" class="site-nav">
+    <nav aria-label="Primary" class="site-nav md:ml-auto">
       <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
         {
           NAV.map((item) => (
@@ -30,6 +32,19 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
         }
       </ul>
     </nav>
+    {
+      readMinutes && (
+        <div class="rt-chip" data-rt data-total={readMinutes} aria-hidden="true">
+          <span class="rt-emoji">🌱</span>
+          <span class="rt-box">
+            <span class="rt-live">
+              <span class="rt-main">{readMinutes} min</span>
+              <span class="rt-sub">left, settle in</span>
+            </span>
+          </span>
+        </div>
+      )
+    }
   </div>
 </header>
 

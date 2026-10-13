@@ -9,6 +9,7 @@ import MotionInit from "../components/MotionInit.astro";
 import "../styles/texture.css";
 import "../styles/lively.css";
 import "../styles/motion.css";
+import "../styles/readtime.css";
 
 interface Props {
   /** Page title. "| Sergei Garcia" is appended unless `fullTitle` is set. */
@@ -24,9 +25,11 @@ interface Props {
   /** Share image path (e.g. from shareImage()). Falls back to the default card. */
   ogImage?: string;
   ogImageAlt?: string;
+  /** Whole minutes to read the page. Only posts and case studies pass it; it turns on the "minutes left" chip. */
+  readMinutes?: number;
 }
 
-const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt } = Astro.props;
+const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes } = Astro.props;
 const pageTitle = fullTitle ? title : `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(ogPath ?? SITE.ogImage, Astro.site);
@@ -71,7 +74,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
   </head>
   <body>
     <a href="#main" class="hit skip">Skip to content</a>
-    <Header home={home} />
+    <Header home={home} readMinutes={readMinutes} />
     <main id="main" class:list={[home && "home-mono"]}>
       <slot />
     </main>
@@ -79,6 +82,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <script>
       import "../scripts/motion.ts";
       import "../scripts/lively.ts";
+      import "../scripts/readtime.ts";
     </script>
   </body>
 </html>

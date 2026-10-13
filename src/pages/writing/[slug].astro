@@ -8,6 +8,7 @@ import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
+import { readingMinutes } from "../../lib/readingTime";
 import { AUTHOR_REF, shareImage } from "../../lib/seo";
 
 export async function getStaticPaths() {
@@ -19,6 +20,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
 const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.data;
 const { Content } = await render(entry);
+const minutes = readingMinutes(entry.body);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = cover ? await shareImage(cover) : undefined;
@@ -46,11 +48,12 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
+<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
   <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
+    <p class="label mt-xs">{minutes} min read</p>
   </PageHead>
   <section class="edge-b">
     <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
@@ -72,7 +75,7 @@ const jsonLd = [
             </div>
           )
         }
-        <div class="prose">
+        <div class="prose" data-rt-body>
           <Content />
         </div>
         <ShareLinks url={canonical} title={title} />

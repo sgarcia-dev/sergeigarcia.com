@@ -1,0 +1,202 @@
+/* "Minutes left" chip, posts and case studies only. Behavior is in src/scripts/readtime.ts.
+   The static "N min read" line in the page head is plain text and needs none of this.
+   Without JS the chip stays display:none. It is aria-hidden: screen readers get the static line.
+
+   Rules this file keeps:
+   - The chip never carries or touches a view-transition-name.
+   - It never changes the header height. In the header it is a flex item that is shorter than
+     the buttons; on phones it is taken out of the flow (position:absolute).
+   - Animation uses longhands, never the `animation` shorthand (the production minifier drops a
+     shorthand that is followed by animation-timeline), and only inside no-preference.
+   - Colors: white on black text with a band-aware border, so it passes contrast on the header
+     (light and dark) and on the tomato and cobalt page head bands. */
+
+.rt-chip {
+  display: none;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex: none;
+  height: 2.125rem; /* 34px: under the 36px compact buttons, so the header row never grows */
+  padding-inline: var(--spacing-xs) var(--spacing-sm);
+  border: var(--rule-thick) solid var(--hit-line);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  text-align: left;
+  pointer-events: none;
+  user-select: none;
+}
+html.js-motion .rt-chip {
+  display: inline-flex;
+}
+.rt-emoji {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+}
+.rt-chip[data-emoji="none"] .rt-emoji {
+  display: none;
+}
+/* The live text and hidden copies of every possible text sit in one grid cell, so the chip is as
+   wide as the widest text and never changes width while you scroll (the nav next to it stays put). */
+.rt-box {
+  display: grid;
+}
+.rt-box > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.rt-ghost {
+  visibility: hidden;
+}
+.rt-main,
+.rt-sub {
+  display: block;
+  white-space: pre; /* blank glyphs during the swap keep their width */
+}
+.rt-main {
+  font-size: var(--text-xs);
+  line-height: 1.15;
+  font-weight: var(--font-weight-bold);
+}
+.rt-sub {
+  font-size: calc(var(--text-xs) * 0.8);
+  line-height: 1.15;
+  font-weight: 400;
+  min-height: 1.15em; /* keep the height when the label is empty ("quiet") */
+}
+
+/* ------------------------------------------------------------------
+   Header placement. From 56rem up the chip is the last flex item, right after the nav.
+   Below that the logo, the four nav buttons and the chip no longer fit on one row, so the chip is
+   taken out of the flow (position:absolute, header height unchanged) and hangs from the header's
+   bottom edge like a tab, right-aligned. On phones the header is two stacked rows (logo, then the
+   nav grid): in the full state the chip sits on the logo row, right-aligned; once compact, the
+   row is logo + nav with no spare width, so it hangs like a tab too.
+   ------------------------------------------------------------------ */
+.site-header-inner {
+  position: relative;
+}
+@media (max-width: 55.99rem) {
+  .site-header .rt-chip {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: 100%; /* its top border sits on the header's bottom rule */
+  }
+}
+@media (max-width: 47.99rem) {
+  .site-header .rt-chip {
+    top: 1.3125rem; /* 16px header padding + (44px logo chip - 34px) / 2 */
+  }
+  .site-header.is-compact .rt-chip {
+    top: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @media (max-width: 47.99rem) {
+      /* Same scroll range as the header compacting. It snaps in the first few pixels, like the
+         rest of the phone header does (see motion.css). */
+      .site-header .rt-chip {
+        animation-name: rt-hang;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root block);
+        animation-range: 80px 140px;
+      }
+    }
+  }
+}
+@keyframes rt-hang {
+  0% {
+    top: 1.3125rem;
+  }
+  4%,
+  100% {
+    top: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Strip placement (?rtpos=strip): motion.ts builds .ph-mini / .ph-mini-in; the script moves the
+   chip into .ph-mini-in, on the right of the title. The strip fades in as the band shrinks, so
+   the chip does too. .ph-mini-title is a sibling and is never touched.
+   ------------------------------------------------------------------ */
+.ph-mini-in:has(> .rt-chip) {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+.ph-mini-in > .rt-chip {
+  position: static;
+  margin-left: auto;
+}
+
+/* ------------------------------------------------------------------
+   Emoji motion. JS sets data-go on the chip each time the step changes (and at load while
+   "almost"), data-state says which of left / almost / done it is.
+   ------------------------------------------------------------------ */
+@keyframes rt-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.5);
+  }
+}
+@keyframes rt-gentle {
+  0%,
+  16%,
+  100% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.3);
+  }
+}
+@keyframes rt-celebrate {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.9) rotate(-14deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  75% {
+    transform: scale(1.5) rotate(-5deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rt-chip[data-go] .rt-emoji {
+    animation-name: rt-bounce;
+    animation-duration: 400ms;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+  .rt-chip[data-go][data-state="almost"] .rt-emoji {
+    animation-name: rt-gentle;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .rt-chip[data-go][data-state="done"] .rt-emoji {
+    animation-name: rt-celebrate;
+    animation-duration: 900ms;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+  }
+}
+
+@media print {
+  .rt-chip {
+    display: none !important;
+  }
+}

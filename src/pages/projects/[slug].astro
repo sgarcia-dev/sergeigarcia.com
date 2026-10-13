@@ -8,6 +8,7 @@ import Media from "../../components/Media.astro";
 import Gallery from "../../components/Gallery.astro";
 import { getProjects, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
+import { readingMinutes } from "../../lib/readingTime";
 import { AUTHOR_REF, breadcrumbs, shareImage } from "../../lib/seo";
 
 export async function getStaticPaths() {
@@ -20,6 +21,7 @@ const { entry } = Astro.props;
 const { title, summary, company, role, period, skills, links, gallery, galleryCaption, cover, coverAlt, confidential, coverKind } =
   entry.data;
 const { Content } = await render(entry);
+const minutes = readingMinutes(entry.body);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const showCover = cover && !(confidential && coverKind !== "illustration");
@@ -43,9 +45,10 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
+<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
   <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)} progress>
     <p class="mt-md max-w-prose text-lg">{summary}</p>
+    <p class="label mt-sm">{minutes} min read</p>
   </PageHead>
   <section class="edge-b">
     <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
@@ -56,7 +59,7 @@ const jsonLd = [
       </div>
       <div class="lg:col-span-8">
         <Media entry={entry} />
-        <div class="prose mt-xl">
+        <div class="prose mt-xl" data-rt-body>
           <Content />
         </div>
         {gallery.length > 0 && (

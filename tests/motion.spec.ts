@@ -20,3 +20,49 @@ test("shrunk page band shows its title, and the reading bar grows", async ({ pag
     )
     .toBeGreaterThan(0.2);
 });
+
+// Read time: a static line for everyone, plus a live "minutes left" chip that scripts add.
+test.describe("read time", () => {
+  const post = "/writing/ai-raises-the-floor/";
+
+  test("static line exists and the chip reaches done at the bottom", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(post);
+    await expect(page.locator("main p.label", { hasText: /^\d+ min read$/ })).toBeAttached();
+    const chip = page.locator(".rt-chip");
+    await expect(chip).toHaveAttribute("aria-hidden", "true");
+    await expect(chip).toContainText("min");
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(chip).toHaveAttribute("data-state", "done");
+    await expect(chip).toContainText("You made it");
+
+    // The quiet wording says plain "Done".
+    await page.goto(`${post}?rtcopy=quiet&rtswap=plain`);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(page.locator(".rt-chip")).toContainText("Done");
+  });
+
+  test("emoji bounces on a change and the chip never changes the header height", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(post);
+    const header = page.locator(".site-header");
+    const before = (await header.boundingBox())!.height;
+    const names = await page.evaluate(async () => {
+      const body = document.querySelector("[data-rt-body]")!;
+      const top = body.getBoundingClientRect().top + scrollY;
+      window.scrollTo(0, top + body.getBoundingClientRect().height * 0.4);
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      return document.querySelector(".rt-emoji")!.getAnimations().map((a) => (a as CSSAnimation).animationName);
+    });
+    expect(names).toContain("rt-bounce");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect.poll(async () => (await header.boundingBox())!.height).toBe(before);
+  });
+
+  test("no chip on pages that are not posts or case studies", async ({ page }) => {
+    await page.goto("/work/");
+    await expect(page.locator(".rt-chip")).toHaveCount(0);
+    await page.goto("/");
+    await expect(page.locator(".rt-chip")).toHaveCount(0);
+  });
+});
