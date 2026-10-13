@@ -1,32 +1,44 @@
 ---
 /**
- * A static card for a post on X. It is only text and one link: no X script, no embed, no request to
- * X until the reader follows the link.
+ * A static card for a post or thread on X. It is only text and one link: no X script, no embed, no
+ * request to X until the reader follows the link. Pass `text` for one post, or `posts` for several
+ * short posts (a trimmed thread) stacked in one card with a thin rule between them. The author line
+ * and date show once.
  */
 import Icon from "./Icon.astro";
 import { formatDate } from "../lib/content";
 
 interface Props {
-  /** Link to the post or thread. */
+  /** Link to the post or thread. Also the `cite` of each quote. */
   url: string;
   author: string;
   /** With the @, for example "@_mexicat". */
   handle: string;
   date: Date;
-  text: string;
+  /** One post. */
+  text?: string;
+  /** Several posts, in order. */
+  posts?: string[];
   linkLabel?: string;
 }
-const { url, author, handle, date, text, linkLabel = "Read the full thread on X" } = Astro.props;
+const { url, author, handle, date, text, posts, linkLabel = "Read the full thread on X" } = Astro.props;
+const quotes = posts ?? (text ? [text] : []);
 ---
 
-<article class="xpost" aria-label={`Post by ${author} (${handle}) on X`}>
-  <header class="xpost-head">
-    <p class="font-title xpost-name">{author}</p>
-    <p class="label xpost-handle">{handle}</p>
+<figure class="xpost">
+  <figcaption class="xpost-head">
+    <span class="font-title xpost-name">{author}</span>
+    <span class="label xpost-handle">{handle}</span>
+    <span class="label xpost-date"><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></span>
     <span class="xpost-logo" aria-hidden="true"><Icon name="x" /></span>
-  </header>
-  <p class="xpost-text">{text}</p>
-  <p class="label xpost-date"><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></p>
+  </figcaption>
+  {
+    quotes.map((quote) => (
+      <blockquote class="xpost-text" cite={url}>
+        <p>{quote}</p>
+      </blockquote>
+    ))
+  }
   <p class="xpost-link">
     <a class="hit" href={url} target="_blank" rel="noopener noreferrer">
       <Icon name="x" />
@@ -34,11 +46,12 @@ const { url, author, handle, date, text, linkLabel = "Read the full thread on X"
       <span class="xpost-new">(opens in a new tab)</span>
     </a>
   </p>
-</article>
+</figure>
 
 <style>
   .xpost {
     max-width: var(--container-prose);
+    margin: var(--spacing-md) 0;
     padding: var(--spacing-md);
     border: var(--rule-thick) solid var(--edge);
     box-shadow: 6px 6px 0 var(--edge);
@@ -50,34 +63,39 @@ const { url, author, handle, date, text, linkLabel = "Read the full thread on X"
     grid-template-columns: 1fr auto;
     column-gap: var(--spacing-sm);
     align-items: baseline;
+    padding-bottom: var(--spacing-sm);
   }
   .xpost-name {
     font-size: var(--text-xl);
     line-height: var(--text-xl--line-height);
   }
-  .xpost-handle {
-    grid-row: 2;
+  .xpost-handle,
+  .xpost-date {
+    grid-column: 1;
     color: var(--color-muted);
   }
   .xpost-logo {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
     align-self: start;
   }
+  /* Each post is its own block, split by a thin rule. These reset the prose quote style. */
   .xpost-text {
-    margin-top: var(--spacing-sm);
+    margin: 0;
+    padding: var(--spacing-sm) 0;
+    border: 0;
+    border-top: var(--rule-thin) solid var(--rule-color);
     font-size: var(--text-lg);
     line-height: var(--text-lg--line-height);
   }
-  .xpost-date {
-    margin-top: var(--spacing-sm);
-    color: var(--color-muted);
-  }
   .xpost-link {
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+    padding-top: var(--spacing-sm);
+    border-top: var(--rule-thin) solid var(--rule-color);
   }
   .xpost-link :global(.hit) {
     position: relative;
+    text-decoration: none;
   }
   /* Visually hidden, read by screen readers. */
   .xpost-new {

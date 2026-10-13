@@ -6,48 +6,72 @@ skills: ["AI agents", "Claude Code", "Design", "Prototyping"]
 cover: "../../assets/posts/ai-raises-the-floor/cover.jpg"
 coverAlt: "A film director in a tall chair points a megaphone at three cheerful robots running a film set: one on the camera, one holding the boom microphone, one with a clapperboard."
 draft: false
-embeds:
-  youtube:
-    id: "5EoO5413dBY"
-    title: "P(doom) music video by @_mexicat"
-    thumb: "../../assets/posts/ai-raises-the-floor/yt-5EoO5413dBY.jpg"
-  xpost:
-    url: "https://x.com/_mexicat/status/2103904518929055853"
-    author: "mexicat"
-    handle: "@_mexicat"
-    date: 2026-09-26
-    text: "a few words about this video, since some people seem to draw hasty conclusions from it"
 ---
 
+import YouTubeEmbed from "../../components/YouTubeEmbed.astro";
+import XPost from "../../components/XPost.astro";
+import Figure from "../../components/Figure.astro";
+import ytThumb from "../../assets/posts/ai-raises-the-floor/yt-5EoO5413dBY.jpg";
+import figOptions from "../../assets/posts/ai-raises-the-floor/fig-options.jpg";
+import figLoop from "../../assets/posts/ai-raises-the-floor/fig-loop.jpg";
+import figHandback from "../../assets/posts/ai-raises-the-floor/fig-handback.jpg";
+
+{/* INTRO: Opus rewrites */}
+
 In late September a [music video](https://www.youtube.com/watch?v=5EoO5413dBY) went around. It is 2 minutes 37 seconds of fast, sharp, well-timed visuals, and it was made with Claude Opus 5.5 in Claude Code. Some people read it as "one prompt, and the AI did the rest."
+
+<YouTubeEmbed id="5EoO5413dBY" title="P(doom) music video by @_mexicat" thumb={ytThumb} />
 
 I get why. AI has come a long way, and it is tempting to think the human can step out of the loop now.
 
 I don't think so. The video is a good example of why.
 
-## What really went into the video
+## Exhibit A: the P(doom) video
 
 The song is about P(doom). That is short for "probability of doom": your own guess at how likely it is that AI ends badly for humanity. "What's your p(doom)?" has become an in-joke in AI circles.
 
 The words of that song came from people, and over a long time. A Udio user called MusicPerson wrote the opening verse and chorus. A person named osmarks wrote most of the rest in 2024, with lines suggested on the EleutherAI Discord. Both are credited in the [project's repo](https://github.com/mexicat/pdoom-video). The singing was AI-made, but the lyrics were not a prompt.
 
-Then there is the video itself. Its author, [@_mexicat](https://x.com/_mexicat/status/2103904518929055853), wrote a thread about it, and it says plainly "this is not a one-shot prompt." The author started with a vague vision and sharpened it over a long conversation with Claude, with clear rules: maximalist type, a limited palette, no literal retelling of each verse, lyrics always in sync. The thread counts "tens of small and big adjustments and changes of trajectory."
+Then there is the video itself. Its author wrote a thread to answer the "one prompt" idea. These are the parts that matter:
 
-One example I like. The first draft showed the p(doom) number in a box in the corner, always on. The author asked for it to be woven into the scenes instead. The video got far more interesting.
+<XPost
+  url="https://x.com/_mexicat/status/2103904518929055853"
+  author="mexicat"
+  handle="@_mexicat"
+  date={new Date("2026-09-26")}
+  posts={[
+    "this is not a one-shot prompt. i had a vague vision of the type of video i wanted it to be that i refined during a long conversation with claude.",
+    "there were several constraints: maximalist typography, limited color palette, not a literal rendition of each verse, lyrics always perfectly in sync with the video.",
+    "the first draft had the p(doom) indicator always present on screen with a sort of hud. i asked to integrate it more or less subtly in some of the scenes as part of the “environment”, and the video became way more visually interesting.",
+    "there were tens of small and big adjustments and changes of trajectory to get to a final version.",
+    "you get way more interesting results if you approach these tools with a director mindset.",
+    "these tools raise the floor: decent-looking is basically instant now. the ceiling is still set by having a good creative vision, at least with 5.5.",
+  ]}
+/>
 
-The repo keeps a revision log too. In one round a realistic eye was removed because "the client found it uncanny." There is a typography pass, a color fix, and hand-set timings where the automatic lyric sync failed.
+The repo keeps a revision log too. In one round a realistic eye was removed because "the client found it uncanny," and where the automatic lyric sync failed, the timings were set by hand. That is a director at work, with a very fast crew.
 
-That is a director at work, with a very fast crew.
-
-## The same thing happened on my site
+## Exhibit B: how my site was built
 
 I felt this myself this week. The first live version of this site took about 90 minutes, from nothing to published. The motion and texture system, the animated dots and the text reveals, took one afternoon, about two hours and fifteen minutes from my first question to shipped.
 
 Fast, yes. But the speed was not the story. The loop was.
 
-I never asked for one perfect result. I asked for options. Agents built each option on a throwaway copy of the real site, where I could switch effects on and off from the web address. I looked at them on the real pages and told them what was wrong. Then they tried again.
+I never asked for one perfect result. I asked for options. Agents built each option on a throwaway copy of the real site, where I could switch effects on and off from the web address.
 
-![A big friendly robot holds up five framed patterns: small dots, big dots, stripes, a grid and fading dots. A person stands in front and points firmly at one.](../../assets/posts/ai-raises-the-floor/fig-options.jpg)
+<Figure
+  src={figOptions}
+  alt="A big friendly robot holds up five framed patterns: small dots, big dots, stripes, a grid and fading dots. A person stands in front and points firmly at one."
+  caption="Five options on the table, and one I pointed at."
+/>
+
+I looked at them on the real pages and told them what was wrong. Then they tried again.
+
+<Figure
+  src={figLoop}
+  alt="A friendly robot paints at an easel while a person points at one spot on the canvas to give a note. A big arrow loops around them both: build, look, give feedback, repeat."
+  caption="Build, look, give a note, repeat."
+/>
 
 Here is what that sounded like, in order:
 
@@ -55,11 +79,9 @@ Here is what that sounded like, in order:
 - **Round 3.** The agents pushed the contrast up. My verdict: "way too much... basically unusable." So round 4 landed in between, with a contrast knob I could set myself.
 - **Round 5.** My favorite dots looked blurry. "It hurts my eyes." The fix was crisp, stepped dots.
 
-![The same corner of my home page in three rounds. Round 1: dots darker than the yellow. Round 3: a bold white grid that drowned everything. Final: crisp, light dots that sit behind the text.](../../assets/posts/ai-raises-the-floor/fig-rounds.jpg)
+You can try every pattern, speed and contrast level yourself on the [playground](/playground/).
 
 The text reveal went the same way. A flashy reveal on the big headings "screams too much." A quiet, terminal-style block reveal on the small monospace text was "minimal and unobtrusive," so that one shipped.
-
-![A friendly robot paints at an easel while a person points at one spot on the canvas to give a note. A big arrow loops around them both: build, look, give feedback, repeat.](../../assets/posts/ai-raises-the-floor/fig-loop.jpg)
 
 I said no to a lot. Scroll fade-ins felt generic. A dot that follows the cursor was too much. A yellow progress bar added ugly extra space.
 
@@ -71,9 +93,13 @@ Across it all: 5 rounds of backgrounds, 3 of motion and 3 of small touches, plus
 
 @_mexicat said it better than I can: these tools raise the floor. A decent-looking result is nearly instant now. The ceiling is still set by having a good creative vision.
 
-I would add one thing. The ceiling also depends on feedback, because vision is not a single moment. It is the dozens of small "no, not like that" along the way.
+I would add one thing. The ceiling also depends on feedback, because vision is not a single moment. It is the dozens of small "no, not like that" along the way. The more exact the note, the better the next round.
 
-![A cheerful robot hands a person a freshly painted poster. The person smiles, points at one spot marked with a check and a cross, and hands it back for another round. A stack of earlier tries sits behind the robot.](../../assets/posts/ai-raises-the-floor/fig-handback.jpg)
+<Figure
+  src={figHandback}
+  alt="A cheerful robot hands a person a freshly painted poster. The person smiles, points at one spot marked with a check and a cross, and hands it back for another round. A stack of earlier tries sits behind the robot."
+  caption="Hand it back with a note about one exact spot."
+/>
 
 Here are the habits that worked for me:
 

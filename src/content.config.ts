@@ -66,33 +66,6 @@ const posts = defineCollection({
       cover: image().optional(),
       coverAlt: z.string().optional(),
       draft: z.boolean().default(false),
-      /*
-        Optional click-to-load video and quoted X post. Markdown cannot hold components, so the
-        post page renders these in a "Sources" block after the text. `thumb` is a local copy of the
-        video thumbnail, so the page requests nothing from YouTube until the reader clicks play.
-      */
-      embeds: z
-        .object({
-          youtube: z
-            .object({
-              id: z.string(),
-              title: z.string(),
-              thumb: image(),
-              start: z.number().int().optional(),
-            })
-            .optional(),
-          xpost: z
-            .object({
-              url: z.url(),
-              author: z.string(),
-              handle: z.string(),
-              date: z.coerce.date(),
-              text: z.string(),
-              linkLabel: z.string().optional(),
-            })
-            .optional(),
-        })
-        .optional(),
     }),
 });
 

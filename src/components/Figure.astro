@@ -1,0 +1,54 @@
+---
+/**
+ * A framed image with a short caption, for posts written in MDX. The frame is the same as every
+ * other image on the site: thick ink border and the hard shadow. The caption is a small mono
+ * label under it. Keep captions short and human; the alt text describes the picture, the caption
+ * says why it is there.
+ */
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption: string;
+}
+const { src, alt, caption } = Astro.props;
+---
+
+<figure class="fig">
+  <Picture
+    src={src}
+    formats={["avif", "webp"]}
+    widths={[640, 960, 1280]}
+    sizes="(min-width: 64rem) 40rem, 100vw"
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    pictureAttributes={{ class: "block" }}
+  />
+  <figcaption class="label fig-caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .fig {
+    max-width: var(--container-prose);
+    margin: var(--spacing-md) 0;
+  }
+  .fig :global(picture) {
+    display: block;
+  }
+  .fig :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-white);
+  }
+  /* The extra top space clears the hard shadow. */
+  .fig-caption {
+    margin-top: var(--spacing-sm);
+    color: var(--color-muted);
+  }
+</style>

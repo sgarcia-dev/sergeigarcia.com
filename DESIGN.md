@@ -67,10 +67,12 @@ Radius is always 0. One exception: the small round headshot in the home hero (`.
 - **Icon chip** (`.hit.hit-icon`): a `.hit` as a 44px square with one inline SVG
   from `Icon.astro` (the share row). The name lives in `aria-label` and `title`.
   Hover stays the site yellow; brand colors are not tokens, so no brand fills.
-- **Embeds** (`<YouTubeEmbed>`, `<XPost>`): click-to-load video in a 16:9 frame
-  (local thumbnail, yellow play chip, no request to YouTube until the click) and a
-  static quoted-post card (no X script). Posts feed them through the optional
-  `embeds` frontmatter; `[slug].astro` renders them in "The original" after the text.
+- **Embeds** (`<YouTubeEmbed>`, `<XPost>`, `<Figure>`): used inline in MDX posts. Video is
+  click-to-load in a 16:9 frame (local thumbnail, yellow play chip, no request to YouTube
+  until the click; the iframe fills the frame). `<XPost>` is a static quoted card (no X
+  script) with one post (`text`) or several stacked posts (`posts`), the author and date once, a
+  thin rule between posts. `<Figure>` is a framed image with a mono `.label` caption.
+  Posts that use components are `.mdx`.
 - **Hero** (home): yellow name band plus cobalt aside, content capped at `page`
   width, with the fills running to the edges via a gradient on `.hero`. The name
   is capped at 13rem.
