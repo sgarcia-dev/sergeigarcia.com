@@ -28,5 +28,5 @@ export const NAV = [
  * yellow and Projects stay cobalt. To swap them, change WRITING_BAND; About follows.
  */
 export type SectionBand = "yellow" | "cobalt";
-export const WRITING_BAND: SectionBand = "cobalt";
+export const WRITING_BAND = "cobalt" as SectionBand;
 export const ABOUT_BAND: SectionBand = WRITING_BAND === "yellow" ? "cobalt" : "yellow";
