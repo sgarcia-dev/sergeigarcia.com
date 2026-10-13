@@ -277,13 +277,17 @@ main
 }
 
 /* ---------------------------------------------------------------------------------------------
-   5. Ticker: one slim black strip under the home hero, listing the companies and skills that are
-   already on the page. It is plain server HTML. The real list is read once; the copy after it is
+   5. Ticker: one slim black strip under the home hero, listing short phrases that describe Sergei. It is plain server HTML. The real list is read once; the copy after it is
    aria-hidden and only there so the loop is seamless. Each copy is at least one screen wide, so two
    copies always fill the strip. Slow, transform only, paused on hover. Reduced motion: stopped, one
    static row, clipped.
    --------------------------------------------------------------------------------------------- */
+/* Loop time is length based so the speed stays 19.93px/s (the speed Sergei approved, 1594px in 80s).
+   --ticker-w is the measured width of one copy in px (12 phrases, mono 13px bold). Re-measure it if the
+   list in index.astro changes: .ticker-list getBoundingClientRect().width at any width up to 2597px. */
 .ticker {
+  --ticker-w: 2597.5;
+  --ticker-speed: 19.93;
   overflow: hidden;
   background: var(--color-black);
   color: var(--color-yellow);
@@ -326,7 +330,7 @@ main
 }
 @media (prefers-reduced-motion: no-preference) {
   .ticker-track {
-    animation: ticker-move 80s linear infinite;
+    animation: ticker-move calc(var(--ticker-w) / var(--ticker-speed) * 1s) linear infinite;
     will-change: transform;
   }
   .ticker:hover .ticker-track {

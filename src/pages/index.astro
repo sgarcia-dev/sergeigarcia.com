@@ -18,13 +18,21 @@ const upcoming = posts.length === 0 ? (await getAllPosts()).slice(0, 1) : [];
 const featuredWork = work.slice(0, 4);
 const featuredProjects = projects.slice(0, 4);
 
-// Ticker under the hero: only names that are already on this page.
+// Ticker under the hero: short phrases that describe Sergei. If you change the list, re-measure
+// the copy width and update --ticker-w in lively.css (the loop time follows from it).
 const tickerItems = [
-  ...featuredWork.map((entry) => entry.data.company),
+  "Senior software engineer",
   "Front end",
   "Full stack",
   "AI-assisted development",
   "AI agent workflows",
+  "Web performance",
+  "Accessibility",
+  "Developer tools",
+  "Educator",
+  "Designer at heart",
+  "13+ years shipping",
+  "Dublin, IE",
 ];
 
 const jsonLd = [
@@ -89,7 +97,7 @@ const jsonLd = [
 
   <div class="ticker edge-b">
     <div class="ticker-track">
-      <ul role="list" class="ticker-list" aria-label="Companies and skills">
+      <ul role="list" class="ticker-list" aria-label="What I do">
         {tickerItems.map((item) => <li>{item}</li>)}
       </ul>
       <ul role="list" class="ticker-list ticker-copy" aria-hidden="true">
