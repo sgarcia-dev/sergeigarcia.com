@@ -78,15 +78,38 @@ Radius is always 0. One exception: the small round headshot in the home hero (`.
 
 ## Motion
 
-CSS only, and only inside `prefers-reduced-motion: no-preference`.
+Only inside `prefers-reduced-motion: no-preference`, unless noted. Every effect
+was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
+`lab/motion-2026-10-13` tag). Do not add, remove or "tone down" one without asking.
 
 - Cross-document view transitions (`@view-transition { navigation: auto; }`),
   220ms.
 - The home page name has `view-transition-name: site-name`; on every other page
   the header mark has it, so the name shrinks into the nav.
 - A list title and its page h1 share `vtName(kind, id)` from `src/lib/content.ts`.
-  Use each name on exactly one element per page.
+  Use each name on exactly one element per page. No other effect may style an
+  element that carries a view-transition-name.
 - Hit hover and press: 90ms transform and shadow.
+- **Band textures** (`src/styles/texture.css`, `TexturePick.astro`): every big
+  yellow, cobalt and tomato band gets one pattern per page load, picked at random
+  from dots-fade, dots-big, hatch and grid, never the same twice in a row, with a
+  random drift direction at 13.9px/s. The texture is pinned to the viewport and
+  clipped to the band's padding box, so it never touches a border. Rule: the
+  texture tone always moves away from the text color (lighter on yellow and
+  tomato, darker on cobalt). Reduced motion keeps the texture, stops the drift.
+- **Glyph reveal** (`src/scripts/motion.ts`): monospace text only (labels, the
+  home hero facts, section intro lines). Letters go blank, ░, ▒, ▓, then real.
+  Never on links, buttons, nav, headings, serif text or article body. No-JS shows
+  plain text; failsafes force text visible within 2.5 to 3.5s.
+- **Sticky header** compacts after about 80px. On every page but home, the
+  PageHead band sticks under it and shrinks to a thin one-line banner.
+- **Reading bar**: 4px, `--color-ink`, top of the viewport, posts and case
+  studies only.
+- **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale
+  marker that draws once behind a few key phrases (`.lv-mark`), a yellow sweep on
+  list row hover and focus, sticker tilt on the headshot, photo chip and skill
+  pills on hover, a growing yellow underline on inline text links, and the slow
+  black ticker under the home hero (pauses on hover, static under reduced motion).
 
 Nothing else moves.
 
@@ -100,7 +123,7 @@ Nothing else moves.
 | 4. Grids of identical rounded cards, cards in cards, bento | Ruled lists of rows. One frame per image. |
 | 5. Tracked all-caps eyebrows everywhere, one accented word, 01/02/03 for non-steps | Mono `.label` in sentence case, only where it adds meaning. |
 | 6. "A · B · C" meta strings, "→" on every link, emoji in headings | Separate lines or a `<dl>`. Plain link text that says where it goes. |
-| 7. Fade-in sections, card hover animations, parallax, scroll hijack, loaders | The view transitions and hit feedback above, nothing else. |
+| 7. Fade-in sections, card hover animations, parallax, scroll hijack, loaders | Only the effects listed under Motion, nothing else. |
 | 8. Skill bars, percent meters, fake terminals, "passionate" copy, invented metrics, lorem ipsum | Skill pills, real facts from sources, plain English. |
 | 9. Any color, font, radius or spacing outside `@theme` | Add a token with a reason, or use an existing one. |
 | 10. Pure `#000` or gray text on color, anything under AA | Use each band's own text color. Run `npm run test:e2e`. |
