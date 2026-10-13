@@ -62,7 +62,14 @@ const { heading = "Try it yourself" } = Astro.props;
     width: 100%;
     height: auto;
   }
-  .pg-cta-btn {
+  /* .prose a sets color: inherit and an underline; the button keeps its own colors. */
+  .pg-cta a.pg-cta-btn {
     display: inline-flex;
+    color: var(--primary-ink);
+    text-decoration: none;
+  }
+  .pg-cta a.pg-cta-btn:hover {
+    background: var(--primary-hover-bg);
+    color: var(--primary-hover-ink);
   }
 </style>
