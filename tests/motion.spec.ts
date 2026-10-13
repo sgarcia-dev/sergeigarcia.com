@@ -59,6 +59,29 @@ test.describe("read time", () => {
     await expect.poll(async () => (await header.boundingBox())!.height).toBe(before);
   });
 
+  test("chip is one line, emoji last, and phones get the short text in the strip or the corner", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(post);
+    await expect(page.locator(".rt-chip > :last-child")).toHaveClass(/rt-emoji/);
+    await expect(page.locator(".rt-chip .rt-main").first()).toContainText(/^\d+ min left$/);
+
+    // Phone, default: inside the shrunk strip, minutes only. The header keeps its two rows (139px).
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(post);
+    await expect(page.locator(".ph-mini-in > .rt-chip")).toHaveCount(1);
+    await expect(page.locator(".rt-chip .rt-main").first()).toHaveText(/^\d+ min$/);
+    expect((await page.locator(".site-header").boundingBox())!.height).toBe(139);
+
+    // Phone, corner: shows after the page head shrinks, hides again over the footer.
+    await page.goto(`${post}?rtm=corner`);
+    const chip = page.locator('.rt-chip[data-pos="corner"]');
+    await expect(chip).not.toHaveAttribute("data-show", "");
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.4));
+    await expect(chip).toHaveAttribute("data-show", "");
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(chip).not.toHaveAttribute("data-show", "");
+  });
+
   test("no chip on pages that are not posts or case studies", async ({ page }) => {
     await page.goto("/work/");
     await expect(page.locator(".rt-chip")).toHaveCount(0);

@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import PostRow from "../../components/PostRow.astro";
 import { getPosts, getAllPosts } from "../../lib/content";
+import { WRITING_BAND } from "../../lib/site";
 
 const posts = await getPosts();
 const drafts = posts.length === 0 ? await getAllPosts() : [];
@@ -12,7 +13,7 @@ const drafts = posts.length === 0 ? await getAllPosts() : [];
   title="Writing"
   description="Notes from Sergei Garcia on building software, working with AI coding agents and shipping front ends."
 >
-  <PageHead title="Writing" band="tomato">
+  <PageHead title="Writing" band={WRITING_BAND}>
     <p class="mt-md max-w-prose text-lg">
       Notes on building software and working with AI coding agents.
     </p>

@@ -2,47 +2,62 @@
    The static "N min read" line in the page head is plain text and needs none of this.
    Without JS the chip stays display:none. It is aria-hidden: screen readers get the static line.
 
+   The chip is one line of text in the color of whatever it sits on (no fill, no frame), then the
+   emoji LAST, pinned to the right edge, so it stays put while the words change on its left.
+   Where it lives (the script moves it, and sets data-pos):
+     header  desktop default, after the nav (from 56rem)
+     strip   inside the shrunk page head strip, on the right (desktop option, and tablets)
+     corner  a small pinned pill at the bottom right of the screen (phone option)
+   Phones get the short text (minutes and emoji only), tablets and up get the tagline.
+
    Rules this file keeps:
    - The chip never carries or touches a view-transition-name.
-   - It never changes the header height. In the header it is a flex item that is shorter than
-     the buttons; on phones it is taken out of the flow (position:absolute).
+   - It never changes the header height: in the header it is a flex item shorter than the buttons,
+     and below 56rem it is not in the header at all.
    - Animation uses longhands, never the `animation` shorthand (the production minifier drops a
      shorthand that is followed by animation-timeline), and only inside no-preference.
-   - Colors: white on black text with a band-aware border, so it passes contrast on the header
-     (light and dark) and on the tomato and cobalt page head bands. */
+   - Colors come from the surface it sits on (ink on the header, the band's own text color in the
+     strip), so contrast is whatever the page already has. The corner pill has the page background. */
 
 .rt-chip {
   display: none;
   box-sizing: border-box;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--spacing-xs);
   flex: none;
-  height: 2.125rem; /* 34px: under the 36px compact buttons, so the header row never grows */
-  padding-inline: var(--spacing-xs) var(--spacing-sm);
-  border: var(--rule-thick) solid var(--hit-line);
-  background: var(--color-black);
-  color: var(--color-white);
+  color: inherit;
   font-family: var(--font-mono);
+  font-size: var(--text-xs); /* same size as the nav labels */
+  line-height: var(--text-xs--line-height);
   white-space: nowrap;
-  text-align: left;
+  text-align: right;
   pointer-events: none;
   user-select: none;
+  visibility: hidden; /* until the script has placed it (the space is already reserved) */
 }
 html.js-motion .rt-chip {
   display: inline-flex;
 }
+.rt-chip[data-pos] {
+  visibility: visible;
+}
 .rt-emoji {
   display: inline-block;
-  font-size: 1rem;
+  font-size: 1.125rem; /* a little larger than the text, so the steps read */
   line-height: 1;
+  min-width: 1.25em;
+  text-align: center;
 }
 .rt-chip[data-emoji="none"] .rt-emoji {
   display: none;
 }
-/* The live text and hidden copies of every possible text sit in one grid cell, so the chip is as
-   wide as the widest text and never changes width while you scroll (the nav next to it stays put). */
+/* The live text and hidden copies of every possible text sit in one grid cell, right-aligned. The
+   chip is as wide as the widest text and never changes width while you scroll (neighbors stay put);
+   shorter text just starts further right, so it grows and shrinks on the left of the emoji. */
 .rt-box {
   display: grid;
+  justify-items: end;
 }
 .rt-box > * {
   grid-area: 1 / 1;
@@ -52,88 +67,75 @@ html.js-motion .rt-chip {
   visibility: hidden;
 }
 .rt-main,
-.rt-sub {
-  display: block;
+.rt-tail {
   white-space: pre; /* blank glyphs during the swap keep their width */
 }
 .rt-main {
-  font-size: var(--text-xs);
-  line-height: 1.15;
   font-weight: var(--font-weight-bold);
 }
-.rt-sub {
-  font-size: calc(var(--text-xs) * 0.8);
-  line-height: 1.15;
+.rt-tail {
   font-weight: 400;
-  min-height: 1.15em; /* keep the height when the label is empty ("quiet") */
+  margin-left: 1ch;
+}
+.rt-tail:empty {
+  display: none;
 }
 
 /* ------------------------------------------------------------------
-   Header placement. From 56rem up the chip is the last flex item, right after the nav.
-   Below that the logo, the four nav buttons and the chip no longer fit on one row, so the chip is
-   taken out of the flow (position:absolute, header height unchanged) and hangs from the header's
-   bottom edge like a tab, right-aligned. On phones the header is two stacked rows (logo, then the
-   nav grid): in the full state the chip sits on the logo row, right-aligned; once compact, the
-   row is logo + nav with no spare width, so it hangs like a tab too.
+   Placement.
+   header: below 56rem the logo, the nav and the chip do not fit on one row, so the header never
+   shows it there (the script puts it in the strip, or in the corner on phones). The header is
+   not touched on phones at all.
    ------------------------------------------------------------------ */
-.site-header-inner {
-  position: relative;
-}
 @media (max-width: 55.99rem) {
   .site-header .rt-chip {
-    position: absolute;
-    right: var(--spacing-sm);
-    top: 100%; /* its top border sits on the header's bottom rule */
+    display: none !important;
   }
 }
-@media (max-width: 47.99rem) {
-  .site-header .rt-chip {
-    top: 1.3125rem; /* 16px header padding + (44px logo chip - 34px) / 2 */
-  }
-  .site-header.is-compact .rt-chip {
-    top: 100%;
+/* From 56rem to 72rem there is room for the short text only, in the header. */
+@media (max-width: 71.99rem) {
+  .rt-chip[data-pos="header"] .rt-tail {
+    display: none;
   }
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: scroll()) {
-    @media (max-width: 47.99rem) {
-      /* Same scroll range as the header compacting. It snaps in the first few pixels, like the
-         rest of the phone header does (see motion.css). */
-      .site-header .rt-chip {
-        animation-name: rt-hang;
-        animation-duration: 1ms;
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: scroll(root block);
-        animation-range: 80px 140px;
-      }
-    }
-  }
-}
-@keyframes rt-hang {
-  0% {
-    top: 1.3125rem;
-  }
-  4%,
-  100% {
-    top: 100%;
-  }
-}
-
-/* ------------------------------------------------------------------
-   Strip placement (?rtpos=strip): motion.ts builds .ph-mini / .ph-mini-in; the script moves the
-   chip into .ph-mini-in, on the right of the title. The strip fades in as the band shrinks, so
-   the chip does too. .ph-mini-title is a sibling and is never touched.
-   ------------------------------------------------------------------ */
+/* strip: motion.ts builds .ph-mini / .ph-mini-in; the script moves the chip into .ph-mini-in, on the
+   right of the title. The strip fades in as the band shrinks, so the chip does too.
+   .ph-mini-title is a sibling and is never touched; it takes the rest of the width. */
 .ph-mini-in:has(> .rt-chip) {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
 }
+.ph-mini-in:has(> .rt-chip) > .ph-mini-title {
+  flex: 1 1 auto;
+}
 .ph-mini-in > .rt-chip {
-  position: static;
   margin-left: auto;
+}
+/* corner: fixed to the bottom right, clear of the phone's safe area, and only once the page head has
+   shrunk. The script hides it again while the footer is on screen, so it never covers footer links. */
+.rt-chip[data-pos="corner"] {
+  position: fixed;
+  z-index: 35; /* under the header (40) */
+  right: max(var(--spacing-sm), env(safe-area-inset-right));
+  bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  padding: var(--spacing-2xs) var(--spacing-xs);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  border: var(--rule-thin) solid var(--color-ink);
+  opacity: 0;
+  visibility: hidden;
+}
+.rt-chip[data-pos="corner"][data-show] {
+  opacity: 1;
+  visibility: visible;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rt-chip[data-pos="corner"] {
+    transition:
+      opacity 160ms ease-out,
+      visibility 160ms;
+  }
 }
 
 /* ------------------------------------------------------------------

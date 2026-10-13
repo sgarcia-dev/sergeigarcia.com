@@ -8,7 +8,8 @@
 //   1 when the article bottom is visible
 //
 // Variants, switched by URL param and remembered in sessionStorage for the tab:
-//   ?rtpos=header|strip                 where the chip sits (default header)
+//   ?rtpos=header|strip                 desktop placement (default header)
+//   ?rtm=compact|corner                 phone placement (default compact: in the strip, short text)
 //   ?rtemoji=grow|trip|moon|none        emoji set (default grow)
 //   ?rtcopy=cheer|coach|quiet           wording (default cheer)
 //   ?rtswap=glyph|plain                 how changed text swaps in: the site's block-glyph reveal, or instantly
@@ -20,32 +21,38 @@ const EMOJI = {
   none: ["", "", "", "", ""],
 } as const;
 
-/** [main text, small label] per step: 0-25%, 25-50%, 50-75%, 75-97%, done. "{n}" becomes "N min". */
+/**
+ * [bold text, tagline] per step: 0-25%, 25-50%, 50-75%, 75-97%, done. "{n}" becomes "N min".
+ * The tagline carries its own separator. Phones never show it (see SHORT).
+ */
 const COPY = {
   cheer: [
-    ["{n}", "left, settle in"],
-    ["{n}", "left, nice start"],
-    ["{n}", "halfway there"],
-    ["Almost there", "keep going"],
-    ["You made it", "thanks for reading"],
+    ["{n} left", "· settle in"],
+    ["{n} left", "· nice start"],
+    ["{n} left", "· halfway there"],
+    ["Almost there", "· keep going"],
+    ["You made it", "· thanks for reading"],
   ],
   coach: [
     ["{n}", "to go"],
-    ["{n}", "good pace"],
-    ["{n}", "past halfway"],
-    ["Final stretch", "nearly done"],
-    ["Done", "nicely read"],
+    ["{n}", "· good pace"],
+    ["{n}", "· past halfway"],
+    ["Final stretch", "· nearly done"],
+    ["Done", "· nicely read"],
   ],
   quiet: [
-    ["{n}", "left"],
-    ["{n}", "left"],
-    ["{n}", "left"],
+    ["{n} left", ""],
+    ["{n} left", ""],
+    ["{n} left", ""],
     ["Almost done", ""],
     ["Done", ""],
   ],
 } as const;
+/** Phone text: minutes and the emoji only ("3 min", "Almost", "Done"). */
+const SHORT = ["{n}", "{n}", "{n}", "Almost", "Done"] as const;
 
 const POS = ["header", "strip"] as const;
+const PHONE = ["compact", "corner"] as const;
 const SWAP = ["glyph", "plain"] as const;
 /** Same look as the glyph reveal in motion.ts: blank, then these three blocks, then the real letter. */
 const FRAMES = ["░", "▒", "▓"];
@@ -79,11 +86,12 @@ function init() {
   const emojiEl = chip?.querySelector<HTMLElement>(".rt-emoji");
   const box = chip?.querySelector<HTMLElement>(".rt-box");
   const mainEl = chip?.querySelector<HTMLElement>(".rt-main");
-  const subEl = chip?.querySelector<HTMLElement>(".rt-sub");
-  if (!chip || !body || !emojiEl || !box || !mainEl || !subEl) return;
+  const tailEl = chip?.querySelector<HTMLElement>(".rt-tail");
+  if (!chip || !body || !emojiEl || !box || !mainEl || !tailEl) return;
 
   const total = Math.max(1, Number(chip.dataset.total) || 1);
   const pos = pick("rtpos", POS, "header");
+  const phoneMode = pick("rtm", PHONE, "compact");
   const emojiSet = pick("rtemoji", Object.keys(EMOJI) as (keyof typeof EMOJI)[], "grow");
   const copySet = pick("rtcopy", Object.keys(COPY) as (keyof typeof COPY)[], "cheer");
   const swapMode = pick("rtswap", SWAP, "glyph");
@@ -92,46 +100,42 @@ function init() {
   const copy = COPY[copySet];
   chip.dataset.emoji = emojiSet;
 
-  const mainText = (step: number, mins: number) => copy[step][0].replace("{n}", `${mins} min`);
+  const phoneQ = matchMedia("(max-width: 47.99rem)");
+  const wideQ = matchMedia("(min-width: 56rem)");
+  const homeParent = chip.parentElement!; // the header, where the server put it
+  const root = document.documentElement;
+  const band = document.querySelector<HTMLElement>("main .page-head");
+  const footer = document.querySelector<HTMLElement>("body > footer");
+  const cssPx = (name: string) => parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
+
+  /** [bold, tagline] for a step. Phones get the short form and no tagline. */
+  function words(step: number, mins: number): [string, string] {
+    const n = `${mins} min`;
+    if (phoneQ.matches) return [SHORT[step].replace("{n}", n), ""];
+    return [copy[step][0].replace("{n}", n), copy[step][1]];
+  }
 
   // Hidden copies of every text the chip can show, stacked in the same grid cell as the live text.
   // The chip is then as wide as the widest one and never jitters as the words change.
-  const seen = new Set<string>();
-  copy.forEach((row, step) => {
-    const key = `${mainText(step, total)}|${row[1]}`;
-    if (seen.has(key)) return;
-    seen.add(key);
-    const ghost = document.createElement("span");
-    ghost.className = "rt-ghost rt-live";
-    ghost.setAttribute("aria-hidden", "true");
-    const m = document.createElement("span");
-    m.className = "rt-main";
-    m.textContent = mainText(step, total);
-    const s = document.createElement("span");
-    s.className = "rt-sub";
-    s.textContent = row[1];
-    ghost.append(m, s);
-    box.append(ghost);
-  });
-
-  // Where it sits. The strip only exists when motion.ts built it (no reduced motion, scroll
-  // timelines supported); otherwise the chip stays in the header.
-  const strip = pos === "strip" ? document.querySelector<HTMLElement>(".ph-mini-in") : null;
-  if (strip) strip.append(chip);
-  chip.dataset.pos = strip ? "strip" : "header";
-
-  const root = document.documentElement;
-  const cssPx = (name: string) => parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
-
-  /** 0..1 through the article body. */
-  function progress() {
-    const r = body!.getBoundingClientRect();
-    // The reading line: just under the compact header, and under the page head strip when it shows.
-    const line = cssPx("--hh") + (root.dataset.ph === "on" ? cssPx("--ph-strip") : 0);
-    const room = innerHeight - line; // viewport height that is not covered
-    const range = r.height - room; // how far the article can travel before its bottom shows
-    if (range <= 0) return r.bottom <= innerHeight ? 1 : 0; // a short article: done once it all shows
-    return Math.min(1, Math.max(0, (line - r.top) / range));
+  function buildGhosts() {
+    box!.querySelectorAll(".rt-ghost").forEach((g) => g.remove());
+    const seen = new Set<string>();
+    for (let step = 0; step < 5; step++) {
+      const [m, t] = words(step, total);
+      if (seen.has(m + "|" + t)) continue;
+      seen.add(m + "|" + t);
+      const ghost = document.createElement("span");
+      ghost.className = "rt-ghost rt-live";
+      ghost.setAttribute("aria-hidden", "true");
+      const mm = document.createElement("b");
+      mm.className = "rt-main";
+      mm.textContent = m;
+      const tt = document.createElement("span");
+      tt.className = "rt-tail";
+      tt.textContent = t;
+      ghost.append(mm, tt);
+      box!.append(ghost);
+    }
   }
 
   /**
@@ -174,19 +178,62 @@ function init() {
     };
   }
   const setMain = swapper(mainEl);
-  const setSub = swapper(subEl);
+  const setTail = swapper(tailEl);
+
+  /**
+   * Where the chip lives:
+   *   phones   compact (default): in the page head strip, short text. corner: pinned bottom right.
+   *   tablets  in the strip (the header has no room for it below 56rem)
+   *   desktop  the header (default) or the strip, by ?rtpos
+   * The strip only exists when motion.ts built it (no reduced motion, scroll timelines supported);
+   * without it a phone uses the corner and a wider screen keeps the chip in the header.
+   */
+  function place() {
+    const strip = document.querySelector<HTMLElement>(".ph-mini-in");
+    const phone = phoneQ.matches;
+    let where: "header" | "strip" | "corner";
+    if (phone) where = phoneMode === "corner" || !strip ? "corner" : "strip";
+    else where = pos === "header" && wideQ.matches ? "header" : strip ? "strip" : "header";
+    chip!.dataset.pos = where;
+    if (where === "strip") strip!.append(chip!);
+    else if (where === "corner") document.body.append(chip!);
+    else homeParent.append(chip!);
+    buildGhosts();
+    render(true);
+  }
+
+  /** 0..1 through the article body. */
+  function progress() {
+    const r = body!.getBoundingClientRect();
+    // The reading line: just under the compact header, and under the page head strip when it shows.
+    const line = cssPx("--hh") + (root.dataset.ph === "on" ? cssPx("--ph-strip") : 0);
+    const room = innerHeight - line; // viewport height that is not covered
+    const range = r.height - room; // how far the article can travel before its bottom shows
+    if (range <= 0) return r.bottom <= innerHeight ? 1 : 0; // a short article: done once it all shows
+    return Math.min(1, Math.max(0, (line - r.top) / range));
+  }
+
+  /** The corner pill shows once the page head has shrunk to its strip, and not over the footer. */
+  function updateCorner() {
+    if (chip!.dataset.pos !== "corner") return;
+    const line = cssPx("--hh") + (root.dataset.ph === "on" ? cssPx("--ph-strip") : 0);
+    const shrunk = !band || band.getBoundingClientRect().bottom <= line + 2;
+    const footerShown = !!footer && footer.getBoundingClientRect().top < innerHeight;
+    chip!.toggleAttribute("data-show", shrunk && !footerShown);
+  }
 
   let step = -1;
-  function render() {
+  function render(instant = false) {
     const p = progress();
     const s = p < 0.25 ? 0 : p < 0.5 ? 1 : p < 0.75 ? 2 : p < DONE_AT ? 3 : 4;
     const mins = Math.max(1, Math.round(total * (1 - p)));
-    const first = step === -1;
-    const mainChanged = setMain(mainText(s, mins), first);
-    const subChanged = setSub(copy[s][1], first);
-    const textChanged = mainChanged || subChanged;
+    const first = step === -1 || instant;
+    const [main, tail] = words(s, mins);
+    const mainChanged = setMain(main, first);
+    const tailChanged = setTail(tail, first);
     const stepChanged = s !== step;
-    if (!textChanged && !stepChanged) return;
+    updateCorner();
+    if (!mainChanged && !tailChanged && !stepChanged && !instant) return;
     step = s;
     emojiEl!.textContent = emojis[s];
     chip!.dataset.state = s === 4 ? "done" : s === 3 ? "almost" : "left";
@@ -211,6 +258,8 @@ function init() {
   };
   addEventListener("scroll", schedule, { passive: true });
   addEventListener("resize", schedule);
+  phoneQ.addEventListener("change", place);
+  wideQ.addEventListener("change", place);
   // Images and fonts change the article height after load.
   if ("ResizeObserver" in window) new ResizeObserver(schedule).observe(body);
   // Back/forward cache: the page comes back as it was, with the scroll position restored.
@@ -219,7 +268,7 @@ function init() {
   });
   // motion.ts sets html[data-ph] after fonts load, which moves the reading line.
   void document.fonts.ready.then(schedule);
-  render();
+  place();
 }
 
 init();

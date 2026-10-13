@@ -5,7 +5,7 @@ import ProjectRow from "../components/ProjectRow.astro";
 import PostRow from "../components/PostRow.astro";
 import Icon from "../components/Icon.astro";
 import { Picture } from "astro:assets";
-import { SITE } from "../lib/site";
+import { SITE, WRITING_BAND, ABOUT_BAND } from "../lib/site";
 import headshot from "../assets/about/headshot.jpg";
 import { PERSON, PERSON_ID } from "../lib/seo";
 import { getWork, getProjects, getPosts, getAllPosts } from "../lib/content";
@@ -136,7 +136,7 @@ const jsonLd = [
     </div>
   </section>
 
-  <section id="writing" class="band-tomato edge-b" aria-labelledby="writing-h">
+  <section id="writing" class={`band-${WRITING_BAND} edge-b`} aria-labelledby="writing-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg">
       <div class="section-head lg:col-span-4 xl:col-span-5">
         <h2 id="writing-h" class="font-display text-h2 tracking-tight">Writing</h2>
@@ -159,7 +159,7 @@ const jsonLd = [
     </div>
   </section>
 
-  <section id="about" class="band-cobalt" aria-labelledby="about-h">
+  <section id="about" class={`band-${ABOUT_BAND}`} aria-labelledby="about-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <h2 id="about-h" class="font-display text-h2 tracking-tight lg:col-span-4 xl:col-span-5">About</h2>
       <div class="lg:col-span-8 xl:col-span-7">

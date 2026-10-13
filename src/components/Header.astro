@@ -35,13 +35,13 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     {
       readMinutes && (
         <div class="rt-chip" data-rt data-total={readMinutes} aria-hidden="true">
-          <span class="rt-emoji">🌱</span>
           <span class="rt-box">
             <span class="rt-live">
-              <span class="rt-main">{readMinutes} min</span>
-              <span class="rt-sub">left, settle in</span>
+              <b class="rt-main">{readMinutes} min left</b>
+              <span class="rt-tail">· settle in</span>
             </span>
           </span>
+          <span class="rt-emoji">🌱</span>
         </div>
       )
     }

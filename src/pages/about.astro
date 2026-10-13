@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import { Picture } from "astro:assets";
-import { SITE } from "../lib/site";
+import { SITE, ABOUT_BAND } from "../lib/site";
 import { PERSON, breadcrumbs } from "../lib/seo";
 import family from "../assets/about/family.jpg";
 
@@ -25,7 +25,7 @@ const jsonLd = [
   ogType="profile"
   jsonLd={jsonLd}
 >
-  <PageHead band="cobalt" title="About" />
+  <PageHead band={ABOUT_BAND} title="About" />
 
   <div class="shell py-sm lg:py-md">
     <section class="about-section grid gap-md py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">

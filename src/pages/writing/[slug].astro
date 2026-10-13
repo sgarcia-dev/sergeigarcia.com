@@ -7,7 +7,7 @@ import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
-import { SITE } from "../../lib/site";
+import { SITE, WRITING_BAND } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
 import { AUTHOR_REF, shareImage } from "../../lib/seo";
 
@@ -49,7 +49,7 @@ const jsonLd = [
 ---
 
 <Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
-  <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
+  <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
