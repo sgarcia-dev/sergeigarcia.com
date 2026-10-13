@@ -1,0 +1,274 @@
+/*
+  LAB ONLY: liveliness ideas. Every rule is scoped to html[data-lively~="<name>"], so with no
+  attribute the site is unchanged. Nothing here touches an element that carries a
+  view-transition-name (list titles, page headings, the name mark).
+
+  Ground rules shared by every idea:
+  - Moving things only inside prefers-reduced-motion: no-preference. Reduced motion gets the static end state.
+  - Only transform, opacity, background-size and (small elements) box-shadow animate.
+  - Nothing changes size after load.
+*/
+
+/* ---------------------------------------------------------------------------------------------
+   1. marker: a soft highlighter swipe behind a few key phrases. lab-lively.ts wraps the phrases in
+   <span class="lv-mark">. The CSS default is the finished highlight (so a wrapped phrase is never
+   blank). With motion allowed, the script first adds .lv-pre (highlight collapsed to nothing), then
+   .lv-in once the phrase is on screen, and the highlight draws left to right once and stays.
+   --------------------------------------------------------------------------------------------- */
+html[data-lively~="marker"] .lv-mark {
+  --lv-mark-color: #ffe98a;
+  --lv-mark-size: 100% 62%;
+  --lv-mark-pos: 0 80%;
+  /* The block runs a little past the text on both sides; the negative margin cancels the padding. */
+  padding-inline: 0.16em;
+  margin-inline: -0.16em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  background: linear-gradient(var(--lv-mark-color), var(--lv-mark-color)) var(--lv-mark-pos) / var(--lv-mark-size) no-repeat;
+}
+/* In dark mode the page text is light, which fails on a pale block. On paper the marker becomes a softer
+   underline bar below the letters. On colored bands the text is fixed black, so it stays a block. */
+@media (prefers-color-scheme: dark) {
+  html[data-lively~="marker"] .lv-mark:not(.lv-mark--band) {
+    --lv-mark-color: rgba(255, 212, 0, 0.62);
+    --lv-mark-size: 100% 0.2em;
+    --lv-mark-pos: 0 96%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lively~="marker"] .lv-mark.lv-pre {
+    background-size: 0% var(--lv-mark-h, 62%);
+  }
+  html[data-lively~="marker"] .lv-mark.lv-pre.lv-in {
+    background-size: var(--lv-mark-size);
+    transition: background-size 750ms var(--ease-out);
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark) {
+  html[data-lively~="marker"] .lv-mark.lv-pre:not(.lv-mark--band) {
+    --lv-mark-h: 0.2em;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   2. rows: a yellow fill sweeps in from the left behind a hovered or focused list row, and an
+   arrow slides in after the title. Pure CSS. The fill is a pseudo-element on the <li>, never on the
+   title link, so the title keeps morphing between pages.
+   --------------------------------------------------------------------------------------------- */
+html[data-lively~="rows"] .row {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+}
+html[data-lively~="rows"] .row::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 -0.75rem;
+  background: var(--color-yellow);
+  transform: scaleX(0);
+  /* Leaves toward the right, comes in from the left. */
+  transform-origin: right center;
+  pointer-events: none;
+}
+/* The arrow sits in the gap to the left of the title, pointing at it, and slides in. It is absolutely
+   positioned, so it takes no space and never changes a row's height. Wide screens only: on phones
+   there is no gap to put it in. */
+@media (min-width: 48rem) {
+  html[data-lively~="rows"] .row :is(h2, h3) {
+    position: relative;
+  }
+  html[data-lively~="rows"] .row :is(h2, h3)::after {
+    content: "\2192";
+    content: "\2192" / "";
+    position: absolute;
+    top: 0;
+    right: calc(100% + 0.3rem);
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-bold);
+    font-size: 0.8em;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateX(-0.6em);
+  }
+}
+/* The fill is yellow in every color scheme, so the row text goes black while it is active. */
+html[data-lively~="rows"] .row:has(a.row-link:focus-visible) {
+  color: var(--color-black);
+  --c-muted: var(--color-black);
+  --pill-line: var(--color-black);
+  --edge: var(--color-black);
+}
+html[data-lively~="rows"] .row:has(a.row-link:focus-visible)::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+html[data-lively~="rows"] .row:has(a.row-link:focus-visible) :is(h2, h3)::after {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: hover) {
+  html[data-lively~="rows"] .row:hover {
+    color: var(--color-black);
+    --c-muted: var(--color-black);
+    --pill-line: var(--color-black);
+    --edge: var(--color-black);
+  }
+  html[data-lively~="rows"] .row:hover::before {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  html[data-lively~="rows"] .row:hover :is(h2, h3)::after {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lively~="rows"] .row {
+    transition: color 160ms ease-out;
+  }
+  html[data-lively~="rows"] .row::before {
+    transition: transform 240ms var(--ease-out);
+  }
+  html[data-lively~="rows"] .row :is(h2, h3)::after {
+    transition:
+      transform 260ms var(--ease-out) 60ms,
+      opacity 160ms ease-out 60ms;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   5. sticker: the headshot and a rotated label chip tilt and pop on hover, like stickers on a zine.
+   The chips are decorative duplicates of text already on the page (aria-hidden).
+   --------------------------------------------------------------------------------------------- */
+html[data-lively~="sticker"] .lv-sticker-host {
+  position: relative;
+}
+html[data-lively~="sticker"] picture.lv-sticker-host {
+  width: fit-content;
+}
+html[data-lively~="sticker"] .lv-chip {
+  position: absolute;
+  z-index: 1;
+  display: inline-block;
+  border: 2px solid var(--color-black);
+  background: var(--color-white);
+  color: var(--color-black);
+  padding: 0.125rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  transform: rotate(var(--lv-rest, 5deg));
+  transform-origin: left center;
+}
+/* Beside the round headshot. */
+html[data-lively~="sticker"] .hero picture.lv-sticker-host {
+  --lv-av: 3.5rem;
+}
+@media (min-width: 64rem) {
+  html[data-lively~="sticker"] .hero picture.lv-sticker-host {
+    --lv-av: 4.5rem;
+  }
+}
+html[data-lively~="sticker"] .hero .lv-chip {
+  left: calc(var(--lv-av) + 0.375rem);
+  top: calc((var(--lv-av) - 1.9rem) / 2);
+}
+/* Over the corner of the family photo. */
+html[data-lively~="sticker"] .photo .lv-chip {
+  --lv-rest: -4deg;
+  right: -0.375rem;
+  bottom: -0.875rem;
+  transform-origin: right center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lively~="sticker"] .lv-chip,
+  html[data-lively~="sticker"] .hero .avatar {
+    transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  html[data-lively~="sticker"] .lv-sticker-host:hover .avatar {
+    transform: rotate(-9deg) scale(1.1);
+  }
+  html[data-lively~="sticker"] .hero .lv-sticker-host:hover .lv-chip {
+    transform: rotate(-3deg) scale(1.12);
+  }
+  html[data-lively~="sticker"] .photo.lv-sticker-host:hover .lv-chip {
+    transform: rotate(2deg) scale(1.12);
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Sticker pills: skill and tech pills tilt and pop on hover, each at its own angle, like stickers
+   stuck on by hand. Hover only, no idle motion. Pills are not focusable, so there is no focus state.
+   --------------------------------------------------------------------------------------------- */
+html[data-lively~="sticker"] .pill {
+  --lv-tilt: -2.5deg;
+}
+html[data-lively~="sticker"] .pill:nth-child(5n + 2) {
+  --lv-tilt: 3deg;
+}
+html[data-lively~="sticker"] .pill:nth-child(5n + 3) {
+  --lv-tilt: -4deg;
+}
+html[data-lively~="sticker"] .pill:nth-child(5n + 4) {
+  --lv-tilt: 2deg;
+}
+html[data-lively~="sticker"] .pill:nth-child(5n + 5) {
+  --lv-tilt: -1.5deg;
+}
+@media (hover: hover) {
+  html[data-lively~="sticker"] .pill:hover {
+    background: var(--color-white);
+    color: var(--color-black);
+    border-color: var(--color-black);
+    position: relative;
+    z-index: 1;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-lively~="sticker"] .pill {
+    transition:
+      transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  html[data-lively~="sticker"] .pill:hover {
+    transform: rotate(var(--lv-tilt)) scale(1.1);
+    box-shadow: 2px 2px 0 var(--color-black);
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   6. links: every inline text link in the main content (paragraphs, list items, quotes, captions)
+   carries a thick yellow bar under the text that grows into a full block on hover or focus. The
+   normal underline stays, so a link never depends on color alone. Left alone: buttons and chips
+   (.hit), list title links (.row-link), hidden duplicates, anything with a view-transition-name, and
+   links on the cobalt, yellow and black bands (the bar would vanish or clash with the text color).
+   --------------------------------------------------------------------------------------------- */
+html[data-lively~="links"]
+  main
+  :is(p, li, dd, blockquote, figcaption)
+  a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  background: linear-gradient(var(--color-yellow), var(--color-yellow)) 0 100% / 100% 0.3em no-repeat;
+}
+html[data-lively~="links"]
+  main
+  :is(p, li, dd, blockquote, figcaption)
+  a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *):is(:hover, :focus-visible) {
+  background-size: 100% 100%;
+  color: var(--color-black);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lively~="links"]
+    main
+    :is(p, li, dd, blockquote, figcaption)
+    a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
+    transition:
+      background-size 200ms var(--ease-out),
+      color 200ms ease-out;
+  }
+}

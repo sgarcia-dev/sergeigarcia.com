@@ -8,5 +8,6 @@ export default defineConfig({
   trailingSlash: "always",
   build: { format: "directory" },
   integrations: [sitemap()],
-  vite: { plugins: [tailwindcss()] },
+  // LAB ONLY: node_modules is a symlink to the main checkout; let the dev server serve it.
+  vite: { plugins: [tailwindcss()], server: { fs: { allow: ["..", "../sergeigarcia.com"] } } },
 });

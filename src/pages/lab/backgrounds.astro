@@ -1,0 +1,151 @@
+---
+// LAB ONLY: compare the background texture variants side by side.
+import Base from "../../layouts/Base.astro";
+
+const variants = [
+  { name: "dots-fade", note: "Small dots swell into big ones toward the bottom right, like comic shading." },
+  { name: "dots-big", note: "Large, sparse dots." },
+  { name: "hatch", note: "Diagonal print hatching drifting sideways." },
+  { name: "grid", note: "Graph paper lines. Brutalist." },
+];
+const speeds = [
+  { n: 1, px: "13.9 (default)" },
+  { n: 2, px: "20" },
+  { n: 3, px: "28" },
+];
+const contrasts = [
+  { n: 1, label: "softer" },
+  { n: 2, label: "middle" },
+  { n: 3, label: "a little stronger" },
+];
+---
+
+<Base title="Background lab" description="Lab page for comparing background textures.">
+  <!-- The real-page switch (html[data-bg]) would fight the per-swatch demos, so clear it here. -->
+  <script is:inline>
+    delete document.documentElement.dataset.bg;
+  </script>
+
+  <section class="edge-b">
+    <div class="shell py-lg lg:py-xl">
+      <p class="label mb-sm">Lab / backgrounds</p>
+      <h1 class="font-display text-h2 tracking-tight">Background textures</h1>
+      <p class="mt-sm max-w-prose text-lg">
+        Each pair shows the texture on the yellow and cobalt blocks. Open a variant on the real home page, or try the
+        wild card.
+      </p>
+      <p class="label mt-md">Sergei's pick</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        <li><a class="hit hit-primary" href="/?bg=wild&lively=off">Sergei's pick</a></li>
+      </ul>
+      <p class="mt-xs max-w-prose">
+        <code>/?bg=wild&amp;lively=off</code>. A random pattern and drift direction on
+        every page load, never the same pattern twice in a row. <code>lively=off</code> clears the cursor-dots
+        experiment.
+      </p>
+      <p class="label mt-md">Wild card (real home page)</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        <li><a class="hit" href="/?bg=wild">/?bg=wild (random every load)</a></li>
+        <li><a class="hit" href="/?bg=wild-page">/?bg=wild-page (fixed per page)</a></li>
+      </ul>
+      <p class="label mt-md">Speed (px per second, every variant, sticks for this tab)</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        {speeds.map((s) => <li><a class="hit" href={`/lab/backgrounds/?bgspeed=${s.n}`}>{s.n}: {s.px}</a></li>)}
+      </ul>
+      <p class="label mt-md">Contrast override (each pattern has its own default: hatch 2, grid 2, dots-fade 2, dots-big 1; a level here forces all of them, sticks for this tab)</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        {contrasts.map((c) => <li><a class="hit" href={`/lab/backgrounds/?bgcontrast=${c.n}`}>{c.n}: {c.label}</a></li>)}
+      </ul>
+      <p class="label mt-md">Scroll depth (fixed is the default)</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        <li><a class="hit" href="/lab/backgrounds/?bgscroll=fixed">fixed (pinned to the screen)</a></li>
+        <li><a class="hit" href="/lab/backgrounds/?bgscroll=none">none (moves with the page)</a></li>
+      </ul>
+      <p class="label mt-md">Reset</p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        <li><a class="hit" href="/?bg=off">Texture off (/?bg=off)</a></li>
+        <li><a class="hit" href="/?lab=reset">Reset all lab switches</a></li>
+      </ul>
+      <p class="mt-xs max-w-prose">
+        Lab switches persist for this browser tab. <code>/?lab=reset</code> clears all of them.
+      </p>
+    </div>
+  </section>
+
+  {
+    variants.map((v) => (
+      <section class="edge-b" data-bg-demo={v.name} aria-labelledby={`h-${v.name}`}>
+        <div class="shell py-md">
+          <h2 id={`h-${v.name}`} class="font-title text-xl">
+            <code>{v.name}</code>
+          </h2>
+          <p class="mt-2xs max-w-prose">{v.note}</p>
+          <p class="mt-xs">
+            <a class="hit" href={`/?bg=${v.name}`}>
+              See on home page: /?bg={v.name}
+            </a>
+          </p>
+        </div>
+        <div class="demo-pair grid md:grid-cols-2">
+          <div class="band-yellow demo-swatch">
+            <p class="font-display text-h2 tracking-tight">Yellow block</p>
+            <p class="mt-xs max-w-prose text-lg">Senior software engineer. Front end, full stack, AI-assisted development.</p>
+            <p class="mt-sm"><a class="hit hit-primary" href="/about/">A button</a></p>
+          </div>
+          <div class="band-cobalt demo-swatch">
+            <p class="font-display text-h2 tracking-tight">Cobalt block</p>
+            <p class="mt-xs max-w-prose text-lg">I build fast, accessible web products and the tooling that helps teams ship them.</p>
+            <p class="mt-sm"><a class="hit hit-primary" href="/about/">A button</a></p>
+          </div>
+        </div>
+        <div class="demo-ladder grid grid-cols-3">
+          {[1, 2, 3].map((n) => (
+            <div data-cm-demo={n}>
+              <div class="band-yellow demo-mini">
+                <p class="font-title text-xl">Contrast {n}</p>
+                <p>Body text on yellow.</p>
+              </div>
+              <div class="band-cobalt demo-mini">
+                <p class="font-title text-xl">Contrast {n}</p>
+                <p>Body text on cobalt.</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .demo-ladder {
+    border-top: var(--rule-thick) solid var(--color-black);
+  }
+  .demo-ladder > div + div {
+    border-left: var(--rule-thick) solid var(--color-black);
+  }
+  .demo-mini {
+    padding: var(--spacing-sm);
+    min-height: 110px;
+  }
+  .demo-pair {
+    border-top: var(--rule-thick) solid var(--color-black);
+  }
+  .demo-swatch {
+    min-height: 220px;
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  @media (min-width: 64rem) {
+    .demo-swatch {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .demo-swatch + .demo-swatch {
+      border-left: var(--rule-thick) solid var(--color-black);
+    }
+  }
+  @media (max-width: 47.99rem) {
+    .demo-swatch + .demo-swatch {
+      border-top: var(--rule-thick) solid var(--color-black);
+    }
+  }
+</style>

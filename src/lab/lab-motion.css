@@ -1,0 +1,431 @@
+/* LAB ONLY: glyph decode, shrinking header and reading progress.
+   Active variants come from <html data-motion / data-header / data-progress>. Owned by the motion worker.
+   With no attribute set, nothing in this file matches. */
+
+/* ------------------------------------------------------------------
+   motion=glyph (alias decode-glyph)
+   Mono text builds up letter by letter: nothing, then ░ ▒ ▓, then the real letter.
+   lab-motion.ts never edits the element's own nodes. While it reveals, the element's own ink is
+   transparent and an aria-hidden overlay of positioned boxes (.dc-ov > .dc-b) draws the
+   letters on top. When the reveal ends only the overlay is removed.
+   No JS means no data-motion and no data-dc, so none of this ever matches and text just shows.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Ink off while pending or running; the overlay draws in the element's color. */
+  [data-dc="pending"],
+  [data-dc="run"],
+  [data-dc="pending"] *,
+  [data-dc="run"] * {
+    -webkit-text-fill-color: transparent;
+  }
+  [data-dc="run"] {
+    position: relative;
+  }
+  [data-dc="run"] .dc-ov,
+  [data-dc="run"] .dc-ov * {
+    -webkit-text-fill-color: currentColor;
+  }
+  .dc-ov {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .dc-b {
+    position: absolute;
+    display: block;
+    white-space: pre;
+    font-style: normal;
+  }
+  .dc-b::before {
+    content: attr(data-g);
+  }
+}
+
+/* Hide the real text until the script has taken over, so the finished text does not flash
+   before the reveal begins. Only when the inline head script has set data-motion (so never
+   without JS) and motion is welcome. A 1.5s failsafe shows everything even if the module
+   never runs. Same targets as TARGETS in lab-motion.ts; anything the script rules out gets
+   data-dc="skip". */
+@keyframes lab-dc-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(html[data-motion="glyph"], html[data-motion="decode-glyph"])
+    :is(main .label, main .hero-aside p:not(.font-title), main .section-head > p):not([data-dc]):not(
+      :where(a, button, nav) *
+    ) {
+    opacity: 0;
+    animation: lab-dc-failsafe 1ms linear 1.5s forwards;
+  }
+}
+
+/* ------------------------------------------------------------------
+   B. Header variants: data-header = shrink (the pick) | sticky (fallback)
+   Header.astro gives the header .site-header, .site-header-inner and .site-nav.
+   ------------------------------------------------------------------ */
+html[data-header] {
+  /* Anchor jumps land below the stuck header. */
+  scroll-padding-top: 5rem;
+  --lab-hh: 79px;
+}
+@media (max-width: 47.99rem) {
+  html[data-header] {
+    scroll-padding-top: 9rem;
+  }
+}
+html[data-header="shrink"] {
+  --lab-hh: 51px;
+}
+/* Sticky columns on desktop (home section headings, project meta) sit under the header. */
+html[data-header] .section-head,
+html[data-header] .meta-col {
+  top: calc(var(--lab-hh) + var(--spacing-md));
+}
+
+html:is([data-header="sticky"], [data-header="shrink"]) .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--color-bg);
+}
+
+/* --- shrink ---
+   Everything compact is defined once as custom properties, then used by both the
+   scroll-driven animation and the class fallback.
+   The header stays in flow, so when it gets shorter the page would jump up. To stop
+   that, margin-bottom grows by exactly the height lost (--lab-delta). Content still
+   scrolls under the header normally because the header covers it. */
+html[data-header="shrink"] .site-header {
+  /* desktop / tablet (header is one row from 48rem) */
+  --lab-c-py: 6px;
+  --lab-c-hit: 2.25rem; /* 36px; pointer devices only, phones keep 44px below */
+  --lab-c-mark: 1.125rem;
+  --lab-delta: 28px; /* 79px -> 51px */
+}
+@media (max-width: 47.99rem) {
+  html[data-header="shrink"] .site-header {
+    --lab-c-py: 6px;
+    --lab-c-hit: 2.75rem;
+    --lab-c-mark: 1.25rem;
+    --lab-delta: 80px; /* 139px (two rows) -> 59px (one row) */
+  }
+}
+
+@keyframes lab-h-outer {
+  to {
+    margin-bottom: var(--lab-delta);
+  }
+}
+@keyframes lab-h-inner {
+  to {
+    padding-block: var(--lab-c-py);
+  }
+}
+@keyframes lab-h-mark {
+  to {
+    height: var(--lab-c-mark);
+  }
+}
+@keyframes lab-h-hit {
+  to {
+    min-height: var(--lab-c-hit);
+    padding-block: 6px;
+  }
+}
+@keyframes lab-h-hit-logo {
+  to {
+    min-height: var(--lab-c-hit);
+    padding-block: var(--spacing-2xs);
+  }
+}
+/* Phones: the stacked header (logo above a 4 column grid) becomes one row. A change of
+   layout cannot be tweened, so it snaps once, in the first ~2px of the shrink range
+   (4% of 60px), then the padding eases down. margin-bottom jumps by the same amount
+   at the snap so the page below does not move. */
+@keyframes lab-h-outer-m {
+  0% {
+    margin-bottom: 0;
+  }
+  4% {
+    margin-bottom: calc(var(--lab-delta) - 19px);
+  }
+  100% {
+    margin-bottom: var(--lab-delta);
+  }
+}
+@keyframes lab-h-row {
+  0%,
+  2% {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  2.01%,
+  100% {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+}
+@keyframes lab-h-logo-chip {
+  0% {
+    padding-inline: var(--spacing-sm);
+  }
+  4%,
+  100% {
+    align-self: center;
+    padding-inline: var(--spacing-xs);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+@keyframes lab-h-nav {
+  0% {
+    flex: 0 1 auto;
+  }
+  4%,
+  100% {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+@keyframes lab-h-navgrid {
+  4%,
+  100% {
+    gap: var(--spacing-2xs);
+  }
+}
+@keyframes lab-h-navhit {
+  4%,
+  100% {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    padding-inline: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    html[data-header="shrink"] :is(.site-header, .site-header-inner, .site-header .logo-mark, .site-header .hit) {
+      animation-duration: 1ms; /* ignored by scroll timelines, required by some engines */
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 80px 140px;
+    }
+    html[data-header="shrink"] .site-header {
+      animation-name: lab-h-outer;
+    }
+    html[data-header="shrink"] .site-header-inner {
+      animation-name: lab-h-inner;
+    }
+    html[data-header="shrink"] .site-header .logo-mark {
+      animation-name: lab-h-mark;
+    }
+    /* Desktop: only pointer devices get the 36px buttons. */
+    @media (min-width: 48rem) and (pointer: fine) {
+      html[data-header="shrink"] .site-header .hit {
+        animation-name: lab-h-hit;
+      }
+      html[data-header="shrink"] .site-header .hit-logo {
+        animation-name: lab-h-hit-logo;
+      }
+    }
+    @media (max-width: 47.99rem) {
+      html[data-header="shrink"] .site-header {
+        animation-name: lab-h-outer-m;
+      }
+      html[data-header="shrink"] .site-header-inner {
+        animation-name: lab-h-inner, lab-h-row;
+      }
+      html[data-header="shrink"] .site-header .hit-logo {
+        animation-name: lab-h-logo-chip;
+      }
+      html[data-header="shrink"] .site-header .site-nav {
+        animation-name: lab-h-nav;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root block);
+        animation-range: 80px 140px;
+      }
+      html[data-header="shrink"] .site-header .site-nav > ul {
+        animation: lab-h-navgrid 1ms linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 80px 140px;
+      }
+      html[data-header="shrink"] .site-header .hit-nav {
+        animation-name: lab-h-navhit;
+      }
+    }
+  }
+
+  /* Fallback where scroll() timelines do not exist: lab-motion.ts toggles .is-compact
+     from an IntersectionObserver sentinel 80px down the page. */
+  @supports not (animation-timeline: scroll()) {
+    html[data-header="shrink"] .site-header,
+    html[data-header="shrink"] .site-header-inner,
+    html[data-header="shrink"] .site-header .logo-mark,
+    html[data-header="shrink"] .site-header .hit {
+      transition:
+        margin-bottom 160ms var(--ease-out),
+        padding 160ms var(--ease-out),
+        height 160ms var(--ease-out),
+        min-height 160ms var(--ease-out);
+    }
+    html[data-header="shrink"] .site-header.is-compact {
+      margin-bottom: var(--lab-delta);
+    }
+    html[data-header="shrink"] .site-header.is-compact .site-header-inner {
+      padding-block: var(--lab-c-py);
+    }
+    html[data-header="shrink"] .site-header.is-compact .logo-mark {
+      height: var(--lab-c-mark);
+    }
+    @media (min-width: 48rem) and (pointer: fine) {
+      html[data-header="shrink"] .site-header.is-compact .hit {
+        min-height: var(--lab-c-hit);
+      }
+      html[data-header="shrink"] .site-header.is-compact .hit-logo {
+        padding-block: var(--spacing-2xs);
+      }
+    }
+    @media (max-width: 47.99rem) {
+      html[data-header="shrink"] .site-header.is-compact .site-header-inner {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+      html[data-header="shrink"] .site-header.is-compact .hit-logo {
+        align-self: center;
+        padding-inline: var(--spacing-xs);
+        min-width: 2.75rem;
+        min-height: 2.75rem;
+      }
+      html[data-header="shrink"] .site-header.is-compact .site-nav {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      html[data-header="shrink"] .site-header.is-compact .site-nav > ul {
+        gap: var(--spacing-2xs);
+      }
+      html[data-header="shrink"] .site-header.is-compact .hit-nav {
+        font-size: 0.75rem;
+        letter-spacing: 0;
+        padding-inline: 2px;
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Page head shrink: data-header = pagehead
+   The nav header is NOT sticky here. The title band (PageHead) is made sticky with a
+   negative top, so only its bottom --ph-strip stays on screen. That is a pure sticky
+   position change: no height animation, no layout shift. lab-motion.ts measures the band
+   (--ph-H) and the scroll range where the strip arrives (--ph-start .. --ph-end), adds a
+   small aria-hidden .ph-mini title in the strip, and sets html[data-ph]. The mini title
+   fades in (scroll-driven) as the strip reaches the top, and covers the band's lower
+   content. Without JS, scroll timelines, or with reduced motion, nothing happens.
+   ------------------------------------------------------------------ */
+html[data-header="pagehead"] {
+  --ph-strip: 48px; /* visible banner height, including its 3px rule */
+  scroll-padding-top: 4rem;
+}
+.ph-mini {
+  display: none;
+}
+@keyframes ph-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    html[data-header="pagehead"][data-ph="on"] .page-head {
+      position: sticky;
+      top: calc(var(--ph-strip) - var(--ph-H));
+      z-index: 30;
+    }
+    html[data-header="pagehead"][data-ph="on"] .ph-mini {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      inset: auto 0 0 0;
+      height: calc(var(--ph-strip) - var(--rule-thick));
+      background: inherit; /* the band's own fill, so it covers the band's lower content */
+      pointer-events: none;
+      opacity: 0;
+      animation: ph-in linear both;
+      animation-timeline: scroll(root block);
+      animation-range: var(--ph-start) var(--ph-end);
+    }
+    .ph-mini-title {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.375rem;
+      line-height: 1.2;
+      letter-spacing: var(--tracking-tight);
+    }
+    /* Sticky columns sit below the banner instead of the top edge. */
+    html[data-header="pagehead"][data-ph="on"] .section-head,
+    html[data-header="pagehead"][data-ph="on"] .meta-col {
+      top: calc(var(--ph-strip) + var(--spacing-md));
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Reading progress: data-progress = bar
+   Injected by lab-motion.ts on /writing/<slug> and /projects/<slug> only, and only when scroll
+   timelines are supported and motion is welcome. A 4px bar fixed at the very top of the
+   viewport, above any sticky header or banner, growing left to right with the scroll.
+   ------------------------------------------------------------------ */
+@keyframes lab-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.lab-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  z-index: 60;
+  pointer-events: none;
+}
+.lab-progress > i {
+  display: block;
+  height: 100%;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .lab-progress > i {
+      animation: lab-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@media print {
+  .lab-progress {
+    display: none;
+  }
+}

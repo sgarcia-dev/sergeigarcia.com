@@ -1,0 +1,54 @@
+---
+// LAB ONLY. Reads ?bg= ?bgspeed= ?bgcontrast= ?bgscroll=(none to unpin) ?motion= ?header= ?progress= ?lively= from the URL, remembers them for the
+// browser tab (sessionStorage) so they survive navigation, and sets data-* on <html>.
+// ?lab=reset clears them. Runs inline in <head> so there is no flash.
+---
+<script is:inline>
+  (function () {
+    var keys = ["bg", "bgspeed", "bgcontrast", "bgscroll", "motion", "header", "progress", "lively"];
+    var p = new URLSearchParams(location.search);
+    try {
+      if (p.get("lab") === "reset") keys.forEach(function (k) { sessionStorage.removeItem("lab-" + k); });
+      keys.forEach(function (k) {
+        if (p.has(k)) sessionStorage.setItem("lab-" + k, p.get(k));
+        var v = sessionStorage.getItem("lab-" + k);
+        if (v && v !== "off") document.documentElement.dataset[k] = v;
+      });
+    } catch (e) {}
+
+    // ?bg=wild       random pattern + random drift direction on every page load. It never repeats the
+    //                previous page load's pattern in this tab, so a refresh visibly changes it.
+    // ?bg=wild-page  pattern + direction fixed per page, from a hash of location.pathname.
+    // Both end up as a normal data-bg name plus --bg-dx / --bg-dy (-1, 0 or 1) and --bg-angle (deg).
+    var root = document.documentElement;
+    var mode = root.dataset.bg;
+    if (mode === "wild" || mode === "wild-page") {
+      var pats = ["dots-fade", "dots-big", "hatch", "grid"];
+      var dirs = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]; // E SE S SW W NW N NE
+      var a, d;
+      if (mode === "wild") {
+        var last = -1;
+        try { last = parseInt(sessionStorage.getItem("lab-wildlast"), 10); } catch (e) {}
+        a = Math.floor(Math.random() * pats.length);
+        if (a === last) a = (a + 1 + Math.floor(Math.random() * (pats.length - 1))) % pats.length;
+        d = Math.floor(Math.random() * dirs.length);
+        try { sessionStorage.setItem("lab-wildlast", String(a)); } catch (e) {}
+      } else {
+        var h = 5381, path = location.pathname;
+        for (var i = 0; i < path.length; i++) h = (Math.imul(h, 33) + path.charCodeAt(i)) >>> 0;
+        h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0;
+        h = Math.imul(h ^ (h >>> 13), 3266489917) >>> 0;
+        h = (h ^ (h >>> 16)) >>> 0;
+        a = h % pats.length;
+        d = (h >>> 8) % dirs.length;
+      }
+      // Hatching moving along its own lines (NE/SW) would look static, so turn it to E/W.
+      if (pats[a] === "hatch" && (d === 7 || d === 3)) d = d === 7 ? 0 : 4;
+      root.dataset.bg = pats[a];
+      root.dataset.bgWild = mode;
+      root.style.setProperty("--bg-dx", dirs[d][0]);
+      root.style.setProperty("--bg-dy", dirs[d][1]);
+      root.style.setProperty("--bg-angle", d * 45 + "deg");
+    }
+  })();
+</script>

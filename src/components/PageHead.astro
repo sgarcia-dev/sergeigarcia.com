@@ -13,12 +13,12 @@ interface Props {
 const { title, band = "yellow", eyebrow, vt, size = "h2" } = Astro.props;
 ---
 
-<section class:list={["edge-b", `band-${band}`]}>
-  <div class="shell py-lg lg:py-xl">
+<section class:list={["edge-b", `band-${band}`, "page-head"]}>
+  <div class="shell py-lg lg:py-xl page-head-inner">
     {eyebrow && <p class="label mb-sm">{eyebrow}</p>}
     <h1
       class:list={[
-        "max-w-title tracking-tight",
+        "max-w-title tracking-tight page-head-title",
         size === "h2" ? "font-display text-h2" : "font-title text-xl",
       ]}
       style={vt ? `view-transition-name: ${vt}` : undefined}

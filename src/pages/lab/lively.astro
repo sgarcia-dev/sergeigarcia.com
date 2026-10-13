@@ -1,0 +1,106 @@
+---
+// LAB ONLY: compare the "liveliness" ideas one at a time or together. Each link sets
+// html[data-lively] for the tab (see src/lab/LabSwitch.astro). ?lively=off clears it.
+import Base from "../../layouts/Base.astro";
+
+const ideas = [
+  {
+    name: "marker",
+    what: "A soft yellow highlighter swipe draws left to right behind two or three key phrases the first time they are on screen, then stays.",
+    why: "Points the eye at the facts that matter (13 years, what changed) without a heading or a bold. Draws once. Without motion, or without JS, you get the plain text or a static highlight.",
+    links: [
+      ["/?lively=marker", "Home"],
+      ["/about/?lively=marker", "About"],
+    ],
+  },
+  {
+    name: "rows",
+    what: "Hover or keyboard focus on a list row sweeps a yellow fill in from the left, and an arrow slides in after the title. Clicking anywhere on the row opens it.",
+    why: "Tells you the whole row is the target, and the sweep rewards the pointer. Pure CSS, plus a tiny click forwarder.",
+    links: [
+      ["/projects/?lively=rows", "Projects"],
+      ["/work/?lively=rows", "Work"],
+      ["/?lively=rows", "Home (all three lists)"],
+    ],
+  },
+  {
+    name: "sticker",
+    what: "The headshot and a small tilted chip tilt and pop on hover. On About, the chip sits on the corner of the family photo. Skill pills tilt and pop on hover too, each at its own angle.",
+    why: "A bit of zine personality on the things people look at, and it rewards a hover. Hover only, nothing moves on its own.",
+    links: [
+      ["/?lively=sticker", "Home (headshot and pills)"],
+      ["/about/?lively=sticker", "About"],
+      ["/projects/typing-com-react/?lively=sticker", "A case study (pills)"],
+    ],
+  },
+  {
+    name: "links",
+    what: "Inline text links get a thick yellow bar under the text that grows into a full block on hover and focus. The underline stays.",
+    why: "A clear, confident link state in the site's own color. It applies to every text link inside main content, but only three pages have any today: Toptal, Reddit and the localization case study.",
+    links: [
+      ["/work/toptal/?lively=links", "Toptal (has a body link)"],
+      ["/projects/reddit-localization/?lively=links", "A case study"],
+    ],
+  },
+];
+
+const picks = "marker+rows+sticker+links";
+---
+
+<Base title="Liveliness lab" description="Lab page for comparing small liveliness ideas.">
+  <section class="edge-b band-yellow">
+    <div class="shell py-lg lg:py-xl">
+      <p class="label mb-sm">Lab / lively</p>
+      <h1 class="font-display text-h2 tracking-tight">Liveliness ideas</h1>
+      <p class="mt-sm max-w-prose text-lg">
+        Four small touches, each on its own switch. Open one on a real page, or combine them with a plus sign, for
+        example <code>?lively=marker+rows</code>. The setting sticks for this browser tab. <code>/?lab=reset</code> clears
+        every lab switch, not just these.
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        <li><a class="hit hit-primary" href={`/?lively=${picks}`}>Sergei's picks: all four</a></li>
+        <li><a class="hit" href="/?lively=off">Turn all off (/?lively=off)</a></li>
+        <li><a class="hit" href="/?lab=reset">Clear all lab switches (/?lab=reset)</a></li>
+      </ul>
+      <p class="mt-md max-w-prose font-bold">Where the links effect shows</p>
+      <p class="mt-2xs max-w-prose">
+        It only touches text links inside paragraphs. Most pages have none (home, about and the lists are all buttons
+        and titles), so open one of these, then hover the underlined link in the text:
+      </p>
+      <ul role="list" class="mt-xs flex flex-wrap gap-sm">
+        <li><a class="hit" href={`/work/toptal/?lively=${picks}`}>Toptal work page (link near the end)</a></li>
+        <li><a class="hit" href={`/work/reddit/?lively=${picks}`}>Reddit work page (two links)</a></li>
+        <li><a class="hit" href={`/projects/reddit-localization/?lively=${picks}`}>Case study (link near the end)</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <ul role="list">
+    {
+      ideas.map((idea) => (
+        <li class="edge-b" aria-labelledby={`h-${idea.name}`}>
+          <div class="shell grid gap-sm py-md lg:grid-cols-12 lg:gap-lg">
+            <div class="lg:col-span-4">
+              <h2 id={`h-${idea.name}`} class="font-title text-xl">
+                <code>{idea.name}</code>
+              </h2>
+                          </div>
+            <div class="lg:col-span-8">
+              <p class="max-w-prose">{idea.what}</p>
+              <p class="mt-xs max-w-prose text-muted">{idea.why}</p>
+              <ul role="list" class="mt-sm flex flex-wrap gap-sm">
+                {idea.links.map(([href, label]) => (
+                  <li>
+                    <a class="hit" href={href}>
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

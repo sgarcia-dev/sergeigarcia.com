@@ -1,0 +1,227 @@
+/* LAB ONLY: background texture variants for .band-yellow / .band-cobalt.
+   Active variant: <html data-bg="..."> on real pages, or a wrapper with data-bg-demo="..." in the
+   gallery (/lab/backgrounds/). Other switches, all set by src/lab/LabSwitch.astro:
+     data-bgspeed   1..3      drift speed in px per second: 13.9 (default), 20, 28
+     data-bgcontrast 1..3     overrides every pattern's own default contrast: softer, middle, a little stronger.
+                              Defaults when unset: hatch 2, grid 2, dots-fade 2, dots-big 1.
+     data-bgscroll  none      lets the texture move with the page. Without it the texture is pinned to the screen.
+     --bg-dx/--bg-dy -1|0|1   drift direction (the wild modes set these on <html>)
+   Variants: dots-fade, dots-big, hatch, grid.
+   Owned by the backgrounds worker.
+
+   How it works: each band gets one oversized pseudo-element layer behind its content, holding a
+   tiling texture. The layer drifts with `transform` only, by a whole number of tiles per loop, so
+   the loop is seamless and nothing repaints. Pinned (default), the layer is position: fixed and the
+   band clips it with clip-path.
+
+   Contrast rule: the texture always moves AWAY from the text color. Yellow bands have black text,
+   so their texture is a lighter yellow. Cobalt bands have white text, so theirs is a deeper blue.
+   Smaller marks go a little further from the fill so thin lines still read. Each mark has a
+   "strong" end tone (--s-*); the texture is that tone mixed toward the fill by --cm percent
+   (bgcontrast 1/2/3 = 40/65/90). Level 2 lands on the picked colors. Bands keep their fills in
+   dark mode (see global.css), so this holds in both themes. */
+
+/* ---- Speed (px per second along the drift path) ------------------------------------- */
+html { --spd: 13.9; }
+html[data-bgspeed="1"] { --spd: 13.9; }
+html[data-bgspeed="2"] { --spd: 20; }
+html[data-bgspeed="3"] { --spd: 28; }
+
+/* ---- Contrast: percent of the strong tone mixed into the fill ----------------------- */
+html[data-bgcontrast="1"] { --cm-user: 40; }
+html[data-bgcontrast="2"] { --cm-user: 65; }
+html[data-bgcontrast="3"] { --cm-user: 90; }
+/* The gallery's contrast ladder pins a level on a wrapper. */
+[data-cm-demo="1"] { --cm-user: 40; }
+[data-cm-demo="2"] { --cm-user: 65; }
+[data-cm-demo="3"] { --cm-user: 90; }
+
+/* ---- Direction defaults. Inline styles from the wild modes beat these on <html>. ---- */
+html[data-bg],
+[data-bg-demo] {
+  --bg-dx: 1;
+  --bg-dy: 1;
+}
+:is(html[data-bg="hatch"], [data-bg-demo="hatch"]) {
+  --bg-dy: 0; /* the stripes run NE-SW, so sideways is the direction you can see */
+}
+
+/* ---- Shared plumbing --------------------------------------------------------------- */
+
+/* overflow: clip (not hidden) so sticky headings inside a band keep working. */
+html[data-bg] :is(.band-yellow, .band-cobalt),
+[data-bg-demo] :is(.band-yellow, .band-cobalt) {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  --cm: var(--cm-user, 65); /* each pattern may set its own default below */
+  --fill: var(--color-yellow);
+  /* Strong end tones: lighter yellows, away from the black text. Thin marks go lightest. */
+  --s-fine: #ffed8e; /* hatch and grid lines; picked tone at level 2 is #ffe45c */
+  --s-small: #fffccd; /* small dots in dots-fade; #ffee85 */
+  --s-big: #fff6ac; /* big dots in dots-fade; #ffea70 */
+  --s-huge: #fff19d; /* dots-big; #ffe766 */
+  --tx-fine: color-mix(in srgb, var(--s-fine) calc(var(--cm) * 1%), var(--fill));
+  --tx-small: color-mix(in srgb, var(--s-small) calc(var(--cm) * 1%), var(--fill));
+  --tx-big: color-mix(in srgb, var(--s-big) calc(var(--cm) * 1%), var(--fill));
+  --tx-huge: color-mix(in srgb, var(--s-huge) calc(var(--cm) * 1%), var(--fill));
+  --tn: 26; /* tile size in px, as a plain number so speed math works */
+  --k: 3; /* tiles travelled per loop */
+  --tile: calc(var(--tn) * 1px);
+  /* One loop = distance / speed. Diagonals travel further, so they take longer: same px/s. */
+  --dur: calc(var(--tn) * var(--k) * hypot(var(--bg-dx), var(--bg-dy)) / var(--spd) * 1s);
+}
+html[data-bg] .band-cobalt,
+[data-bg-demo] .band-cobalt {
+  --fill: var(--color-cobalt);
+  /* Strong end tones: deeper blues, away from the white text. Level 2 picks: #162fa8 / #1834b2 / #1630aa. */
+  --s-fine: #112692;
+  --s-small: #112692;
+  --s-big: #142ea1;
+  --s-huge: #112895;
+}
+
+html[data-bg] :is(.band-yellow, .band-cobalt)::before,
+html[data-bg] :is(.band-yellow, .band-cobalt)::after,
+[data-bg-demo] :is(.band-yellow, .band-cobalt)::before,
+[data-bg-demo] :is(.band-yellow, .band-cobalt)::after {
+  --reach: calc(var(--tn) * var(--k) * 1px);
+  position: absolute;
+  inset: calc(-1 * var(--reach));
+  z-index: -1;
+  pointer-events: none;
+  background-repeat: repeat;
+  will-change: transform;
+  animation: lab-bg-drift var(--dur) linear infinite;
+}
+html[data-bg] :is(.band-yellow, .band-cobalt)::before,
+[data-bg-demo] :is(.band-yellow, .band-cobalt)::before {
+  content: "";
+}
+/* ::after is only used by dots-fade. */
+html[data-bg] :is(.band-yellow, .band-cobalt)::after,
+[data-bg-demo] :is(.band-yellow, .band-cobalt)::after {
+  content: none;
+}
+
+@keyframes lab-bg-drift {
+  to {
+    transform: translate3d(calc(var(--bg-dx) * var(--reach)), calc(var(--bg-dy) * var(--reach)), 0);
+  }
+}
+
+/* ---- dots-fade: a stepped halftone, small dots at the top left growing to big at the bottom right -- */
+/* Six hard-edged diagonal bands, each with its own dot radius (1.6, 2.6, 3.8, 5.2, 6.2, 7px) on ONE
+   shared 45 degree lattice (28px cell). The bands are cut midway between two rows of dots, so no dot is
+   ever sliced. There is no gradient and no blending of layers: every edge is a vector circle edge with
+   one pixel of anti-aliasing. The picture is a tiny inline SVG used as a background image (NOT a mask:
+   Chrome rasterizes SVG masks at 1x and they come out soft). Colors are baked in, one picture per band
+   color and contrast level, picked through --df-y / --df-c. Its size is a whole number of lattice
+   cells, so drifting by whole cells (84px) stays seamless.
+   The picture's origin sits at the layer's top left, just above and left of the screen when pinned, so
+   the small end sits at the top left of the screen and the big end at the bottom right. */
+:root {
+  --df-y1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23ffe452'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23ffe452'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23ffe452'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23ffe452'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23ffe452'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23ffe452'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%23ffe245'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%23ffe245'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%23ffe245'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%23ffe245'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%23ffe245'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%23ffe245'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #ffe452, big #ffe245 */
+  --df-y2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%23ffea70'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%23ffea70'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%23ffea70'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #ffee85, big #ffea70 */
+  --df-y3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23fff8b8'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23fff8b8'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23fff8b8'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23fff8b8'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23fff8b8'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23fff8b8'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%23fff39b'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%23fff39b'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%23fff39b'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%23fff39b'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%23fff39b'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%23fff39b'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #fff8b8, big #fff39b */
+  --df-c1: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%231935b8'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%231935b8'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%231935b8'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%231935b8'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%231935b8'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%231935b8'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%231b38be'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%231b38be'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%231b38be'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%231b38be'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%231b38be'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%231b38be'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #1935b8, big #1b38be */
+  --df-c2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%231834b2'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%231834b2'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%231834b2'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #162fa8, big #1834b2 */
+  --df-c3: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23122898'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23122898'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23122898'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23122898'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23122898'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23122898'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%231530a6'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%231530a6'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%231530a6'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%231530a6'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%231530a6'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%231530a6'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #122898, big #1530a6 */
+  --df-y: var(--df-y2);
+  --df-c: var(--df-c2);
+}
+html[data-bgcontrast="1"] { --df-y: var(--df-y1); --df-c: var(--df-c1); }
+html[data-bgcontrast="3"] { --df-y: var(--df-y3); --df-c: var(--df-c3); }
+[data-cm-demo="1"] { --df-y: var(--df-y1); --df-c: var(--df-c1); }
+[data-cm-demo="2"] { --df-y: var(--df-y2); --df-c: var(--df-c2); }
+[data-cm-demo="3"] { --df-y: var(--df-y3); --df-c: var(--df-c3); }
+
+:is(html[data-bg="dots-fade"], [data-bg-demo="dots-fade"]) :is(.band-yellow, .band-cobalt) {
+  --tn: 28;
+  --k: 3;
+}
+:is(html[data-bg="dots-fade"], [data-bg-demo="dots-fade"]) :is(.band-yellow, .band-cobalt)::before {
+  background-size: 3192px 3192px;
+  background-position: 0 0;
+}
+:is(html[data-bg="dots-fade"], [data-bg-demo="dots-fade"]) .band-yellow::before {
+  background-image: var(--df-y);
+}
+:is(html[data-bg="dots-fade"], [data-bg-demo="dots-fade"]) .band-cobalt::before {
+  background-image: var(--df-c);
+}
+
+/* ---- dots-big: large sparse dots ---------------------------------------------------- */
+:is(html[data-bg="dots-big"], [data-bg-demo="dots-big"]) :is(.band-yellow, .band-cobalt) {
+  --tn: 44;
+  --k: 2;
+  --cm: var(--cm-user, 40); /* Sergei's pick: contrast 1 */
+}
+:is(html[data-bg="dots-big"], [data-bg-demo="dots-big"]) :is(.band-yellow, .band-cobalt)::before {
+  background-image:
+    radial-gradient(circle, var(--tx-huge) 0 8px, #0000 8.8px),
+    radial-gradient(circle, var(--tx-huge) 0 8px, #0000 8.8px);
+  background-size: var(--tile) var(--tile);
+  background-position: 0 0, calc(var(--tile) / 2) calc(var(--tile) / 2);
+}
+
+/* ---- hatch: diagonal print hatching ------------------------------------------------- */
+:is(html[data-bg="hatch"], [data-bg-demo="hatch"]) :is(.band-yellow, .band-cobalt) {
+  --tn: 16;
+  --k: 4;
+}
+:is(html[data-bg="hatch"], [data-bg-demo="hatch"]) :is(.band-yellow, .band-cobalt)::before {
+  background-image: linear-gradient(135deg, #0000 43%, var(--tx-fine) 43% 57%, #0000 57%);
+  background-size: var(--tile) var(--tile);
+}
+
+/* ---- grid: graph paper -------------------------------------------------------------- */
+:is(html[data-bg="grid"], [data-bg-demo="grid"]) :is(.band-yellow, .band-cobalt) {
+  --tn: 48;
+  --k: 2;
+}
+:is(html[data-bg="grid"], [data-bg-demo="grid"]) :is(.band-yellow, .band-cobalt)::before {
+  background-image:
+    linear-gradient(to right, var(--tx-fine) 0 2px, #0000 2px),
+    linear-gradient(to bottom, var(--tx-fine) 0 2px, #0000 2px);
+  background-size: var(--tile) var(--tile);
+}
+
+/* ---- Pinned to the screen (default) -------------------------------------------------- */
+/* The layer becomes position: fixed and viewport-sized, and the band clips it with clip-path (a fixed
+   child escapes overflow, but not clip-path). Content scrolls over a texture that holds still on the
+   screen, and only drifts. No scroll listener, no scroll animation, and the layer stays small, which
+   keeps its edges sharp: Chrome renders a very tall layer at a lower resolution and softens it.
+   data-bgscroll="none" puts the texture back on the band so it moves with the page.
+
+   clip-path cuts at the border box, and a negative z-index layer paints above the band's own border.
+   So ::after redraws the band's borders on top (border: inherit, pushed out by the rule width). The
+   production port can skip this: a real layer element can sit inside the padding box. */
+:is(html[data-bg]:not([data-bgscroll="none"]), html:not([data-bgscroll="none"]) [data-bg-demo]) :is(.band-yellow, .band-cobalt) {
+  overflow: visible;
+  clip-path: inset(-0.5px -0.5px 0); /* half a pixel past the top and sides so stacked bands leave no hairline gap; none at the bottom, where a border may follow */
+}
+:is(html[data-bg]:not([data-bgscroll="none"]), html:not([data-bgscroll="none"]) [data-bg-demo]) :is(.band-yellow, .band-cobalt)::before {
+  position: fixed;
+}
+:is(html[data-bg]:not([data-bgscroll="none"]), html:not([data-bgscroll="none"]) [data-bg-demo]) :is(.band-yellow, .band-cobalt)::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--rule-thick));
+  border: inherit;
+  background: none;
+  animation: none;
+  will-change: auto;
+  z-index: auto;
+}
+
+/* ---- Reduced motion: the texture stays, all movement stops (drift and scroll) -------- */
+@media (prefers-reduced-motion: reduce) {
+  html[data-bg] :is(.band-yellow, .band-cobalt)::before,
+  html[data-bg] :is(.band-yellow, .band-cobalt)::after,
+  [data-bg-demo] :is(.band-yellow, .band-cobalt)::before,
+  [data-bg-demo] :is(.band-yellow, .band-cobalt)::after {
+    animation: none !important;
+    will-change: auto;
+  }
+}

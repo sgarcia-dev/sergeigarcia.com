@@ -1,0 +1,51 @@
+---
+// LAB ONLY: index of scroll, header and progress variants. Not linked from the site.
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+
+const post = "/writing/agents-workspace-tour/";
+const project = "/projects/reddit-localization/";
+
+const picks = [
+  { name: "Home", text: "Mono text builds up letter by letter. The nav header shrinks and sticks.", href: "/?motion=glyph&header=shrink", label: "Open home" },
+  { name: "List page", text: "The title band sticks and shrinks to a thin banner. The nav scrolls away.", href: "/projects/?motion=glyph&header=pagehead", label: "Open projects" },
+  { name: "Project", text: "Same, with the thin reading bar at the very top.", href: `${project}?motion=glyph&header=pagehead&progress=bar`, label: "Open project" },
+  { name: "Post", text: "Same on a post.", href: `${post}?motion=glyph&header=pagehead&progress=bar`, label: "Open post" },
+  { name: "Reset", text: "Clears every lab choice, including backgrounds.", href: "/?lab=reset", label: "Reset all" },
+];
+---
+
+<Base title="Motion lab" description="Lab page: glyph reveal, page head shrink and reading bar." >
+  <PageHead title="Motion lab" band="yellow">
+    <p class="mt-md max-w-prose text-lg">Open a pick on a real page and scroll.</p>
+    <p class="label mt-sm">Active now: <span id="lab-active">none</span></p>
+  </PageHead>
+  <section class="edge-b" aria-label="Sergei's picks">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-4">
+        <h2 class="font-title text-xl">Sergei's picks</h2>
+        <p class="mt-xs max-w-prose">Choices stay on for this tab while you click around.</p>
+      </div>
+      <ul role="list" class="list lg:col-span-8">
+        {
+          picks.map((it) => (
+            <li class="row-end">
+              <div>
+                <p class="label">{it.name}</p>
+                <p class="mt-2xs max-w-prose">{it.text}</p>
+              </div>
+              <a class="hit" href={it.href}>{it.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const d = document.documentElement.dataset;
+  const parts = ["motion", "header", "progress", "bg"].filter((k) => d[k]).map((k) => `${k}=${d[k]}`);
+  const out = document.getElementById("lab-active");
+  if (out && parts.length) out.textContent = parts.join(", ");
+</script>
