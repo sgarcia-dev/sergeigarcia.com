@@ -1,0 +1,93 @@
+---
+/**
+ * "Share this post": plain links to each network's own share page, plus Copy link and a
+ * native Share button. No third-party scripts, nothing loads from another site. The two
+ * buttons stay hidden until the small script below confirms the browser can do them.
+ */
+interface Props {
+  /** Canonical absolute URL of the page. */
+  url: string;
+  title: string;
+}
+const { url, title } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+
+const links = [
+  { name: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { name: "Hacker News", href: `https://news.ycombinator.com/submitlink?u=${u}&t=${t}` },
+  { name: "Reddit", href: `https://www.reddit.com/submit?url=${u}&title=${t}&type=LINK` },
+  { name: "Bluesky", href: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${title}\n${url}`)}` },
+  { name: "X", href: `https://x.com/intent/tweet?url=${u}&text=${t}` },
+];
+const mail = `mailto:?subject=${t}&body=${encodeURIComponent(`${title}\r\n\r\n${url}`)}`;
+---
+
+<aside class="share mt-lg" aria-labelledby="share-h" data-url={url} data-title={title}>
+  <h2 id="share-h" class="font-title text-xl">Share this post</h2>
+  <ul role="list" class="mt-sm flex flex-wrap gap-sm">
+    {
+      links.map((link) => (
+        <li>
+          <a class="hit" href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${link.name} (opens in a new tab)`}>
+            {link.name}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a class="hit" href={mail} aria-label="Share by email">Email</a>
+    </li>
+    <li hidden data-share-item>
+      <button type="button" class="hit" data-share>Share</button>
+    </li>
+    <li hidden data-copy-item>
+      <button type="button" class="hit" data-copy>Copy link</button>
+    </li>
+  </ul>
+  <p class="label mt-sm" role="status" aria-live="polite" data-status></p>
+</aside>
+
+<script is:inline>
+  (function () {
+    var box = document.currentScript && document.currentScript.previousElementSibling;
+    if (!box || !box.classList.contains("share")) return;
+    var url = box.getAttribute("data-url");
+    var title = box.getAttribute("data-title");
+    var status = box.querySelector("[data-status]");
+    var timer;
+    function say(text) {
+      status.textContent = text;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        status.textContent = "";
+      }, 2500);
+    }
+    if (navigator.share) {
+      box.querySelector("[data-share-item]").hidden = false;
+      box.querySelector("[data-share]").addEventListener("click", function () {
+        navigator.share({ title: title, url: url }).catch(function () {});
+      });
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      box.querySelector("[data-copy-item]").hidden = false;
+      box.querySelector("[data-copy]").addEventListener("click", function () {
+        navigator.clipboard.writeText(url).then(
+          function () {
+            say("Copied");
+          },
+          function () {
+            say("Could not copy. Select the address bar instead.");
+          },
+        );
+      });
+    }
+  })();
+</script>
+
+<style>
+  /* Reserve the status line so "Copied" never shifts the page. */
+  .share [data-status] {
+    min-height: calc(var(--text-xs) * 1.4);
+  }
+</style>

@@ -5,6 +5,7 @@ import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
+import ShareLinks from "../../components/ShareLinks.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
 import { AUTHOR_REF, shareImage } from "../../lib/seo";
@@ -46,7 +47,7 @@ const jsonLd = [
 ---
 
 <Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
-  <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"}>
+  <PageHead title={title} band="tomato" vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
@@ -74,6 +75,7 @@ const jsonLd = [
         <div class="prose">
           <Content />
         </div>
+        <ShareLinks url={canonical} title={title} />
         <p class="mt-lg"><a class="hit" href="/writing/">All writing</a></p>
       </div>
     </div>
