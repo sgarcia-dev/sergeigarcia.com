@@ -108,11 +108,11 @@ const jsonLd = [
 
   <section id="work" class="edge-b" aria-labelledby="work-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
-      <div class="section-head lg:col-span-5">
+      <div class="section-head lg:col-span-4 xl:col-span-5">
         <h2 id="work-h" class="font-display text-h2 tracking-tight">Work</h2>
         <p class="mt-sm max-w-prose text-muted">Over <span class="lv-mark">13 years</span> of front-end and full-stack roles, from consulting to product teams.</p>
       </div>
-      <div class="lg:col-span-7">
+      <div class="lg:col-span-8 xl:col-span-7">
         <ul role="list" class="list">
           {featuredWork.map((entry) => <WorkRow entry={entry} level="h3" compact />)}
         </ul>
@@ -123,11 +123,11 @@ const jsonLd = [
 
   <section id="projects" class="edge-b" aria-labelledby="projects-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
-      <div class="section-head lg:col-span-5">
+      <div class="section-head lg:col-span-4 xl:col-span-5">
         <h2 id="projects-h" class="font-display text-h2 tracking-tight">Projects</h2>
         <p class="mt-sm max-w-prose text-muted">Case studies: the problem, what I owned, the decisions and <span class="lv-mark">what changed</span>.</p>
       </div>
-      <div class="lg:col-span-7">
+      <div class="lg:col-span-8 xl:col-span-7">
         <ul role="list" class="list">
           {featuredProjects.map((entry) => <ProjectRow entry={entry} level="h3" compact />)}
         </ul>
@@ -138,11 +138,11 @@ const jsonLd = [
 
   <section id="writing" class="band-tomato edge-b" aria-labelledby="writing-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg">
-      <div class="section-head lg:col-span-5">
+      <div class="section-head lg:col-span-4 xl:col-span-5">
         <h2 id="writing-h" class="font-display text-h2 tracking-tight">Writing</h2>
         <p class="mt-sm max-w-prose">How I work with AI agents, build front ends and <span class="lv-mark lv-mark--band">keep teams moving</span>.</p>
       </div>
-      <div class="lg:col-span-7">
+      <div class="lg:col-span-8 xl:col-span-7">
         <ul role="list" class="list">
           {posts.slice(0, 3).map((post, i) => <PostRow post={post} level="h3" featured={i === 0} />)}
           {
@@ -161,8 +161,8 @@ const jsonLd = [
 
   <section id="about" class="band-cobalt" aria-labelledby="about-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
-      <h2 id="about-h" class="font-display text-h2 tracking-tight lg:col-span-5">About</h2>
-      <div class="lg:col-span-7">
+      <h2 id="about-h" class="font-display text-h2 tracking-tight lg:col-span-4 xl:col-span-5">About</h2>
+      <div class="lg:col-span-8 xl:col-span-7">
         <p class="max-w-prose text-lg">
           I'm a software engineer from Mexico, now living in Dublin with my wife and daughter. I came to code by way
           of project management and a love of design, and I have been building software for more than 13 years. I
