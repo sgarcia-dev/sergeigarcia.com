@@ -1,1 +1,464 @@
-/* motion: see DESIGN.md. */
+/* Motion: glyph reveal on mono text, sticky compact header, page head band, reading progress.
+   See DESIGN.md. Behavior lives in src/scripts/motion.ts. Everything here is inert without
+   JS or scroll timelines, and every moving part is inside prefers-reduced-motion: no-preference.
+   Unlayered on purpose: it must win over the Tailwind utilities on the header markup. */
+
+/* ------------------------------------------------------------------
+   Sizes shared by the header and the page head band.
+   --hh is how much of the viewport top the stuck header covers (0 when it is not sticky).
+   The header keeps its full height in the page flow (see margin-bottom below), so
+   nothing under it moves when it compacts.
+   Full / compact heights are the real rendered heights, border included:
+     phones     two rows 139px -> one row 59px
+     tablet+    one row   79px -> 51px (mouse) or 59px (touch keeps 44px targets)
+   ------------------------------------------------------------------ */
+:root {
+  --hh-full: 139px;
+  --hh-compact: 59px;
+  --ph-strip: 48px; /* visible banner height of a shrunk page head, including its 3px rule */
+}
+@media (min-width: 48rem) {
+  :root {
+    --hh-full: 79px;
+  }
+}
+@media (min-width: 48rem) and (pointer: fine) {
+  :root {
+    --hh-compact: 51px;
+  }
+}
+
+/* Sticky only when something can compact it: scroll timelines, or the script's class fallback
+   (html.js-motion). Elsewhere the header stays in the flow exactly as before. */
+html {
+  --hh: 0px;
+  --hdr-pos: static;
+}
+html.js-motion {
+  --hh: var(--hh-compact);
+  --hdr-pos: sticky;
+}
+@supports (animation-timeline: scroll()) {
+  html {
+    --hh: var(--hh-compact);
+    --hdr-pos: sticky;
+  }
+}
+/* Where sticky columns and anchor jumps land: under the header, and under the banner when it sticks. */
+html {
+  --stick-top: calc(var(--hh) + var(--spacing-md));
+  scroll-padding-top: calc(var(--hh) + var(--spacing-sm));
+}
+html[data-ph="on"] {
+  --stick-top: calc(var(--hh) + var(--ph-strip) + var(--spacing-md));
+  scroll-padding-top: calc(var(--hh) + var(--ph-strip) + var(--spacing-sm));
+}
+@media (min-width: 64rem) {
+  .section-head {
+    top: var(--stick-top);
+  }
+}
+/* The skip link must show above the sticky header. */
+.skip {
+  z-index: 70;
+}
+
+/* ------------------------------------------------------------------
+   Header: sticky everywhere, compacts after 80px of scroll.
+   Everything compact is defined once as custom properties, then used by both the
+   scroll-driven animation and the .is-compact class fallback.
+   margin-bottom grows by exactly the height lost, so the page below never jumps.
+   ------------------------------------------------------------------ */
+.site-header {
+  position: var(--hdr-pos, static);
+  top: 0;
+  z-index: 40;
+  background: var(--color-bg);
+  --c-py: 6px;
+  --c-hit: 2.25rem; /* 36px, mouse devices from tablet width only; touch keeps 44px */
+  --c-mark: 1.125rem;
+  --delta: calc(var(--hh-full) - var(--hh-compact));
+}
+@media (max-width: 47.99rem) {
+  .site-header {
+    --c-mark: 1.25rem;
+  }
+}
+
+@keyframes hdr-outer {
+  to {
+    margin-bottom: var(--delta);
+  }
+}
+@keyframes hdr-inner {
+  to {
+    padding-block: var(--c-py);
+  }
+}
+@keyframes hdr-mark {
+  to {
+    height: var(--c-mark);
+  }
+}
+@keyframes hdr-hit {
+  to {
+    min-height: var(--c-hit);
+    padding-block: 6px;
+  }
+}
+@keyframes hdr-hit-logo {
+  to {
+    min-height: var(--c-hit);
+    padding-block: var(--spacing-2xs);
+  }
+}
+/* Phones: the stacked header (logo above a 4 column grid) becomes one row. A change of
+   layout cannot be tweened, so it snaps once, in the first ~2px of the shrink range, then
+   the padding eases down. margin-bottom jumps by the same amount at the snap so the page
+   below does not move. */
+@keyframes hdr-outer-m {
+  0% {
+    margin-bottom: 0;
+  }
+  4% {
+    margin-bottom: calc(var(--delta) - 19px);
+  }
+  100% {
+    margin-bottom: var(--delta);
+  }
+}
+@keyframes hdr-row {
+  0%,
+  2% {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  2.01%,
+  100% {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+}
+@keyframes hdr-logo-chip {
+  0% {
+    padding-inline: var(--spacing-sm);
+  }
+  4%,
+  100% {
+    align-self: center;
+    padding-inline: var(--spacing-xs);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+@keyframes hdr-nav {
+  0% {
+    flex: 0 1 auto;
+  }
+  4%,
+  100% {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+@keyframes hdr-navgrid {
+  4%,
+  100% {
+    gap: var(--spacing-2xs);
+  }
+}
+@keyframes hdr-navhit {
+  4%,
+  100% {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    padding-inline: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    :is(.site-header, .site-header-inner, .site-header .logo-mark, .site-header .hit, .site-header .site-nav, .site-header .site-nav > ul) {
+      animation-duration: 1ms; /* ignored by scroll timelines, required by some engines */
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 80px 140px;
+    }
+    .site-header {
+      animation-name: hdr-outer;
+    }
+    .site-header-inner {
+      animation-name: hdr-inner;
+    }
+    .site-header .logo-mark {
+      animation-name: hdr-mark;
+    }
+    /* Tablet and up: only mouse devices get the 36px buttons. */
+    @media (min-width: 48rem) and (pointer: fine) {
+      .site-header .hit {
+        animation-name: hdr-hit;
+      }
+      .site-header .hit-logo {
+        animation-name: hdr-hit-logo;
+      }
+    }
+    @media (max-width: 47.99rem) {
+      .site-header {
+        animation-name: hdr-outer-m;
+      }
+      .site-header-inner {
+        animation-name: hdr-inner, hdr-row;
+      }
+      .site-header .hit-logo {
+        animation-name: hdr-logo-chip;
+      }
+      .site-header .site-nav {
+        animation-name: hdr-nav;
+      }
+      .site-header .site-nav > ul {
+        animation-name: hdr-navgrid;
+      }
+      .site-header .hit-nav {
+        animation-name: hdr-navhit;
+      }
+    }
+  }
+
+  /* No scroll timelines: motion.ts toggles .is-compact from a sentinel 80px down the page. */
+  @supports not (animation-timeline: scroll()) {
+    .site-header,
+    .site-header-inner,
+    .site-header .logo-mark,
+    .site-header .hit {
+      transition:
+        margin-bottom 160ms var(--ease-out),
+        padding 160ms var(--ease-out),
+        height 160ms var(--ease-out),
+        min-height 160ms var(--ease-out);
+    }
+  }
+}
+
+/* The compact state as plain rules. Used when there are no scroll timelines, and for reduced
+   motion (an instant switch, no animation). Never set while the scroll-driven animation runs. */
+.site-header.is-compact {
+  margin-bottom: var(--delta);
+}
+.site-header.is-compact .site-header-inner {
+  padding-block: var(--c-py);
+}
+.site-header.is-compact .logo-mark {
+  height: var(--c-mark);
+}
+@media (min-width: 48rem) and (pointer: fine) {
+  .site-header.is-compact .hit {
+    min-height: var(--c-hit);
+    padding-block: 6px;
+  }
+  .site-header.is-compact .hit-logo {
+    padding-block: var(--spacing-2xs);
+  }
+}
+@media (max-width: 47.99rem) {
+  .site-header.is-compact .site-header-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  .site-header.is-compact .hit-logo {
+    align-self: center;
+    padding-inline: var(--spacing-xs);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+  .site-header.is-compact .site-nav {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .site-header.is-compact .site-nav > ul {
+    gap: var(--spacing-2xs);
+  }
+  .site-header.is-compact .hit-nav {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    padding-inline: 2px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Page head band: sticks just under the compact header and shrinks to a thin banner.
+   The band is made sticky with a negative top, so only its bottom --ph-strip stays visible
+   below the header. That is a pure sticky position change: no height animation, no layout
+   shift. motion.ts measures the band (--ph-H) and the scroll range where the strip arrives
+   (--ph-start .. --ph-end), adds an aria-hidden .ph-mini title, and sets html[data-ph="on"].
+   The mini title fades in (scroll-driven) as the strip arrives and covers the band's lower
+   content. Without JS, scroll timelines, or with reduced motion, nothing happens.
+   Home has no .page-head, so it only gets the header.
+   ------------------------------------------------------------------ */
+.ph-mini {
+  display: none;
+}
+@keyframes ph-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    html[data-ph="on"] .page-head {
+      position: sticky;
+      top: calc(var(--hh) + var(--ph-strip) - var(--ph-H));
+      z-index: 30; /* under the header (40), over the page */
+    }
+    html[data-ph="on"] .ph-mini {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      inset: auto 0 0 0;
+      height: calc(var(--ph-strip) - var(--rule-thick));
+      background-color: inherit; /* the band's own fill, so it covers the band's lower content */
+      pointer-events: none;
+      opacity: 0;
+      animation: ph-in linear both;
+      animation-timeline: scroll(root block);
+      animation-range: var(--ph-start) var(--ph-end);
+    }
+    .ph-mini-title {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.375rem;
+      line-height: 1.2;
+      letter-spacing: var(--tracking-tight);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Reading progress: PageHead's `progress` prop renders .read-progress on posts and case
+   studies only. A 4px ink bar fixed at the very top of the viewport, above the header.
+   Hidden unless scroll timelines exist and motion is welcome.
+   ------------------------------------------------------------------ */
+@keyframes read-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.read-progress {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .read-progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 4px;
+      z-index: 60;
+      pointer-events: none;
+    }
+    .read-progress > i {
+      display: block;
+      height: 100%;
+      background: var(--color-ink);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: read-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@media print {
+  .read-progress {
+    display: none;
+  }
+  .site-header {
+    position: static;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Glyph reveal on mono text.
+   Mono text builds up letter by letter: nothing, then ░ ▒ ▓, then the real letter.
+   motion.ts never edits the element's own nodes. While it reveals, the element's own ink is
+   transparent and an aria-hidden overlay of positioned boxes (.dc-ov > .dc-b) draws the
+   letters on top. When the reveal ends only the overlay is removed.
+   data-dc is the state: pending (waiting to scroll into view), run, done, skip.
+   No JS means no html.js-motion and no data-dc, so none of this ever matches and text just shows.
+   ------------------------------------------------------------------ */
+@keyframes dc-show {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dc-ink {
+  to {
+    -webkit-text-fill-color: currentColor;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Ink off while pending or running; the overlay draws in the element's color. */
+  [data-dc="pending"],
+  [data-dc="run"],
+  [data-dc="pending"] *,
+  [data-dc="run"] * {
+    -webkit-text-fill-color: transparent;
+  }
+  [data-dc="run"] {
+    position: relative;
+  }
+  [data-dc="run"] .dc-ov,
+  [data-dc="run"] .dc-ov * {
+    -webkit-text-fill-color: currentColor;
+  }
+  /* Failsafe for a stalled script: a reveal that is still running 2.5s after it started shows
+     the real text. motion.ts also force-finishes at 2.5s; this covers a dead main thread
+     or a script that never got the chance. */
+  [data-dc="run"],
+  [data-dc="run"] *:not(.dc-ov, .dc-ov *) {
+    animation: dc-ink 1ms linear 2.5s forwards;
+  }
+  .dc-ov {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .dc-b {
+    position: absolute;
+    display: block;
+    white-space: pre;
+    font-style: normal;
+  }
+  .dc-b::before {
+    content: attr(data-g);
+  }
+
+  /* Hide the real text until the script has taken over, so the finished text does not flash
+     before the reveal begins. Only when the inline head script set html.js-motion (so never
+     without JS). A 1.5s failsafe shows everything even if the module never runs. Same
+     targets as TARGETS in motion.ts; anything the script rules out gets data-dc="skip". */
+  html.js-motion
+    :is(main .label, main .hero-aside p:not(.font-title), main .section-head > p):not([data-dc]):not(
+      :where(a, button, nav) *,
+      :has(a, button, h1, h2, h3, h4, h5, h6)
+    ) {
+    opacity: 0;
+    animation: dc-show 1ms linear 1.5s forwards;
+  }
+}

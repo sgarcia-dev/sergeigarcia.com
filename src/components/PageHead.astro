@@ -2,6 +2,8 @@
 /**
  * Top block for every inner page: a colored band with the page title in display type.
  * `vt` sets the view-transition name so a list title morphs into this heading.
+ * `progress` adds the thin reading bar at the top of the viewport (posts and case studies).
+ * src/scripts/motion.ts makes the band stick under the header and shrink to a thin banner.
  */
 interface Props {
   title: string;
@@ -9,16 +11,24 @@ interface Props {
   eyebrow?: string;
   vt?: string;
   size?: "h2" | "xl";
+  progress?: boolean;
 }
-const { title, band = "yellow", eyebrow, vt, size = "h2" } = Astro.props;
+const { title, band = "yellow", eyebrow, vt, size = "h2", progress = false } = Astro.props;
 ---
 
-<section class:list={["edge-b", `band-${band}`]}>
+{
+  progress && (
+    <div class="read-progress" aria-hidden="true">
+      <i />
+    </div>
+  )
+}
+<section class:list={["edge-b", `band-${band}`, "page-head"]}>
   <div class="shell py-lg lg:py-xl">
     {eyebrow && <p class="label mb-sm">{eyebrow}</p>}
     <h1
       class:list={[
-        "max-w-title tracking-tight",
+        "page-head-title max-w-title tracking-tight",
         size === "h2" ? "font-display text-h2" : "font-title text-xl",
       ]}
       style={vt ? `view-transition-name: ${vt}` : undefined}

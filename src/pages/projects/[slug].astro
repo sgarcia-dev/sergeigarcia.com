@@ -44,7 +44,7 @@ const jsonLd = [
 ---
 
 <Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt}>
-  <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)}>
+  <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)} progress>
     <p class="mt-md max-w-prose text-lg">{summary}</p>
   </PageHead>
   <section class="edge-b">
@@ -74,7 +74,8 @@ const jsonLd = [
   @media (min-width: 64rem) {
     .meta-col {
       position: sticky;
-      top: var(--spacing-md);
+      /* --stick-top (motion.css) keeps it under the sticky header and page head banner. */
+      top: var(--stick-top, var(--spacing-md));
     }
   }
 </style>

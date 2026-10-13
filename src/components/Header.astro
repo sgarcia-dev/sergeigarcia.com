@@ -10,13 +10,14 @@ const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
 
-<header class="edge-b">
-  <div class="shell flex flex-col gap-sm py-sm md:flex-row md:items-center md:justify-between">
+<!-- Sticky on every page; src/styles/motion.css compacts it after ~80px of scroll. -->
+<header class="edge-b site-header">
+  <div class="shell site-header-inner flex flex-col gap-sm py-sm md:flex-row md:items-center md:justify-between">
     <a href="/" class:list={["hit hit-logo self-start", !home && "vt-site-name"]} aria-label="Sergei Garcia, home">
       <Logo class="logo-mark" />
       <span class="logo-name label">Sergei Garcia</span>
     </a>
-    <nav aria-label="Primary">
+    <nav aria-label="Primary" class="site-nav">
       <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
         {
           NAV.map((item) => (

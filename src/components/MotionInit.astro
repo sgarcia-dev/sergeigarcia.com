@@ -1,3 +1,8 @@
 ---
 // Inline, render-blocking: marks <html> so motion CSS may pre-hide text only when JS runs.
+// Without JS this never executes, so nothing is hidden and the page reads as plain text.
 ---
+
+<script is:inline>
+  if ("IntersectionObserver" in window) document.documentElement.classList.add("js-motion");
+</script>
