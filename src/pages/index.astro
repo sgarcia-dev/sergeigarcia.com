@@ -18,6 +18,15 @@ const upcoming = posts.length === 0 ? (await getAllPosts()).slice(0, 1) : [];
 const featuredWork = work.slice(0, 4);
 const featuredProjects = projects.slice(0, 4);
 
+// Ticker under the hero: only names that are already on this page.
+const tickerItems = [
+  ...featuredWork.map((entry) => entry.data.company),
+  "Front end",
+  "Full stack",
+  "AI-assisted development",
+  "AI agent workflows",
+];
+
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -35,6 +44,9 @@ const jsonLd = [
 
 <Base title={SITE.title} fullTitle description={SITE.description} jsonLd={jsonLd} home>
   <section class="hero edge-b" aria-label="Introduction">
+    <!-- Empty halves that carry the band texture out to the screen edges (see texture.css). -->
+    <span class="hero-bleed band-yellow" aria-hidden="true"></span>
+    <span class="hero-bleed band-cobalt" aria-hidden="true"></span>
     <div class="hero-inner grid lg:grid-cols-12">
       <div class="band-yellow flex flex-col justify-end px-sm py-lg lg:col-span-7 lg:px-lg lg:py-xl">
         <Picture
@@ -75,11 +87,22 @@ const jsonLd = [
     </div>
   </section>
 
+  <div class="ticker edge-b">
+    <div class="ticker-track">
+      <ul role="list" class="ticker-list" aria-label="Companies and skills">
+        {tickerItems.map((item) => <li>{item}</li>)}
+      </ul>
+      <ul role="list" class="ticker-list ticker-copy" aria-hidden="true">
+        {tickerItems.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </div>
+
   <section id="work" class="edge-b" aria-labelledby="work-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="section-head lg:col-span-5">
         <h2 id="work-h" class="font-display text-h2 tracking-tight">Work</h2>
-        <p class="mt-sm max-w-prose text-muted">Over 13 years of front-end and full-stack roles, from consulting to product teams.</p>
+        <p class="mt-sm max-w-prose text-muted">Over <span class="lv-mark">13 years</span> of front-end and full-stack roles, from consulting to product teams.</p>
       </div>
       <div class="lg:col-span-7">
         <ul role="list" class="list">
@@ -94,7 +117,7 @@ const jsonLd = [
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="section-head lg:col-span-5">
         <h2 id="projects-h" class="font-display text-h2 tracking-tight">Projects</h2>
-        <p class="mt-sm max-w-prose text-muted">Case studies: the problem, what I owned, the decisions and what changed.</p>
+        <p class="mt-sm max-w-prose text-muted">Case studies: the problem, what I owned, the decisions and <span class="lv-mark">what changed</span>.</p>
       </div>
       <div class="lg:col-span-7">
         <ul role="list" class="list">
@@ -109,7 +132,7 @@ const jsonLd = [
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg">
       <div class="section-head lg:col-span-5">
         <h2 id="writing-h" class="font-display text-h2 tracking-tight">Writing</h2>
-        <p class="mt-sm max-w-prose">How I work with AI agents, build front ends and keep teams moving.</p>
+        <p class="mt-sm max-w-prose">How I work with AI agents, build front ends and <span class="lv-mark lv-mark--band">keep teams moving</span>.</p>
       </div>
       <div class="lg:col-span-7">
         <ul role="list" class="list">
