@@ -17,7 +17,7 @@ If you need a value that is not here, add a token first and say why.
 | `bg` / `ink` / `muted` | light `#FFFFFF` / `#0A0A0A` / `#3F3F3F`; dark `#0D0D12` / `#F2F0EA` / `#C4C2BC` | Paper sections. Switch with `prefers-color-scheme`. |
 | `yellow` | `#FFD400` | Hero name block, primary buttons, hover fill, text selection. Black text only. |
 | `cobalt` | `#1F3FD1` | Facts block, Projects and About bands. White text only. |
-| `tomato` | `#FF5A36` | Writing band and 404. Black text only. |
+| `tomato` | `#FF6A44` | Writing band and 404. Black text only. |
 | `black` / `white` / `chalk` | `#0A0A0A` / `#FFFFFF` / `#F4F4EE` | Footer, tags, text on bands. |
 
 Bands keep their fills in dark mode. Every text pair passes WCAG AA (most pass

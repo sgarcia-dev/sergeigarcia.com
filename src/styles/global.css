@@ -43,7 +43,7 @@
   --color-muted: var(--c-muted);
   --color-yellow: #ffd400;
   --color-cobalt: #1f3fd1;
-  --color-tomato: #ff5a36;
+  --color-tomato: #ff6a44;
   --color-black: #0a0a0a;
   --color-white: #ffffff;
   --color-chalk: #f4f4ee;
@@ -95,6 +95,7 @@
   --container-title: 18ch;
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem; /* where the shell stops growing; the home page goes back to a 5/7 split here */
 
   /* Borders */
   --rule-thick: 3px;
@@ -313,6 +314,11 @@
       grid-template-columns: minmax(0, 1fr) var(--container-rail);
       gap: var(--spacing-md);
     }
+  }
+
+  /* Every list is a size container, so a row can react to the room its own column has. */
+  .list {
+    container: list / inline-size;
   }
 
   /* A row title that links to its page. The underline appears on hover and focus. */
@@ -546,6 +552,31 @@
   .prose blockquote {
     border-left: var(--rule-thick) solid var(--rule-color);
     padding-left: var(--spacing-sm);
+  }
+}
+
+/* Rows in a narrow list column (unlayered on purpose: it has to beat the scoped width in Thumb.astro).
+   From lg the list sits beside a sticky heading. When the list is under 46rem wide, rail + text +
+   thumbnail would leave the text about 200px, so the row stacks instead: thumbnail first, then date,
+   title, text and pills at the full width of the row. Wider lists keep the side-by-side row. This reads
+   the list's own width, so /work/, /projects/ and /writing/ use the same rule as the home page. Below lg
+   nothing changes. The thumbnail stays after the text in the HTML, so reading and tab order are the same. */
+@media (min-width: 64rem) {
+  @container list (max-width: 46rem) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--spacing-2xs);
+    }
+    .row-body {
+      display: contents;
+    }
+    .row-body > .shot {
+      order: -1;
+      margin-bottom: var(--spacing-sm);
+    }
+    .row-body > .shot.shot-sm {
+      width: min(100%, 16rem);
+    }
   }
 }
 
