@@ -1,0 +1,68 @@
+---
+/**
+ * A loud call to action that sends readers to /playground/. A yellow band (so the site's
+ * texture picks it up) with a short pitch, a framed screenshot that is itself a link, and one
+ * primary button. Used in MDX posts.
+ */
+import { Picture } from "astro:assets";
+import shot from "../assets/posts/ai-raises-the-floor/playground.jpg";
+
+interface Props {
+  heading?: string;
+}
+const { heading = "Try it yourself" } = Astro.props;
+---
+
+<aside class="pg-cta band-yellow" aria-labelledby="pg-cta-h">
+  <h2 id="pg-cta-h" class="pg-cta-h">{heading}</h2>
+  <p class="pg-cta-p">
+    Every pattern, speed and contrast level I judged is live on the playground. Pick one, change the
+    speed, and see why I said no to the rest.
+  </p>
+  <a class="pg-cta-shot" href="/playground/" tabindex="-1" aria-hidden="true">
+    <Picture
+      src={shot}
+      formats={["avif", "webp"]}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 64rem) 40rem, 100vw"
+      alt=""
+      loading="lazy"
+      decoding="async"
+      pictureAttributes={{ class: "block" }}
+    />
+  </a>
+  <a class="hit hit-primary pg-cta-btn" href="/playground/">Open the playground</a>
+</aside>
+
+<style>
+  .pg-cta {
+    max-width: var(--container-prose);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    border: var(--rule-thick) solid var(--color-black);
+    box-shadow: 6px 6px 0 var(--color-black);
+  }
+  .pg-cta-h {
+    margin: 0 0 var(--spacing-xs);
+    font-family: var(--font-display);
+    font-size: var(--text-h2, 1.75rem);
+    line-height: 1.1;
+  }
+  .pg-cta-p {
+    margin: 0 0 var(--spacing-md);
+  }
+  .pg-cta-shot {
+    display: block;
+    border: var(--rule-thick) solid var(--color-black);
+    background: var(--color-white);
+    margin-bottom: var(--spacing-md);
+  }
+  .pg-cta-shot :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .pg-cta-btn {
+    display: inline-flex;
+  }
+</style>
