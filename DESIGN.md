@@ -123,17 +123,21 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   studies only.
 - **Read time** (`src/lib/readingTime.ts`, `src/scripts/readtime.ts`, `src/styles/readtime.css`),
   posts and case studies only. A static "N min read" label in the page head (words / 250,
-  minimum 1). With JS, an aria-hidden chip shows minutes left: one line of text in the color of the
-  surface it sits on (no box), then the emoji last and pinned right, which bounces on every change,
-  with text that swaps through the glyph blocks. Desktop: in the header after the nav, or in the
-  shrunk page strip. Tablets: the strip. Phones: the strip with minutes and emoji only, or a small
-  pill pinned bottom right that hides over the footer. Nothing ever hangs below the header and the
-  header height never changes. Prototype switches, remembered per tab:
+  rounded, minimum 1; works without JS). With JS, an aria-hidden chip shows minutes left, rounded
+  (`max(1, round(total * (1 - progress)))`, progress measured through the article body): one bold
+  line in the color of the surface it sits on (no box), then the emoji last and pinned right, which
+  bounces on every change in both directions, with text that swaps through the glyph blocks.
+  Picked by Sergei (2026-10-13): placed in the shrunk page strip, right-aligned to the content
+  column; grow emoji 🌱 🌿 🪴 🌳 🎉; cheer copy ("4 min left · settle in", "nice start",
+  "halfway there", "Almost there · keep going", "You made it · thanks for reading"); glyph swap;
+  phones show minutes and emoji only in the strip. Nothing ever hangs below the header and the
+  header height never changes. Alternatives stay available for comparison, remembered per tab:
   `?rtpos=header|strip`, `?rtm=compact|corner`, `?rtemoji=grow|trip|moon|none`,
-  `?rtcopy=cheer|coach|quiet`, `?rtswap=glyph|plain`. Not yet picked by Sergei.
-- **Section colors** (`WRITING_BAND` in `src/lib/site.ts`): build-time env var `yellow` (default) or
-  `cobalt`. Writing (index, post heads, home section) uses it; About uses the other one. Work stays
-  yellow, Projects cobalt, 404 tomato. Not yet picked by Sergei.
+  `?rtcopy=cheer|coach|quiet`, `?rtswap=glyph|plain`.
+- **Section colors** (`WRITING_BAND` and `ABOUT_BAND` in `src/lib/site.ts`): Writing (index, post
+  heads, home section) is cobalt and About is yellow (picked by Sergei, 2026-10-13; orange made the
+  writing section hard to read). Work stays yellow, Projects cobalt, 404 tomato. The marker and
+  row-hover colors in `lively.css` have per-band versions for yellow and cobalt.
 - **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale
   marker that draws once behind a few key phrases (`.lv-mark`), a yellow sweep on
   list row hover and focus, sticker tilt on the headshot, photo chip and skill

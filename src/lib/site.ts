@@ -23,12 +23,10 @@ export const NAV = [
 ] as const;
 
 /**
- * Band colors for the two sections the owner is comparing. Build time only: set the env var
- * WRITING_BAND=yellow|cobalt when you run `npm run build` (default yellow). Writing (its index page,
- * every post head and the home Writing section) uses WRITING_BAND; About uses the other one. Work
- * stays yellow and Projects stay cobalt.
+ * Band colors for Writing and About (picked by Sergei, 2026-10-13). Writing (its index page, every
+ * post head and the home Writing section) is cobalt; About takes the other color, yellow. Work stays
+ * yellow and Projects stay cobalt. To swap them, change WRITING_BAND; About follows.
  */
 export type SectionBand = "yellow" | "cobalt";
-const writingEnv = typeof process !== "undefined" ? process.env.WRITING_BAND : undefined;
-export const WRITING_BAND: SectionBand = (writingEnv ?? import.meta.env.WRITING_BAND) === "cobalt" ? "cobalt" : "yellow";
+export const WRITING_BAND: SectionBand = "cobalt";
 export const ABOUT_BAND: SectionBand = WRITING_BAND === "yellow" ? "cobalt" : "yellow";
