@@ -1,6 +1,6 @@
 ---
 title: "AI raised the floor. Taste still sets the ceiling."
-summary: "A viral AI music video and my own site show the same thing: AI raises the floor, but human direction and feedback still set the ceiling."
+summary: "A viral AI music video and my own site's creation show the same thing: AI raises the floor, but human direction and feedback still set the ceiling."
 pubDate: 2026-10-13
 skills: ["AI agents", "Claude Code", "Design", "Prototyping"]
 cover: "../../assets/posts/ai-raises-the-floor/cover.jpg"
@@ -31,11 +31,13 @@ Both look like "the AI did it." Both are really proof of the opposite: AI raises
 
 ## Exhibit A: the P(doom) video
 
-[P(doom)](https://en.wikipedia.org/wiki/P(doom)) is short for "probability of doom": your own guess at how likely it is that AI ends badly for humanity. "What's your p(doom)?" has become an in-joke in AI circles.
+**The AI was not the secret ingredient.** Claude did a huge share of the work on this video. But the things that made people stop and share it came from people: a song written by humans, and a director who kept sending notes until it was right.
 
-Start with the song. Its lyrics were written by several people over a long time. [osmarks](https://docs.osmarks.net/hypha/p(doom)_song_objectively_correct_interpretation) wrote most of them in 2024, building on an opening verse and chorus by MusicPerson, with lines suggested by an online community. The music was generated with Suno. So the words, the jokes and the point of view came from people.
+**First, the name.** [P(doom)](https://en.wikipedia.org/wiki/P(doom)) is short for "probability of doom": your own guess at how likely it is that AI ends badly for humanity. "What's your p(doom)?" has become an in-joke in AI circles.
 
-Then the video. Its author wrote a thread to answer the "one prompt" idea. These are the parts that matter:
+**The song.** Its lyrics were written by several people over a long time. [osmarks](https://docs.osmarks.net/hypha/p(doom)_song_objectively_correct_interpretation) wrote most of them in 2024, building on an opening verse and chorus by MusicPerson, with lines suggested by an online community. The music was generated with Suno. So the words, the jokes and the point of view came from people.
+
+**How the video was created.** The video is by X user [@_mexicat](https://x.com/_mexicat). When people claimed it came from one prompt to Opus, they answered with a thread explaining that their part was much deeper than anyone suspected. These are the parts that matter:
 
 <XPost
   url="https://x.com/_mexicat/status/2103904518929055853"
@@ -52,9 +54,9 @@ Then the video. Its author wrote a thread to answer the "one prompt" idea. These
   ]}
 />
 
-The repo's [revision log](https://github.com/mexicat/pdoom-video) tells the same story: a realistic eye removed because "the client found it uncanny," and timings set by hand where the automatic lyric sync failed.
+**The receipts.** You don't have to take their word for it. The whole project, including the code Claude wrote to render the video, is public in a [GitHub repository](https://github.com/mexicat/pdoom-video): a shared folder that keeps every file and every change. Its revision notes back up the thread: a realistic eye removed because "the client found it uncanny," and timings set by hand where the automatic lyric sync failed.
 
-Look at what actually made it good. Not the prompt. The constraints and the notes: a tight palette, rules for the type, "don't illustrate every line," and tens of rounds of "not like that, try this." That is a director at work, with a very fast crew.
+**What this proves.** What actually made it good was not the prompt, but the constraints and the notes: a tight palette, rules for the type, "don't illustrate every line," and tens of rounds of "not like that, try this." That is a director at work, with a very fast crew.
 
 <Figure
   src={figLoop}
@@ -64,9 +66,11 @@ Look at what actually made it good. Not the prompt. The constraints and the note
 
 ## Exhibit B: how my site was built
 
-This is not the fastest website ever built, and that is not the point. The point is where the decisions came from. Three moments:
+Another case of this loop between AI and human feedback is the site you are reading. Two examples:
 
-**1. The research.** Before any code, I had agents run a research spike: about twenty parallel runs across Claude, Codex and Gemini, comparing frameworks, hosting, design trends and SEO. They came back with a safe pick, a quiet editorial look. I chose something louder: yellow, cobalt and a big serif headline. The first version was live about 90 minutes after the research started.
+**1. The research.** Before any code, I had agents run a research spike: about twenty parallel runs across Claude, Codex and Gemini, comparing frameworks, hosting, design trends and SEO. They came back with a safe pick, a quiet editorial look. I chose something louder: yellow, cobalt and a big serif headline.
+
+**2. The improvements.** Later I described the motion I wanted: comic-book halftone dots, a letter-by-letter text reveal I had seen on Meta's Muse Wonder page, a header that shrinks as you scroll. I asked Claude to push back and to pitch more ideas. It came back with a list: highlighter marks, sticker-style hovers, a scrolling ticker, a dot effect that follows the cursor and more. I kept five and cut the rest. Every idea then went live on a throwaway copy of the site, and I judged it on the real pages. My notes were blunt. The first dots made the text harder to read. A later round was "way too much... basically unusable." A flashy reveal on the big headings "screams too much," so a quiet one on the small text shipped instead. Five rounds for the backgrounds alone.
 
 <Figure
   src={figOptions}
@@ -74,17 +78,9 @@ This is not the fastest website ever built, and that is not the point. The point
   caption="AI widens your options. The final call stays yours."
 />
 
-**2. The extras.** Later I described the motion I wanted: comic-book halftone dots, a letter-by-letter text reveal I had seen on Meta's Muse Wonder page, a header that shrinks as you scroll. I asked Claude to push back and to pitch more ideas. It came back with a list: highlighter marks, sticker-style hovers, a scrolling ticker, a dot effect that follows the cursor and more. I kept five and cut the rest.
+Notice what I used AI for: research, pushback, questions and options. The agents built every version and checked each one for contrast, accessibility and layout shifts. **Every decision was mine.**
 
-**3. The tuning.** Every idea went live on a throwaway copy of the site, and I judged it on the real pages. My notes were blunt. The first dots were darker than the yellow and made the text harder to read. A later round was "way too much... basically unusable." My favorite dots looked blurry: "it hurts my eyes." A flashy reveal on the big headings "screams too much," so a quiet, terminal-style one on the small text shipped instead. Five rounds for the backgrounds alone, in one afternoon.
-
-<Figure
-  src={figHandback}
-  alt="A cheerful robot hands a person a freshly painted poster. The person smiles, points at one spot marked with a check and a cross, and hands it back for another round. A stack of earlier tries sits behind the robot."
-  caption="Specific notes beat vague approval. Say what is wrong, and why."
-/>
-
-The agents built every version and checked each one for contrast, accessibility and layout shifts. Every decision was mine.
+Looking back, the interesting part is not the site itself. It is how smoothly human direction and AI work fit together. **I wasn't even building it full time.** I was busy with other work, and the site moved forward in the background, one round of notes at a time. Getting something I'm proud of while my attention was mostly elsewhere is what excites me most about where this is going.
 
 <PlaygroundCta />
 
@@ -98,5 +94,11 @@ So stay in control:
 2. **Judge on the real thing.** A mockup lies. Try each option in the actual product, on real content.
 3. **Set constraints early.** The video and this site both got better because of what they were not allowed to do.
 4. **Give specific notes, and say why.** "The dots are too dark" is fine. "The dots are too dark, and I can't read the text on top" is better. The reason lets the agent fix the cause, not just the symptom.
+
+<Figure
+  src={figHandback}
+  alt="A cheerful robot hands a person a freshly painted poster. The person smiles, points at one spot marked with a check and a cross, and hands it back for another round. A stack of earlier tries sits behind the robot."
+  caption="Specific notes beat vague approval. Say what is wrong, and why."
+/>
 
 The tools raise the floor for everyone. The ceiling is still yours to set.
