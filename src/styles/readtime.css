@@ -5,8 +5,9 @@
    The chip is one line of text in the color of whatever it sits on (no fill, no frame), then the
    emoji LAST, pinned to the right edge, so it stays put while the words change on its left.
    Where it lives (the script moves it, and sets data-pos):
-     header  desktop default, after the nav (from 56rem)
-     strip   inside the shrunk page head strip, on the right (desktop option, and tablets)
+     strip   desktop default: inside the shrunk page head strip, at the right edge of the centered
+             content column (.ph-mini-in is a .shell, the same column as the page content)
+     header  desktop option, after the nav (from 56rem)
      corner  a small pinned pill at the bottom right of the screen (phone option)
    Phones get the short text (minutes and emoji only), tablets and up get the tagline.
 
@@ -28,8 +29,9 @@
   flex: none;
   color: inherit;
   font-family: var(--font-mono);
-  font-size: var(--text-xs); /* same size as the nav labels */
-  line-height: var(--text-xs--line-height);
+  font-size: calc(var(--text-xs) * 1.2); /* a bit larger than the nav labels, so it stands out */
+  line-height: 1.3;
+  font-weight: var(--font-weight-bold);
   white-space: nowrap;
   text-align: right;
   pointer-events: none;
@@ -44,7 +46,7 @@ html.js-motion .rt-chip {
 }
 .rt-emoji {
   display: inline-block;
-  font-size: 1.125rem; /* a little larger than the text, so the steps read */
+  font-size: 1.625rem; /* 1.4x the old size, so the steps read. It fits the 45px strip (checked). */
   line-height: 1;
   min-width: 1.25em;
   text-align: center;
@@ -74,11 +76,20 @@ html.js-motion .rt-chip {
   font-weight: var(--font-weight-bold);
 }
 .rt-tail {
-  font-weight: 400;
+  font-weight: 600; /* a touch lighter than the bold main text */
   margin-left: 1ch;
 }
 .rt-tail:empty {
   display: none;
+}
+/* Phones: the same treatment, scaled down so minutes and emoji leave the strip title room. */
+@media (max-width: 47.99rem) {
+  .rt-chip {
+    font-size: calc(var(--text-xs) * 1.1);
+  }
+  .rt-emoji {
+    font-size: 1.375rem;
+  }
 }
 
 /* ------------------------------------------------------------------

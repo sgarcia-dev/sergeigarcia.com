@@ -8,7 +8,7 @@
 //   1 when the article bottom is visible
 //
 // Variants, switched by URL param and remembered in sessionStorage for the tab:
-//   ?rtpos=header|strip                 desktop placement (default header)
+//   ?rtpos=strip|header                 desktop placement (default strip)
 //   ?rtm=compact|corner                 phone placement (default compact: in the strip, short text)
 //   ?rtemoji=grow|trip|moon|none        emoji set (default grow)
 //   ?rtcopy=cheer|coach|quiet           wording (default cheer)
@@ -90,7 +90,7 @@ function init() {
   if (!chip || !body || !emojiEl || !box || !mainEl || !tailEl) return;
 
   const total = Math.max(1, Number(chip.dataset.total) || 1);
-  const pos = pick("rtpos", POS, "header");
+  const pos = pick("rtpos", POS, "strip");
   const phoneMode = pick("rtm", PHONE, "compact");
   const emojiSet = pick("rtemoji", Object.keys(EMOJI) as (keyof typeof EMOJI)[], "grow");
   const copySet = pick("rtcopy", Object.keys(COPY) as (keyof typeof COPY)[], "cheer");
@@ -184,7 +184,7 @@ function init() {
    * Where the chip lives:
    *   phones   compact (default): in the page head strip, short text. corner: pinned bottom right.
    *   tablets  in the strip (the header has no room for it below 56rem)
-   *   desktop  the header (default) or the strip, by ?rtpos
+   *   desktop  the strip (default) or the header, by ?rtpos
    * The strip only exists when motion.ts built it (no reduced motion, scroll timelines supported);
    * without it a phone uses the corner and a wider screen keeps the chip in the header.
    */
