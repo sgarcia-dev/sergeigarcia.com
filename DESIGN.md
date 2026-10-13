@@ -54,7 +54,9 @@ Radius is always 0. One exception: the small round headshot in the home hero (`.
 - **Section**: `.shell` grid, 5 or 4 columns of heading on the left, 7 or 8
   columns of content on the right from `lg`. Stacks below.
 - **List and row** (`.list`, `.row`, `.row-end`): thin-ruled rows. `.row` has a
-  mono date rail on the left from `md`.
+  mono date rail on the left from `md`. From `lg`, a list narrower than 46rem (its own width,
+  a container query) stacks the row: thumbnail, date, title, text, pills. The home page uses a 4/8
+  heading/list split below `xl` (90rem) and 5/7 from there.
 - **Row link** (`.row-link`): the whole title links to the entry page; underline
   shows on hover and focus.
 - **Hit** (`.hit`, `.hit-primary`, `.hit-nav`, `.hit-logo`): every button-like
