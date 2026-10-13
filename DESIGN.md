@@ -104,7 +104,12 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   Never on links, buttons, nav, headings, serif text or article body. No-JS shows
   plain text; failsafes force text visible within 2.5 to 3.5s.
 - **Sticky header** compacts after about 80px. On every page but home, the
-  PageHead band sticks under it and shrinks to a thin one-line banner.
+  PageHead band sticks under it and shrinks to a thin one-line banner. The banner
+  fills the full width of the band, edge to edge, with the title in the page
+  column. Any other sticky element (home section headings, the project meta
+  column) and any anchor jump sits below the header, and below the banner on
+  inner pages: use `--stick-top` and `scroll-padding-top` from `motion.css`,
+  never a fixed number.
 - **Reading bar**: 4px, `--color-ink`, top of the viewport, posts and case
   studies only.
 - **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale

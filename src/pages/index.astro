@@ -178,11 +178,13 @@ const jsonLd = [
   .name {
     view-transition-name: site-name;
   }
-  /* Section headings stay in view while the long list scrolls past (no motion). */
+  /* Section headings stay in view while the long list scrolls past (no motion).
+     --stick-top (motion.css) keeps them under the sticky header; it is the old offset when the
+     header is not sticky. */
   @media (min-width: 64rem) {
     .section-head {
       position: sticky;
-      top: var(--spacing-md);
+      top: var(--stick-top, var(--spacing-md));
       align-self: start;
     }
   }

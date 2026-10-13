@@ -218,12 +218,15 @@ let pageHeadSwap: (() => void) | null = null;
   const title = band?.querySelector<HTMLElement>(".page-head-title");
   if (band && title && !reduced && hasTimelines) {
     const mini = document.createElement("div");
-    mini.className = "ph-mini shell";
+    mini.className = "ph-mini"; // full width of the band, so the texture never shows at its sides
     mini.setAttribute("aria-hidden", "true");
+    const miniIn = document.createElement("div");
+    miniIn.className = "ph-mini-in shell"; // the centered column the title lines up with
     const miniTitle = document.createElement("span");
     miniTitle.className = "ph-mini-title";
     miniTitle.textContent = (title.textContent ?? "").replace(/\s+/g, " ").trim();
-    mini.append(miniTitle);
+    miniIn.append(miniTitle);
+    mini.append(miniIn);
     band.append(mini);
 
     const cssPx = (name: string, fallback: number) =>
