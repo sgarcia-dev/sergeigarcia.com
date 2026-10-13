@@ -1,3 +1,66 @@
 ---
-// Inline, render-blocking: picks a random band texture and direction before first paint.
+// Inline and render-blocking on purpose: it picks the band texture before first paint, so there is no flash.
+// On every page load it chooses one pattern and one drift direction at random, and never repeats the
+// previous load's pattern in this tab. All bands on a page share the pick. src/styles/texture.css
+// reads <html data-tex> and the --tex-* variables. With no JS nothing is set and bands stay flat.
+//
+// It also adds the texture layer, an empty <span class="tex"> as the first child of every big band, as
+// the page is parsed (a MutationObserver, so bands are never painted bare). The span sits inside the
+// band's border and clips the texture there, so the texture can never cover a border rule. It is
+// added here, and not written into each page, so every band (including PageHead's) gets one.
 ---
+
+<script is:inline>
+  (function () {
+    var patterns = ["dots-fade", "dots-big", "hatch", "grid"];
+    // E, SE, S, SW, W, NW, N, NE as [dx, dy]
+    var dirs = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
+    var last = -1;
+    try {
+      last = parseInt(sessionStorage.getItem("tex-last"), 10);
+    } catch (e) {}
+    var a = Math.floor(Math.random() * patterns.length);
+    if (a === last) a = (a + 1 + Math.floor(Math.random() * (patterns.length - 1))) % patterns.length;
+    try {
+      sessionStorage.setItem("tex-last", String(a));
+    } catch (e) {}
+    var pool = dirs;
+    // The hatch lines run NE to SW. Moving along them would look still, so those two are out.
+    if (patterns[a] === "hatch") pool = dirs.filter(function (d) { return d[0] * d[1] !== -1; });
+    var d = pool[Math.floor(Math.random() * pool.length)];
+    var root = document.documentElement;
+    root.dataset.tex = patterns[a];
+    root.style.setProperty("--tex-dx", d[0]);
+    root.style.setProperty("--tex-dy", d[1]);
+    root.style.setProperty("--tex-len", d[0] && d[1] ? "1.4142" : "1");
+
+    // The small yellow cards (thumbnail fallback, type card) stay plain.
+    var bands = ".band-yellow, .band-cobalt, .band-tomato";
+    function addLayer(band) {
+      if (band.matches(".shot-card, .type-card") || band.querySelector(":scope > .tex")) return;
+      var layer = document.createElement("span");
+      layer.className = "tex";
+      layer.setAttribute("aria-hidden", "true");
+      band.prepend(layer);
+    }
+    function scan(node) {
+      if (node.nodeType !== 1) return;
+      if (node.matches(bands)) addLayer(node);
+      var inside = node.querySelectorAll(bands);
+      for (var i = 0; i < inside.length; i++) addLayer(inside[i]);
+    }
+    var watcher = new MutationObserver(function (records) {
+      for (var i = 0; i < records.length; i++) {
+        for (var j = 0; j < records[i].addedNodes.length; j++) scan(records[i].addedNodes[j]);
+      }
+    });
+    watcher.observe(root, { childList: true, subtree: true });
+    document.addEventListener("DOMContentLoaded", function () {
+      watcher.takeRecords().forEach(function (r) {
+        r.addedNodes.forEach(scan);
+      });
+      scan(document.body);
+      watcher.disconnect();
+    });
+  })();
+</script>

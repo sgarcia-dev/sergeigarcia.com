@@ -1,1 +1,185 @@
-/* texture: see DESIGN.md. */
+/* Band textures. DESIGN.md has the rules; this file has the mechanism.
+
+   TexturePick.astro (inline, in <head>) sets, before first paint:
+     <html data-tex="dots-fade | dots-big | hatch | grid">
+     --tex-dx / --tex-dy   drift direction, each -1, 0 or 1
+     --tex-len             length of that direction (1, or 1.4142 for a diagonal)
+   Without JS there is no data-tex, so no texture and no change to the layout.
+
+   Each big band (yellow, cobalt, tomato, and the home hero halves) gets one layer behind its
+   content (the ::before of a .tex span). The layer is position: fixed, so the texture holds still on screen while the page scrolls
+   over it, and only drifts. A fixed layer stays viewport-sized, which keeps its edges sharp; a layer
+   as tall as a long band would be rendered softer. The drift is a transform only, by a whole number
+   of tiles per loop, so the loop is seamless and nothing repaints.
+
+   The .tex span is clipped to the band's PADDING box, so the texture can never paint over the band's
+   border rules.
+
+   Colors: the texture moves away from the text color. Yellow and tomato bands have black text, so
+   their texture is lighter. Cobalt has white text, so its texture is deeper. The tomato tones match
+   the yellow ones in contrast ratio against their own fill. Bands keep their fills in dark mode. */
+
+/* ---- Pattern geometry (tile size in px, tiles travelled per loop) and speed --------------------- */
+html {
+  --tex-speed: 13.9; /* px per second along the drift path, the same for every pattern */
+}
+html[data-tex="dots-fade"] {
+  --tn: 28;
+  --k: 3;
+}
+html[data-tex="dots-big"] {
+  --tn: 44;
+  --k: 2;
+}
+html[data-tex="hatch"] {
+  --tn: 16;
+  --k: 4;
+}
+html[data-tex="grid"] {
+  --tn: 48;
+  --k: 2;
+}
+
+/* ---- dots-fade: a stepped halftone ---------------------------------------------------------------
+   Six hard-edged diagonal bands, small dots at the top left growing to big at the bottom right, on one
+   45 degree lattice (28px cell). The bands are cut midway between two rows of dots, so no dot is ever
+   sliced. Colors are baked into the picture, one per band color. It is an inline SVG used as a
+   background image, not a mask: Chrome rasterizes SVG masks at 1x and they come out soft. Its size is a
+   whole number of cells, so drifting by whole cells (84px) stays seamless. */
+:root {
+  --df-yellow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23ffee85'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23ffee85'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%23ffea70'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%23ffea70'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%23ffea70'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%23ffea70'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #ffee85, big #ffea70 */
+  --df-cobalt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23162fa8'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23162fa8'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%231834b2'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%231834b2'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%231834b2'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%231834b2'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #162fa8, big #1834b2 */
+  --df-tomato: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3192' height='3192'%3E%3Cdefs%3E%3Cpattern id='p0' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='1.6' fill='%23ff967e'/%3E%3Ccircle cx='21' cy='21' r='1.6' fill='%23ff967e'/%3E%3C/pattern%3E%3Cpattern id='p1' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='2.6' fill='%23ff967e'/%3E%3Ccircle cx='21' cy='21' r='2.6' fill='%23ff967e'/%3E%3C/pattern%3E%3Cpattern id='p2' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='3.8' fill='%23ff967e'/%3E%3Ccircle cx='21' cy='21' r='3.8' fill='%23ff967e'/%3E%3C/pattern%3E%3Cpattern id='p3' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='5.2' fill='%23ff886d'/%3E%3Ccircle cx='21' cy='21' r='5.2' fill='%23ff886d'/%3E%3C/pattern%3E%3Cpattern id='p4' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='6.2' fill='%23ff886d'/%3E%3Ccircle cx='21' cy='21' r='6.2' fill='%23ff886d'/%3E%3C/pattern%3E%3Cpattern id='p5' width='28' height='28' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='7' cy='7' r='7.0' fill='%23ff886d'/%3E%3Ccircle cx='21' cy='21' r='7.0' fill='%23ff886d'/%3E%3C/pattern%3E%3C/defs%3E%3Cpath fill='url(%23p0)' d='M0 0H252L0 252V0Z'/%3E%3Cpath fill='url(%23p1)' d='M252 0H420L0 420V252Z'/%3E%3Cpath fill='url(%23p2)' d='M420 0H616L0 616V420Z'/%3E%3Cpath fill='url(%23p3)' d='M616 0H840L0 840V616Z'/%3E%3Cpath fill='url(%23p4)' d='M840 0H1064L0 1064V840Z'/%3E%3Cpath fill='url(%23p5)' d='M1064 0H3192V3192H0V1064Z'/%3E%3C/svg%3E"); /* small #ff967e, big #ff886d */
+}
+
+/* ---- Band tones -------------------------------------------------------------------------------- */
+html[data-tex] .band-yellow {
+  --t-fine: #ffe45c; /* hatch and grid lines */
+  --t-huge: #ffe03f; /* dots-big */
+  --t-fade: var(--df-yellow);
+}
+html[data-tex] .band-cobalt {
+  --t-fine: #162fa8;
+  --t-huge: #1936b9;
+  --t-fade: var(--df-cobalt);
+}
+html[data-tex] .band-tomato {
+  --t-fine: #ff7c5f;
+  --t-huge: #ff6c4d;
+  --t-fade: var(--df-tomato);
+}
+
+/* ---- The layer ---------------------------------------------------------------------------------- */
+/* TexturePick.astro adds <span class="tex" aria-hidden="true"> as the first child of each big band
+   (yellow, cobalt, tomato; not the small yellow cards). The span sits at inset 0, which is the band's
+   PADDING box, so it ends where the border starts. Its own clip-path then cuts the fixed layer
+   inside it at that edge. A clip-path on the band itself would also cut the band's border, which is
+   why the clip lives on this span and not on the band. */
+html[data-tex] :where(.band-yellow, .band-cobalt, .band-tomato):has(> .tex) {
+  isolation: isolate;
+  position: relative; /* :where keeps this weaker than any rule that sets sticky or absolute */
+}
+html[data-tex] .tex {
+  --reach: calc(var(--tn) * var(--k) * 1px);
+  --tile: calc(var(--tn) * 1px);
+  /* One loop = distance / speed. A diagonal is longer, so it takes longer: same px per second. */
+  --dur: calc(var(--tn) * var(--k) * var(--tex-len, 1) / var(--tex-speed) * 1s);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  clip-path: inset(var(--ci-t, 0) var(--ci-r, 0) var(--ci-b, 0) var(--ci-l, 0));
+}
+/* Layout is fractional but borders are snapped to whole screen pixels, so on a 1x screen the clip can
+   land up to one pixel past the snapped border. On the sides that touch a border rule, pull the clip in
+   by 1px. The 1px of plain band fill left there is the same tone as the texture, so it is not seen. */
+html[data-tex] :is(.edge-b, .hero-bleed, .hero-inner > *) > .tex {
+  --ci-b: 1px;
+}
+html[data-tex] .edge-t > .tex {
+  --ci-t: 1px;
+}
+html[data-tex] .hero-aside > .tex {
+  --ci-t: 1px; /* phones: its border is on top */
+}
+@media (min-width: 64rem) {
+  html[data-tex] .hero-inner > .band-yellow > .tex {
+    --ci-r: 1px; /* next to the aside's left border */
+  }
+  html[data-tex] .hero-aside > .tex {
+    --ci-t: 0;
+    --ci-l: 1px;
+  }
+}
+html[data-tex] .tex::before {
+  content: "";
+  position: fixed;
+  inset: calc(-1 * var(--reach));
+  background-repeat: repeat;
+}
+html[data-tex="dots-fade"] .tex::before {
+  background-image: var(--t-fade);
+  background-size: 3192px 3192px;
+  background-position: 0 0;
+}
+html[data-tex="dots-big"] .tex::before {
+  background-image:
+    radial-gradient(circle, var(--t-huge) 0 8px, #0000 8.8px), radial-gradient(circle, var(--t-huge) 0 8px, #0000 8.8px);
+  background-size: var(--tile) var(--tile);
+  background-position:
+    0 0,
+    calc(var(--tile) / 2) calc(var(--tile) / 2);
+}
+html[data-tex="hatch"] .tex::before {
+  background-image: linear-gradient(135deg, #0000 43%, var(--t-fine) 43% 57%, #0000 57%);
+  background-size: var(--tile) var(--tile);
+}
+html[data-tex="grid"] .tex::before {
+  background-image:
+    linear-gradient(to right, var(--t-fine) 0 2px, #0000 2px), linear-gradient(to bottom, var(--t-fine) 0 2px, #0000 2px);
+  background-size: var(--tile) var(--tile);
+}
+
+/* ---- Home hero: the fills run on to the screen edges ------------------------------------------- */
+/* From 64rem the hero is a yellow half and a cobalt half whose fills continue past the 90rem content
+   box. Two empty band spans behind the content carry the texture out to the edges. Pinned to the
+   screen with the same drift, they line up with the textured blocks on top of them. */
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+.hero-inner {
+  position: relative;
+}
+.hero-bleed {
+  display: none;
+}
+@media (min-width: 64rem) {
+  html[data-tex] .hero-bleed {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
+  html[data-tex] .hero-bleed.band-yellow {
+    left: 0;
+    right: 50%;
+  }
+  html[data-tex] .hero-bleed.band-cobalt {
+    left: 50%;
+    right: 0;
+  }
+}
+
+/* ---- Drift. Reduced motion keeps the texture and stops the movement ------------------------------ */
+@keyframes tex-drift {
+  to {
+    transform: translate3d(calc(var(--tex-dx, 1) * var(--reach)), calc(var(--tex-dy, 1) * var(--reach)), 0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-tex] .tex::before {
+    will-change: transform;
+    animation: tex-drift var(--dur) linear infinite;
+  }
+}
