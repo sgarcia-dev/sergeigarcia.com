@@ -23,6 +23,16 @@
  *   the quote. It then hides the card from assistive tech so the line is not read twice. It holds no
  *   links or buttons, so nothing focusable gets hidden.
  *
+ * Reveal: when the card is about 30% on screen it pops in once with one small bounce. It starts a
+ * little smaller (0.94), lower and untilted, then settles into its final tilt and shadow over about
+ * 640ms with a single overshoot of 2%; the black quote chip lands 140ms later. Only transform and
+ * opacity move, so nothing around it shifts. The script (below the markup) marks each card
+ * data-pq="pending" and then "in"; the pending look is also applied by CSS from the first paint,
+ * so a card never flashes before it animates. Without JS (no html.js-motion), with reduced motion,
+ * and in print the card is simply shown in its final state. Failsafes: if the script has not run
+ * within 1.5s, CSS shows the card; a card already scrolled past is shown at once; any error in
+ * the script shows every card. It plays once and stays.
+ *
  * Usage in MDX, as plain text on one line: <PullQuote>The line from the post.</PullQuote>
  */
 interface Props {
@@ -32,6 +42,65 @@ const { decorative = false } = Astro.props;
 ---
 
 <p class="pq" aria-hidden={decorative ? "true" : undefined}><slot /></p>
+
+<script>
+  // Reveal each pull quote once, when about 30% of it is on screen. The CSS side is below, in this
+  // file. Same switch as the rest of motion: html.js-motion (set by MotionInit) and no reduced motion.
+  // Astro bundles this script once per page, however many pull quotes the page has.
+  const cards = Array.from(document.querySelectorAll<HTMLElement>(".pq"));
+  const root = document.documentElement;
+  const showAll = () => {
+    for (const el of cards) el.dataset.pq = "done"; // "done" has no animation, only the final look
+  };
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (cards.length && !reduced && root.classList.contains("js-motion") && "IntersectionObserver" in window) {
+    try {
+      // Wait for an arriving page transition to end, like the glyph reveal does (but never long).
+      let transitionDone: Promise<unknown> = Promise.resolve();
+      interface RevealEvent extends Event {
+        viewTransition?: { finished: Promise<unknown> } | null;
+      }
+      addEventListener("pagereveal", (e) => {
+        const vt = (e as RevealEvent).viewTransition;
+        if (vt) transitionDone = vt.finished.catch(() => {});
+      });
+      const active = (document as unknown as { activeViewTransition?: { finished: Promise<unknown> } | null })
+        .activeViewTransition;
+      if (active) transitionDone = active.finished.catch(() => {});
+      const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            const el = e.target as HTMLElement;
+            if (e.isIntersecting) {
+              io.unobserve(el);
+              void Promise.race([transitionDone, wait(1500)]).then(() => {
+                el.dataset.pq = "in";
+              });
+            } else if (e.boundingClientRect.top < 0) {
+              // Already scrolled past (a reload that restores the scroll, or a jump link): no show.
+              io.unobserve(el);
+              el.dataset.pq = "done";
+            }
+          }
+        },
+        { threshold: 0.3 },
+      );
+      for (const el of cards) {
+        if (el.dataset.pq) continue; // a restored page that already played
+        el.dataset.pq = "pending"; // hidden by CSS until it is seen
+        io.observe(el);
+      }
+      // The browser keeps the page in memory for back and forward; a card that played stays played.
+    } catch {
+      showAll(); // a card must never stay hidden because of a script error
+    }
+  } else {
+    showAll();
+  }
+</script>
 
 <style>
   .pq {
@@ -46,6 +115,7 @@ const { decorative = false } = Astro.props;
     border: var(--rule-thick) solid var(--edge);
     box-shadow: 8px 8px 0 var(--edge);
     transform: rotate(-1deg);
+    --pq-ms: 640ms; /* the whole pop; the chip finishes at about the same moment */
     font-family: var(--font-sans);
     font-weight: 700;
     font-size: var(--text-xl);
@@ -95,6 +165,86 @@ const { decorative = false } = Astro.props;
   @media (prefers-reduced-motion: reduce) {
     .pq {
       transform: none;
+    }
+  }
+
+  /* Reveal. Only on screens, only when motion is welcome, and only when the inline head script set
+     html.js-motion, so without JS the card is just there. Only transform and opacity change, and
+     the card keeps its box the whole time, so nothing around it moves. The animation has no
+     "forwards" fill: when it ends the card is back on its normal rules above (tilt, shadow, all of
+     it), so the final look is exactly the one it always had. */
+  @keyframes pq-pop {
+    0% {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94) rotate(0deg);
+      animation-timing-function: var(--ease-out, cubic-bezier(0.2, 0, 0, 1));
+    }
+    35% {
+      opacity: 1;
+    }
+    58% {
+      /* The one overshoot: 2% too big, a hair too high, a hair too tilted. */
+      opacity: 1;
+      transform: translateY(-2px) scale(1.02) rotate(-1.4deg);
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(-1deg);
+    }
+  }
+  @keyframes pq-chip {
+    0% {
+      opacity: 0;
+      scale: 0.7;
+      animation-timing-function: var(--ease-out, cubic-bezier(0.2, 0, 0, 1));
+    }
+    60% {
+      opacity: 1;
+      scale: 1.06;
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+  /* The failsafe for a script that never ran: show the card 1.5s after load. */
+  @keyframes pq-show {
+    to {
+      opacity: 1;
+      transform: rotate(-1deg);
+    }
+  }
+  @keyframes pq-show-chip {
+    to {
+      opacity: 1;
+    }
+  }
+  @media screen and (prefers-reduced-motion: no-preference) {
+    /* Waiting: lower, smaller, untilted and invisible. Before the script has looked at the card
+       (no data-pq yet) it is hidden too, so there is no flash; the failsafe shows it if the script
+       never comes. Once the script has marked it pending, the failsafe no longer applies. */
+    :global(html.js-motion) .pq:not([data-pq]),
+    .pq[data-pq="pending"] {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94) rotate(0deg);
+    }
+    :global(html.js-motion) .pq:not([data-pq]) {
+      animation: pq-show 1ms linear 1.5s forwards;
+    }
+    :global(html.js-motion) .pq:not([data-pq])::before,
+    .pq[data-pq="pending"]::before {
+      opacity: 0;
+    }
+    :global(html.js-motion) .pq:not([data-pq])::before {
+      animation: pq-show-chip 1ms linear 1.5s forwards;
+    }
+    .pq[data-pq="in"] {
+      animation: pq-pop var(--pq-ms) linear backwards;
+    }
+    .pq[data-pq="in"]::before {
+      animation: pq-chip 480ms linear 140ms backwards;
     }
   }
 </style>

@@ -89,3 +89,55 @@ test.describe("read time", () => {
     await expect(page.locator(".rt-chip")).toHaveCount(0);
   });
 });
+
+// Pull quote: hidden and untilted until it is on screen, then pops in once and settles on its
+// normal look. Without JS it is just there.
+test.describe("pull quote reveal", () => {
+  const settled = "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"; // rotate(-1deg)
+
+  test("waits below the fold, pops in once when scrolled to, then stays settled", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/about/");
+    const pq = page.locator(".pq");
+    await expect(pq).toHaveAttribute("data-pq", "pending");
+    expect(await pq.evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
+    const top = await pq.evaluate((el) => (el as HTMLElement).offsetTop);
+
+    await pq.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await expect(pq).toHaveAttribute("data-pq", "in");
+    expect(await pq.evaluate((el) => el.getAnimations().map((a) => (a as CSSAnimation).animationName))).toContain(
+      "pq-pop",
+    );
+    // Settled: fully visible, the usual tilt, no animation left, and nothing around it moved.
+    await expect.poll(async () => pq.evaluate((el) => el.getAnimations().length), { timeout: 3000 }).toBe(0);
+    expect(await pq.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+    expect(await pq.evaluate((el) => getComputedStyle(el).transform)).toBe(settled);
+    expect(await pq.evaluate((el) => (el as HTMLElement).offsetTop)).toBe(top);
+
+    // Scrolling away and back does not replay it.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await pq.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(150);
+    expect(await pq.evaluate((el) => el.getAnimations().length)).toBe(0);
+  });
+
+  test("shows at once without scripts", async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto("/about/");
+    const pq = page.locator(".pq");
+    expect(await pq.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+    expect(await pq.evaluate((el) => getComputedStyle(el).transform)).toBe(settled);
+    await ctx.close();
+  });
+
+  test("reduced motion shows it at once, flat", async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await ctx.newPage();
+    await page.goto("/about/");
+    const pq = page.locator(".pq");
+    expect(await pq.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+    expect(await pq.evaluate((el) => getComputedStyle(el).transform)).toBe("none");
+    await ctx.close();
+  });
+});
