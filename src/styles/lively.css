@@ -13,17 +13,25 @@
    <span class="lv-mark"> in the page markup (index.astro, about.astro). The CSS default is the
    finished highlight, so a phrase is never blank. Where scripts run (html[data-tex], set by the
    inline head script) and motion is allowed, the highlight starts collapsed and src/scripts/lively.ts
-   adds .lv-in once the phrase is on screen. It draws left to right once and stays.
+   adds .lv-in once the phrase is on screen. It draws left to right once and stays. lively.ts also puts
+   .lv-js on <html> as soon as it runs; only a page where that never happens gets the timed failsafe below.
    --------------------------------------------------------------------------------------------- */
 .lv-mark {
   --lv-mark-color: #ffe98a;
-  --lv-mark-size: 100% 62%;
+  /* --lv-mark-h is the block height. The collapsed state below reuses it, so the block only ever grows
+     in width when it draws in. */
+  --lv-mark-h: 62%;
+  --lv-mark-size: 100% var(--lv-mark-h);
   --lv-mark-pos: 0 80%;
-  /* The block runs a little past the text on both sides; the negative margin cancels the padding. */
-  padding-inline: 0.16em;
-  margin-inline: -0.16em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  /* The block is padded, never pulled out with a negative margin. A negative margin made the block start
+     inside the space before the phrase and paint over the last letter of the word in front of it (an
+     element's background is painted after the text that comes before it). The padding is real inline space,
+     so the block stays inside its own box on both sides. The end is padded a little less so a period or comma
+     right after the phrase does not drift away from it. "slice" keeps the block flush with the text where
+     a phrase wraps, so a wrapped second line is not pushed in by the padding. */
+  padding-inline: 0.12em 0.08em;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
   background: linear-gradient(var(--lv-mark-color), var(--lv-mark-color)) var(--lv-mark-pos) / var(--lv-mark-size) no-repeat;
 }
 /* In dark mode the page text is light, which fails on a pale block. On paper the marker becomes a softer
@@ -32,18 +40,26 @@
 @media (prefers-color-scheme: dark) {
   .lv-mark:not(.lv-mark--band) {
     --lv-mark-color: rgba(255, 212, 0, 0.62);
-    --lv-mark-size: 100% 0.2em;
+    --lv-mark-h: 0.2em;
     --lv-mark-pos: 0 96%;
   }
 }
 /* The phrase marker on a colored band: the default pale yellow only shows on tomato. On a yellow band
-   it is a white block (black text stays readable); on cobalt, where the text is white, a deeper blue. */
+   it is a white block (black text stays readable); on cobalt, where the text is white, a yellow block.
+   Yellow and tomato bands keep the text black, so a short block over the lower part of the letters is
+   still black on a light color. */
 .band-yellow .lv-mark--band {
   --lv-mark-color: rgba(255, 255, 255, 0.78);
 }
 .band-cobalt .lv-mark--band {
-  /* The old dark-blue block was almost invisible on cobalt. A yellow block with black text reads clearly. */
+  /* The old dark-blue block was almost invisible on cobalt. A yellow block with black text reads clearly.
+     The text turns black here, so the block must sit behind every black letter: a full-height block, not
+     the short one, or the tops of the letters sit on blue and cannot be read. 100% is the inline box
+     (the font's ascent plus descent, about 1.3em), which already reaches past the ascenders and
+     descenders. It stays inside the line height, so a wrapped phrase never paints over the line above. */
   --lv-mark-color: var(--color-yellow);
+  --lv-mark-h: 100%;
+  --lv-mark-pos: 0 50%;
   color: var(--color-black);
 }
 @keyframes lv-mark-show {
@@ -53,18 +69,17 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   html[data-tex] .lv-mark:not(.lv-in) {
-    background-size: 0% var(--lv-mark-h, 62%);
-    /* Failsafe: if the script never runs, the highlight still shows after a few seconds. */
+    background-size: 0% var(--lv-mark-h);
+  }
+  /* Failsafe: if the script never runs, the highlight still shows after a few seconds. It must not apply
+     once the script is running (.lv-js on <html>). It used to, so every mark further down the page was
+     already filled in by the time the reader scrolled to it. */
+  html[data-tex]:not(.lv-js) .lv-mark:not(.lv-in) {
     animation: lv-mark-show 1ms linear 4s forwards;
   }
   html[data-tex] .lv-mark.lv-in {
     background-size: var(--lv-mark-size);
     transition: background-size 750ms var(--ease-out);
-  }
-}
-@media (prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark) {
-  html[data-tex] .lv-mark:not(.lv-mark--band, .lv-in) {
-    --lv-mark-h: 0.2em;
   }
 }
 

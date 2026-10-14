@@ -16,7 +16,7 @@ If you need a value that is not here, add a token first and say why.
 |---|---|---|
 | `bg` / `ink` / `muted` | light `#FFFFFF` / `#0A0A0A` / `#3F3F3F`; dark `#0D0D12` / `#F2F0EA` / `#C4C2BC` | Paper sections. Switch with `prefers-color-scheme`. |
 | `yellow` | `#FFD400` | Hero name block, primary buttons, hover fill, text selection. Black text only. |
-| `cobalt` | `#1F3FD1` | Facts block, Projects and About bands. White text only. |
+| `cobalt` | `#1A34B0` | Facts block, Projects and About bands. White text only. |
 | `tomato` | `#FF6A44` | Writing band and 404. Black text only. |
 | `black` / `white` / `chalk` | `#0A0A0A` / `#FFFFFF` / `#F4F4EE` | Footer, tags, text on bands. |
 
@@ -139,7 +139,9 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   writing section hard to read). Work stays yellow, Projects cobalt, 404 tomato. The marker and
   row-hover colors in `lively.css` have per-band versions for yellow and cobalt.
 - **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale
-  marker that draws once behind a few key phrases (`.lv-mark`), a yellow sweep on
+  marker that draws once, as the phrase scrolls into view, behind a few key phrases (`.lv-mark`; the
+  block sits inside its own box and never overlaps the neighboring words; on cobalt it is full height so
+  the black letters sit on yellow), a yellow sweep on
   list row hover and focus, sticker tilt on the headshot, photo chip and skill
   pills on hover, a growing yellow underline on inline text links, and the slow
   black ticker under the home hero (pauses on hover, static under reduced motion).

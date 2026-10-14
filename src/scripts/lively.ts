@@ -9,7 +9,10 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 // split at runtime (the glyph reveal in motion.ts reads those nodes). Here we only draw them in:
 // each highlight starts collapsed (CSS, while html[data-tex] is set) and grows once when it is
 // on screen. A phrase already on screen at load waits a moment, so the swipe is seen, not missed.
+// Reduced motion and browsers without IntersectionObserver get every mark drawn at once.
 function initMarker() {
+  // Tells the CSS that this script is running, so the timed no-script failsafe on the highlights stays off.
+  document.documentElement.classList.add("lv-js");
   const marks = Array.from(document.querySelectorAll<HTMLElement>(".lv-mark"));
   if (!marks.length) return;
   if (reduceMotion || !("IntersectionObserver" in window)) {
