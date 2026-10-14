@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
+import PullQuote from "../components/PullQuote.astro";
 import { Picture } from "astro:assets";
 import { SITE, ABOUT_BAND } from "../lib/site";
 import { PERSON, breadcrumbs } from "../lib/seo";
@@ -17,6 +18,17 @@ const jsonLd = [
   },
   breadcrumbs([{ name: "About", path: "/about/" }]),
 ];
+
+// Quick facts under the intro: small tilted tags (the tilt comes from the pill rules in lively.css).
+const facts = ["From Mexico", "Lives in Dublin", "13+ years of software", "English and Spanish", "Front end first"];
+
+// The contact line follows the site-wide availability switch (src/lib/site.ts), never its own copy of the choice.
+const availability: Record<string, string | null> = {
+  looking: "I'm currently looking for my next role, so if your team is hiring, ",
+  open: "Always happy to hear about interesting work in developer tools and AI. ",
+  off: null,
+};
+const availabilityLead = availability[SITE.availability];
 ---
 
 <Base
@@ -25,127 +37,216 @@ const jsonLd = [
   ogType="profile"
   jsonLd={jsonLd}
 >
-  <PageHead band={ABOUT_BAND} title="About" />
+  <PageHead band={ABOUT_BAND} title="Hi, I'm Sergei.">
+    <p class="hook font-title mt-sm max-w-prose text-xl">
+      I got into software because a librarian caught me being <span class="lv-mark lv-mark--band">jealous</span>.
+    </p>
+  </PageHead>
 
-  <div class="shell py-sm lg:py-md">
-    <section class="about-section grid gap-md py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">
+  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-label="Introduction">
+    <div class="lg:col-span-5">
+      <figure class="photo">
+        <Picture
+          src={family}
+          formats={["avif", "webp"]}
+          widths={[400, 640, 960]}
+          sizes="(min-width: 64rem) 28rem, 100vw"
+          alt="Sergei with his wife and daughter, smiling on a lakeside hike in Ireland"
+          loading="eager"
+          decoding="async"
+          pictureAttributes={{ class: "block" }}
+        />
+      </figure>
+    </div>
+    <div class="lg:col-span-7">
+      <div class="prose">
+        <p>
+          I'm a software engineer from Mexico. Last year my wife, our young daughter and I packed up and moved to
+          Dublin, Ireland. We have been exploring the country ever since, one weekend at a time, and it already feels
+          like home.
+        </p>
+        <p>
+          Most of my work has been on the front end with React and TypeScript, plus full stack when the job needs it.
+          It's all on the <a href="/work/">work page</a>.
+        </p>
+      </div>
+      <ul role="list" class="facts pill-list mt-md" aria-label="Quick facts">
+        {facts.map((f) => <li class="pill">{f}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="edge-t" aria-labelledby="about-start">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="lg:col-span-5">
-        <h2 id="about-bio" class="label">Hi, I'm Sergei</h2>
-        <figure class="photo mt-sm">
-          <Picture
-            src={family}
-            formats={["avif", "webp"]}
-            widths={[400, 640, 960]}
-            sizes="(min-width: 64rem) 28rem, 100vw"
-            alt="Sergei with his wife and daughter, smiling on a lakeside hike in Ireland"
-            loading="eager"
-            decoding="async"
-            pictureAttributes={{ class: "block" }}
-          />
-        </figure>
+        <p class="label">Around 2005</p>
+        <h2 id="about-start" class="sec-title font-display tracking-tight mt-xs">How I got here</h2>
       </div>
       <div class="prose lg:col-span-7">
+        <p>I'm 13, in the school library, and I'm jealous.</p>
         <p>
-          I'm from Mexico. Last year my wife, our young daughter and I packed up and moved to Dublin, Ireland for my
-          work. We have been exploring the country ever since, one weekend at a time, and it already feels like home.
+          Grown-ups around me are making animations and websites in Macromedia Flash and Dreamweaver. I want to do that
+          so badly it must be written all over my face, because the librarian notices and
+          <span class="lv-mark">offers to teach me</span>.
         </p>
         <p>
-          My road into software was a <span class="lv-mark">happy accident</span>. I originally wanted to study graphic design, and my background
-          is in project management, not engineering. Somewhere along the way I found out that I love building things
-          even more than planning them. That was <span class="lv-mark">more than 13 years</span> ago, and I still get the same kick when something
-          I made works for the first time.
+          That's the whole origin story. I make small animations, turn-based video games with very basic code, and
+          websites. I have a ridiculous amount of fun.
         </p>
         <p>
-          People usually describe me as cheerful and positive. I try to lead with <span class="lv-mark">empathy</span>, at work and at home. I
-          would rather understand why someone is stuck than tell them what to do, and I think that is why teaching
-          has followed me through every job.
+          I originally wanted to study graphic design, and my background is in project management, not engineering.
+          Somewhere along the way I found out that I love building things even more than planning them. I've been at it
+          for <span class="lv-mark">more than 13 years</span> now, and I still get the same kick when something I made
+          works for the first time.
         </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-strengths">
-      <h2 id="about-strengths" class="label lg:col-span-5">What I bring to a team</h2>
-      <div class="prose lg:col-span-7">
-        <p>
-          <strong>A planner's habits.</strong> Thanks to that project management start, I think about scope,
-          deadlines and the people waiting on the work, and I'm good at turning a fuzzy idea into a plan a team can
-          actually ship.
-        </p>
-        <p>
-          <strong>A designer's eye.</strong> I never stopped caring about design, so I sweat the UI and UX details:
-          clear layouts, motion that helps, accessibility, and the small things people feel without naming.
-        </p>
-        <p>
-          <strong>A teacher's patience.</strong> I have mentored developers one to one, taught bootcamp classes at
-          Desafio Latam, run workshops for Thinkful students and given enterprise training. I start from what the
-          person already knows, then we work through real problems together.
-        </p>
-        <p>
-          Most of my work has been on the front end with React and TypeScript, plus full-stack work when the job
-          needs it. I started in consulting, building apps for agriculture and healthcare, then worked on travel,
-          education, research and social products, including Typing.com, St. Jude Children's Research Hospital
-          and Reddit.
-        </p>
-      </div>
-    </section>
+  <section class="band-cobalt edge-t edge-b" aria-labelledby="about-work">
+    <div class="shell py-lg lg:py-xl">
+      <h2 id="about-work" class="sec-title font-display tracking-tight">How I work</h2>
+      <p class="mt-xs max-w-prose text-lg">Three habits, from three different starts.</p>
+      <ul role="list" class="mt-md grid gap-md lg:grid-cols-3 lg:gap-lg">
+        <li class="card">
+          <h3 class="font-title text-xl">Planner</h3>
+          <p>
+            I started in project management, so I think about scope, deadlines and the people waiting on the work. Give
+            me a fuzzy idea and I'll turn it into a plan a team can actually ship.
+          </p>
+          <p class="eg">
+            <span class="label">For example</span>
+            This site started as a pile of options. I had AI agents research frameworks, hosting, design and SEO, picked
+            a direction, and shipped it in a couple of days.
+          </p>
+        </li>
+        <li class="card">
+          <h3 class="font-title text-xl">Designer</h3>
+          <p>
+            I never stopped caring about design. I sweat the details people feel without naming them: clear layouts,
+            spacing, motion that helps.
+          </p>
+          <p class="eg">
+            <span class="label">For example</span>
+            On this site, anything that moves stops moving if your device asks for less motion, and every page has to
+            pass automated accessibility checks before it goes out.
+          </p>
+        </li>
+        <li class="card">
+          <h3 class="font-title text-xl">Teacher</h3>
+          <p>
+            I've taught bootcamp classes at Desafio Latam and mentored students at Thinkful. I would rather understand
+            why someone is stuck than tell them what to do.
+          </p>
+          <p class="eg">
+            <span class="label">For example</span>
+            My favorite moment is when a hard idea finally clicks. Explaining <code>this</code> in JavaScript. Walking
+            through how React's render loop works.
+          </p>
+        </li>
+      </ul>
+      <p class="mt-lg max-w-prose text-lg">
+        People who've worked with me tell me my <span class="lv-mark lv-mark--band">passion for software is
+        infectious</span>, and that everyone in the room levels up or wants to. They also tell me never to stop being
+        like that. I don't plan to.
+      </p>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-life">
-      <h2 id="about-life" class="label lg:col-span-5">Things I love</h2>
-      <div class="prose lg:col-span-7">
-        <ul>
-          <li>
-            <strong>Showing my daughter the world.</strong> We take every chance we get to travel somewhere new as a
-            family.
-          </li>
-          <li>
-            <strong>Taking things apart.</strong> Electronics, gadgets, new tools. If it just came out, I want to
-            know how it works.
-          </li>
-          <li>
-            <strong>Keeping up with tech and AI.</strong> I read about what's new and then try it myself, usually the
-            same week.
-          </li>
-          <li>
-            <strong>Teaching.</strong> My favorite moment is when something finally clicks for someone.
-          </li>
-          <li><strong>Classic rock and disco.</strong> That's most of what's on my playlists.</li>
-        </ul>
-      </div>
-    </section>
+  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-label="Something people disagree with">
+    <div class="lg:col-span-8 xl:col-span-7">
+      <PullQuote>A website should work for everyone, including people on cheap phones.</PullQuote>
+      <p class="prose">
+        Much of the web is bloated, built for the top 1% with expensive iPhones and flagship Androids. Not everyone
+        agrees with me on this. I still think it is worth the extra work.
+      </p>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-languages">
-      <h2 id="about-languages" class="label lg:col-span-5">Languages</h2>
-      <div class="prose lg:col-span-7">
-        <p>English and Spanish.</p>
-      </div>
-    </section>
+  <section class="shell pb-lg lg:pb-xl" aria-labelledby="about-now">
+    <div class="now band-black">
+      <p class="label tag-now">Right now</p>
+      <h2 id="about-now" class="font-title mt-sm text-xl">Bossing agents around from my phone</h2>
+      <p class="mt-sm max-w-prose text-lg">
+        This month I'm running computer-use agents around the clock on my laptop, and I control them from my phone when
+        I'm away from my desk. I use Hermes Agent to hand out tasks and keep several going in parallel, across OpenAI,
+        Anthropic, Google and OpenCode models.
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        <li><a class="hit hit-primary" href="/writing/ai-raises-the-floor/">Read what I learned</a></li>
+        <li><a class="hit" href="/playground/">Try the playground</a></li>
+      </ul>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-contact">
-      <h2 id="about-contact" class="label lg:col-span-5">Contact</h2>
-      <div class="lg:col-span-7">
-        <p class="prose mb-md">The best way to reach me is by email.</p>
-        <ul role="list" class="flex flex-wrap gap-sm">
-          <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
-          <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
-          <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
-          <li>
-            <a class="hit" href={SITE.resume} download="Sergei Garcia - Resume.pdf"
-              ><Icon name="download" />Resume (PDF)</a
-            >
-          </li>
-        </ul>
-      </div>
-    </section>
-  </div>
+  <section class="edge-t" aria-labelledby="about-off">
+    <div class="shell py-lg lg:py-xl">
+      <h2 id="about-off" class="sec-title font-display tracking-tight">Off the clock</h2>
+      <ul role="list" class="mt-md grid gap-md lg:grid-cols-3 lg:gap-lg">
+        <li class="off">
+          <h3 class="font-title text-xl">Music</h3>
+          <p>
+            Queen's "Who Wants to Live Forever" is one of the most beautiful songs I know, and I love it and hate it. It
+            makes me want to cry at how helpless it feels. My favorite classical piece is Holst's "Jupiter, the Bringer
+            of Jollity", and I'm a big André Rieu fan. For decades it has been Michael Jackson, Queen, Journey and
+            Linkin Park.
+          </p>
+        </li>
+        <li class="off">
+          <h3 class="font-title text-xl">Mexico</h3>
+          <p>I miss the food and how big the country is. I love driving long stretches. It relaxes me.</p>
+        </li>
+        <li class="off">
+          <h3 class="font-title text-xl">Ireland</h3>
+          <p>
+            The green, which I can't get enough of. How easy it is to get around by bike. And above all the people, so
+            warm and so kind.
+          </p>
+        </li>
+      </ul>
+      <p class="mt-md max-w-prose">
+        Also on the list: taking gadgets apart to see how they work, and showing my daughter the world.
+      </p>
+    </div>
+  </section>
+
+  <section class="band-yellow edge-t" aria-labelledby="about-contact">
+    <div class="shell py-lg lg:py-xl">
+      <h2 id="about-contact" class="font-display text-h2 tracking-tight">Say hello.</h2>
+      <p class="mt-sm max-w-prose text-lg">
+        Email is the best way to reach me.{" "}
+        {
+          availabilityLead && (
+            <>
+              {availabilityLead}
+              <span class="lv-mark lv-mark--band">let's talk</span>.
+            </>
+          )
+        }
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
+        <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
+        <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
+        <li>
+          <a class="hit" href={SITE.resume} download="Sergei Garcia - Resume.pdf"
+            ><Icon name="download" />Resume (PDF)</a
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
 </Base>
 
 <style>
-  /* Thin rules between about sections, in the page rule color. */
-  .about-section {
-    border-bottom: var(--rule-thin) solid var(--rule-color);
+  /* Section headings on this page: display serif, a notch under the big page heading. */
+  .sec-title {
+    font-size: clamp(2.25rem, 1.2rem + 4.2vw, 3.75rem);
+    line-height: 1;
   }
-  .about-section:last-child {
-    border-bottom: 0;
+  /* The hook sits in the title band; the bar must not outgrow the band's text. */
+  .hook {
+    line-height: 1.2;
   }
   /* The family photo: thick frame like the screenshots, no shadow (it is not a control). */
   .photo :global(img) {
@@ -158,5 +259,65 @@ const jsonLd = [
     .photo {
       max-width: 28rem;
     }
+  }
+  /* Quick facts: the pills sit a little crooked, like stickers. Hover keeps the pop from lively.css. */
+  .facts {
+    gap: var(--spacing-xs) var(--spacing-sm);
+  }
+  .facts .pill {
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
+  }
+  .facts .pill:not(:hover) {
+    transform: rotate(calc(var(--lv-tilt) * 0.7));
+  }
+  /* How I work: three plain cards on the cobalt band, outlined in the band's rule color. */
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    border: var(--rule-thick) solid var(--rule-color);
+    padding: var(--spacing-md);
+  }
+  .eg {
+    margin-top: auto;
+    padding-top: var(--spacing-sm);
+    border-top: var(--rule-thin) solid var(--rule-color);
+    font-size: var(--text-base);
+  }
+  .eg .label {
+    display: block;
+    margin-bottom: var(--spacing-2xs);
+  }
+  .card code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    padding: 0 0.25em;
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+  /* Right now: a black box with a thick edge. Black in light mode, and the chalk edge keeps it visible in dark mode. */
+  .now {
+    border: var(--rule-thick) solid var(--color-chalk);
+    padding: var(--spacing-md);
+  }
+  @media (min-width: 48rem) {
+    .now {
+      padding: var(--spacing-lg);
+    }
+  }
+  .tag-now {
+    display: inline-block;
+    background: var(--color-yellow);
+    color: var(--color-black);
+    padding: 0 var(--spacing-xs);
+  }
+  /* Off the clock: each topic has a thick rule on top and no box. */
+  .off {
+    border-top: var(--rule-thick) solid var(--rule-color);
+    padding-top: var(--spacing-sm);
+  }
+  .off p {
+    margin-top: var(--spacing-xs);
   }
 </style>
