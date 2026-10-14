@@ -1,0 +1,17 @@
+---
+/**
+ * A highlighted phrase on a card. Two shapes: "mark" is a highlighter swipe behind the words
+ * (the default), "block" is a solid slab. Four tones. The card sets the size and position of the
+ * swipe with --hl-size, --hl-pos and --hl-pad, and `class` hooks it into the card's own CSS.
+ * The look lives in cards.css (global) so the same classes also work inside strings passed to
+ * set:html, which is what the TL;DR text is. See hl() in ./hl.ts for that case.
+ */
+interface Props {
+  tone?: "pale" | "yellow" | "cobalt" | "tomato";
+  shape?: "mark" | "block";
+  class?: string;
+}
+const { tone = "yellow", shape = "mark", class: cls } = Astro.props;
+---
+
+<span class:list={["card-hl", `card-hl--${tone}`, shape === "block" && "card-hl--block", cls]}><slot /></span>

@@ -30,9 +30,11 @@ interface Props {
   readMinutes?: number;
   /** Also preload the body font. Posts pass it because body text is now visible at first paint, so a late font swap would shift it. */
   preloadBody?: boolean;
+  /** Keep the page out of search engines (unlisted lab pages). Pair it with a sitemap filter in astro.config.mjs. */
+  noindex?: boolean;
 }
 
-const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes, preloadBody = false } = Astro.props;
+const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes, preloadBody = false, noindex = false } = Astro.props;
 const pageTitle = fullTitle ? title : `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(ogPath ?? SITE.ogImage, Astro.site);
@@ -48,6 +50,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="color-scheme" content="light dark" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
     {preloadBody && <link rel="preload" href={spaceUrl} as="font" type="font/woff2" crossorigin />}

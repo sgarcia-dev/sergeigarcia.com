@@ -1,0 +1,115 @@
+---
+/**
+ * One card on the lab page: a label (name, id, status, note, link to the native-size view) above
+ * the card, scaled down to fit its column. The scaling is the CSS `zoom` property, set from the
+ * slot's width by the script on the page. In native view (?raw) zoom is 1.
+ * The card itself goes in the slot and is wrapped in <CardFrame>.
+ */
+import CardFrame from "./CardFrame.astro";
+import { cardById } from "../../lib/cards";
+import "./cards.css";
+
+interface Props {
+  id: string;
+  /** Extra classes for the card frame (the set's own look). */
+  class?: string;
+}
+const { id, class: cls } = Astro.props;
+const card = cardById(id);
+---
+
+<article class="card-entry" aria-labelledby={`${id}-name`}>
+  <header class="card-meta">
+    <h3 class="card-name" id={`${id}-name`}>{card.name}</h3>
+    <p class="card-tags">
+      <code class="card-id">{card.id}</code>
+      <span class="card-status" data-status={card.status}>{card.status}</span>
+      <span class="card-size">{card.w}x{card.h}</span>
+    </p>
+    <p class="card-note">{card.note}</p>
+    <p class="card-links">
+      <a class="card-native" href={`?raw#${card.id}`} data-card-link={card.id}>Native size</a>
+    </p>
+  </header>
+  <div class="card-slot">
+    <div class="card-scale">
+      <CardFrame id={card.id} label={`${card.name}, ${card.w} by ${card.h} pixels`} w={card.w} h={card.h} safe={card.safe} class={cls}>
+        <slot />
+      </CardFrame>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card-entry {
+    min-width: 0;
+    scroll-margin-top: calc(var(--hh, 0px) + 1rem);
+  }
+  .card-meta {
+    margin-bottom: var(--spacing-xs);
+  }
+  .card-name {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    line-height: 1.25;
+    font-weight: 700;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-2xs) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  .card-id {
+    font: inherit;
+  }
+  .card-status {
+    padding: 0 var(--spacing-xs);
+    border: var(--rule-thin) solid #0a0a0a;
+    color: #0a0a0a;
+    background: #f4f4ee;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .card-status[data-status="posted"] {
+    background: #1f3fd1;
+    color: #fff;
+  }
+  .card-status[data-status="candidate"] {
+    background: #ffd400;
+  }
+  .card-status[data-status="rejected"] {
+    background: #ff6a44;
+  }
+  .card-note {
+    margin: var(--spacing-2xs) 0 0;
+    font-size: var(--text-xs);
+    line-height: 1.45;
+  }
+  .card-links {
+    margin: var(--spacing-2xs) 0 0;
+    font-size: var(--text-xs);
+  }
+  /* Width of the slot sets the scale (see the script on the page). 0.3 until it runs. */
+  .card-slot {
+    min-width: 0;
+    border: var(--rule-thin) solid var(--edge);
+    line-height: 0;
+  }
+  .card-scale {
+    zoom: var(--card-zoom, 0.3);
+  }
+  :global(html[data-cards-raw]) .card-scale {
+    zoom: 1;
+  }
+  :global(html[data-cards-raw]) .card-slot {
+    width: max-content;
+    overflow: visible;
+  }
+</style>

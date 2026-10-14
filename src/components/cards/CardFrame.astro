@@ -1,0 +1,62 @@
+---
+/**
+ * The fixed-size box every card is drawn in: 1080 wide, and by default 1350 tall (4:5, what
+ * LinkedIn shows best in the feed). Nothing inside may rely on the page around it: the colors are
+ * fixed values, so a card looks the same in light and dark mode and in the screenshot script.
+ *
+ * It is a picture, so it is exposed as one: role="img" with a short label, and its children are
+ * skipped by screen readers. `safe` draws a debug outline (page query `?safe`) around the area that
+ * must hold everything important when LinkedIn crops the image.
+ */
+interface Props {
+  id: string;
+  label: string;
+  w?: number;
+  h?: number;
+  safe?: { top: number; height: number };
+  class?: string;
+}
+const { id, label, w = 1080, h = 1350, safe, class: cls } = Astro.props;
+---
+
+<section id={id} class:list={["card-frame", cls]} role="img" aria-label={label} data-card={id} style={`width:${w}px;height:${h}px`}>
+  <slot />
+  {safe && <span class="card-safe" aria-hidden="true" style={`top:${safe.top}px;height:${safe.height}px`}>safe box {w}x{safe.height}</span>}
+</section>
+
+<style>
+  .card-frame {
+    position: relative;
+    box-sizing: border-box;
+    flex: none;
+    overflow: hidden;
+    isolation: isolate;
+    font-size: 16px;
+    line-height: normal;
+    text-align: left;
+  }
+  /* Defaults with zero specificity, so a set's own rules always win. Fixed values, so the card never
+     picks up the page's light or dark text color. */
+  :where(.card-frame) {
+    background: #f4f4ee;
+    color: #0a0a0a;
+    font-family: var(--font-sans);
+  }
+  .card-safe {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-sizing: border-box;
+    border: 4px dashed #ff00c8;
+    padding: 6px 12px;
+    text-align: right;
+    color: #ff00c8;
+    font: 700 22px/1 var(--font-mono);
+    pointer-events: none;
+  }
+  :global(html[data-cards-safe]) .card-safe {
+    display: block;
+  }
+</style>

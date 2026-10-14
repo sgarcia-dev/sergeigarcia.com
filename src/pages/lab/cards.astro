@@ -1,0 +1,103 @@
+---
+/**
+ * Unlisted lab page: the LinkedIn image cards for posts, kept so they can be reopened and changed.
+ * Public but not linked from anywhere, noindex, and left out of the sitemap (astro.config.mjs).
+ * The card data is in src/lib/cards.ts, the drawings in src/components/cards/.
+ *
+ * Query switches (read by the inline script below):
+ *   ?raw   cards at native size (1080 wide), one per row. scripts/cards.mjs screenshots this view.
+ *   ?safe  draws the crop-safe box on the cards that have one (B-8, B-8sq, B-8p).
+ * Combine them: ?raw&safe#b8sq
+ */
+import Base from "../../layouts/Base.astro";
+import SetA from "../../components/cards/SetA.astro";
+import SetB from "../../components/cards/SetB.astro";
+import SetC from "../../components/cards/SetC.astro";
+import { CARD_SETS, CARDS } from "../../lib/cards";
+
+const sets = { a: SetA, b: SetB, c: SetC };
+---
+
+<Base
+  title="LinkedIn cards"
+  description="Unlisted lab page: LinkedIn image cards for posts on sergeigarcia.com, kept so they can be reopened and changed."
+  noindex
+>
+  <script is:inline>
+    // Runs before the cards are parsed, so there is no flash of the wrong size.
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var root = document.documentElement;
+      if (q.has("raw")) root.setAttribute("data-cards-raw", "");
+      if (q.has("safe")) root.setAttribute("data-cards-safe", "");
+    })();
+  </script>
+
+  <section class="edge-b">
+    <div class="shell py-lg">
+      <h1 class="font-display text-h2 tracking-tight">LinkedIn cards</h1>
+      <p class="mt-md max-w-prose text-lg">
+        LinkedIn image cards for posts. Each is 1080 wide and most are 1350 tall; the size is on each label.
+      </p>
+      <p class="mt-sm max-w-prose">
+        {CARDS.length} cards, shown scaled down. <strong>Native size</strong> opens one at full size. Add{" "}
+        <code>?safe</code> to the address to draw the crop-safe box, or <code>?raw</code> for native size everywhere.
+      </p>
+    </div>
+  </section>
+
+  {
+    CARD_SETS.map((set) => {
+      const Set = sets[set.id];
+      return (
+        <section class="edge-b" aria-labelledby={`set-${set.id}`}>
+          <div class="shell py-lg">
+            <h2 id={`set-${set.id}`} class="font-title text-xl">{set.title}</h2>
+            <p class="mt-xs max-w-prose">{set.blurb}</p>
+            <div class="card-grid mt-md">
+              <Set />
+            </div>
+          </div>
+        </section>
+      );
+    })
+  }
+</Base>
+
+<script>
+  // Scale each card to the width of its slot. Native view (?raw) leaves zoom at 1 (see CardEntry).
+  const raw = document.documentElement.hasAttribute("data-cards-raw");
+  if (raw) {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("a[data-card-link]")) {
+      link.textContent = "Scaled view";
+      link.href = `./#${link.dataset.cardLink}`;
+    }
+  } else {
+    const fit = (slot: HTMLElement) => slot.style.setProperty("--card-zoom", String(slot.clientWidth / 1080));
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target as HTMLElement)));
+    for (const slot of document.querySelectorAll<HTMLElement>(".card-slot")) {
+      fit(slot);
+      ro.observe(slot);
+    }
+  }
+</script>
+
+<style is:global>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: var(--spacing-lg) var(--spacing-md);
+    align-items: start;
+  }
+  /* Native view: one card per row, no sticky header over the cards (scripts/cards.mjs relies on this). */
+  html[data-cards-raw] {
+    --hdr-pos: static;
+  }
+  html[data-cards-raw] .card-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    width: max-content;
+  }
+</style>

@@ -4,13 +4,15 @@ import AxeBuilder from "@axe-core/playwright";
 
 const SITE = "https://sergeigarcia.com";
 const NOT_FOUND = "/404.html";
+// Public but unlisted pages are left out of the sitemap on purpose, so they are listed here.
+const UNLISTED = ["/lab/cards/"];
 
 // Read at test time (not at file load) so it sees the sitemap from the build
 // that the webServer command just ran.
 function routesFromSitemap(): string[] {
   const xml = readFileSync("dist/sitemap-0.xml", "utf8");
   const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(SITE, "") || "/");
-  return [...new Set([...paths, NOT_FOUND])];
+  return [...new Set([...paths, ...UNLISTED, NOT_FOUND])];
 }
 
 test("every route passes a11y and basic SEO checks", async ({ page }) => {

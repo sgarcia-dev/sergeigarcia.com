@@ -1,0 +1,112 @@
+---
+/**
+ * The identity row: round headshot with a thick ring, name, and the website. Four sizes, one per
+ * card family, picked with `variant`. Colors come from custom properties set on the card:
+ *   --cid-name (default: the card's text color), --cid-site (same), --cid-ring (default black).
+ * Pass `class` to position it (the collage cards place it with absolute coordinates).
+ */
+import { Image } from "astro:assets";
+import headshot from "../../assets/about/headshot.jpg";
+
+interface Props {
+  variant?: "hook" | "compact" | "small" | "display" | "display-sm";
+  class?: string;
+}
+const { variant = "hook", class: cls } = Astro.props;
+---
+
+<div class:list={["cid", cls]} data-v={variant}>
+  <Image src={headshot} width={400} height={400} alt="" class="cid-avatar" loading="eager" />
+  <p class="cid-text">
+    <span class="cid-name">Sergei Garcia</span>
+    <span class="cid-site">sergeigarcia.com</span>
+  </p>
+</div>
+
+<style>
+  .cid {
+    --av: 120px;
+    --ring: 5px;
+    --gap: 28px;
+    --name-font: var(--font-sans);
+    --name-weight: 700;
+    --name-size: 46px;
+    --name-lh: 1.05;
+    --name-ls: -0.01em;
+    --site-size: 32px;
+    --site-lh: 1.1;
+    --text-gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+  }
+  .cid[data-v="compact"] {
+    --av: 96px;
+    --gap: 24px;
+    --name-size: 40px;
+    --name-lh: 1.1;
+    --site-size: 28px;
+    --site-lh: 1.2;
+    --text-gap: 2px;
+  }
+  .cid[data-v="small"] {
+    --av: 76px;
+    --ring: 4px;
+    --gap: 20px;
+    --name-size: 34px;
+    --name-lh: 1.1;
+    --site-size: 24px;
+    --site-lh: 1.2;
+    --text-gap: 2px;
+  }
+  .cid[data-v="display"],
+  .cid[data-v="display-sm"] {
+    --av: 128px;
+    --ring: 6px;
+    --name-font: var(--font-display);
+    --name-weight: 900;
+    --name-size: 60px;
+    --name-lh: 1;
+    --name-ls: -0.02em;
+    --site-size: 30px;
+    --site-lh: 1.2;
+    --text-gap: 10px;
+  }
+  .cid[data-v="display-sm"] {
+    --av: 112px;
+    --name-size: 54px;
+    --site-size: 28px;
+  }
+  .cid-avatar {
+    flex: none;
+    display: block;
+    width: var(--av);
+    height: var(--av);
+    border-radius: 50%;
+    border: var(--ring) solid var(--cid-ring, #0a0a0a);
+    object-fit: cover;
+    background: #f4f4ee;
+  }
+  .cid-text {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--text-gap);
+  }
+  .cid-name {
+    font-family: var(--name-font);
+    font-weight: var(--name-weight);
+    font-variation-settings: "opsz" 144;
+    font-size: var(--name-size);
+    line-height: var(--name-lh);
+    letter-spacing: var(--name-ls);
+    color: var(--cid-name, inherit);
+  }
+  .cid-site {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: var(--site-size);
+    line-height: var(--site-lh);
+    color: var(--cid-site, inherit);
+  }
+</style>

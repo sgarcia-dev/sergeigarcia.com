@@ -154,6 +154,12 @@ page-local attributes it styles itself (contrast, scroll mode, pause). If you ch
 how a texture, the glyph reveal or the marker works, check the playground still
 behaves.
 
+The unlisted `/lab/cards/` page (`src/pages/lab/cards.astro`) keeps the LinkedIn image cards for posts.
+Card list and status: `src/lib/cards.ts`; drawings and shared pieces: `src/components/cards/`. It is
+noindex and out of the sitemap, and nothing links to it. Export the PNGs with `npm run cards`
+(needs a running preview; `node scripts/cards.mjs` header lists the options). `?raw` shows native
+size, `?safe` draws the crop-safe box.
+
 ## Banned patterns, and what to do instead
 
 | Do not | Do this instead |

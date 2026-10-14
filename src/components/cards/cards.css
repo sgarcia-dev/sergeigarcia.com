@@ -1,0 +1,38 @@
+/*
+  Shared card styles that must be global: the highlight (used inside set:html strings too).
+  Fixed colors on purpose. The site's own .lv-mark changes in dark mode and animates in, and a
+  card must look the same every time.
+*/
+.card-hl {
+  --hl-color: #ffe98a;
+  padding-inline: var(--hl-pad, 0.16em);
+  margin-inline: calc(var(--hl-pad, 0.16em) * -1);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  background: linear-gradient(var(--hl-color), var(--hl-color)) var(--hl-pos, 0 80%) / var(--hl-size, 100% 62%) no-repeat;
+  color: var(--hl-ink, inherit);
+}
+.card-hl--pale {
+  --hl-color: #ffe98a;
+}
+.card-hl--yellow {
+  --hl-color: #ffd400;
+  --hl-ink: #0a0a0a;
+}
+.card-hl--cobalt {
+  --hl-color: #1f3fd1;
+  --hl-ink: #ffffff;
+}
+.card-hl--tomato {
+  --hl-color: #ff6a44;
+  --hl-ink: #0a0a0a;
+}
+/* A solid slab instead of a swipe. */
+.card-hl--block {
+  display: inline-block;
+  --hl-size: 100% 100%;
+  --hl-pos: 0 0;
+  --hl-pad: 0.14em;
+  padding-block: 0 0.04em;
+  margin-inline: 0;
+}

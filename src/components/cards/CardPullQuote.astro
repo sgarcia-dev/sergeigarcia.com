@@ -1,0 +1,60 @@
+---
+/**
+ * A yellow pull quote card: black quote chip on the corner, bold sans, hard shadow, a slight tilt.
+ * Built small and scaled up 2.1x with `zoom`. Fixed colors, and the tilt never turns off.
+ */
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+
+<div class:list={["card-pq-wrap", cls]}>
+  <div class="card-pq"><p class="card-pq-text"><slot /></p></div>
+</div>
+
+<style>
+  .card-pq-wrap {
+    width: 446px; /* x2.1 zoom = 936px */
+    zoom: 2.1;
+  }
+  .card-pq {
+    position: relative;
+    margin: 0;
+    padding: 1.5rem;
+    background: #ffd400;
+    color: #0a0a0a;
+    border: 3px solid #0a0a0a;
+    box-shadow: 8px 8px 0 #0a0a0a;
+    transform: rotate(-1deg);
+    font-family: var(--font-sans);
+    font-weight: 700;
+  }
+  .card-pq::before {
+    content: "\201C";
+    position: absolute;
+    top: -1.5rem;
+    left: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    background: #0a0a0a;
+    color: #ffd400;
+    border: 3px solid #0a0a0a;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 3.5rem;
+    line-height: 1;
+    padding-top: 0.75rem;
+    box-sizing: border-box;
+  }
+  .card-pq-text {
+    margin: 0;
+    padding-top: 1rem;
+    font-size: 2.15rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+</style>

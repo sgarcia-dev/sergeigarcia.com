@@ -16,7 +16,8 @@
     "test:e2e": "playwright test",
     "screenshots": "node scripts/screenshots.mjs",
     "screenshots:companies": "node scripts/company-screenshots.mjs",
-    "og": "node scripts/og-image.mjs"
+    "og": "node scripts/og-image.mjs",
+    "cards": "node scripts/cards.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.0.3",

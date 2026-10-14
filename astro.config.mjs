@@ -8,6 +8,7 @@ export default defineConfig({
   site: "https://sergeigarcia.com",
   trailingSlash: "always",
   build: { format: "directory" },
-  integrations: [mdx(), sitemap()],
+  // /lab/ pages are public but unlisted: no sitemap entry, and each sets noindex.
+  integrations: [mdx(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/lab/") })],
   vite: { plugins: [tailwindcss()] },
 });

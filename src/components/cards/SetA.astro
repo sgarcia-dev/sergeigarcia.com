@@ -1,0 +1,233 @@
+---
+/**
+ * Set A: text-led cards. Big type, no picture. The page gives each card its label and size.
+ * Selectors start with .cs-a so nothing here can leak into the other sets.
+ */
+import CardEntry from "./CardEntry.astro";
+import CardId from "./CardId.astro";
+import CardTitle from "./CardTitle.astro";
+import CardHighlight from "./CardHighlight.astro";
+
+// The hand-drawn strike: two uneven passes. Same two lines in A-2 and A-3.
+const strikes = [
+  { text: "AI made me", s1: "M0.5 6.2 C 18 2.4, 36 8.6, 55 4.6 S 88 3.4, 99.5 4.8", s2: "M2 4.2 C 24 7.4, 44 2.6, 66 6 S 92 5.4, 99 3.6" },
+  { text: "worthless.", s1: "M0.5 4.6 C 20 8.2, 38 2.8, 58 6 S 86 7.4, 99.5 3.8", s2: "M2 6.8 C 26 3.2, 46 7.8, 68 3.8 S 94 4.2, 99 6.2" },
+];
+---
+
+<!-- A-1: cobalt, hook in white, answer on a yellow block -->
+<CardEntry id="a1" class="cs-a a-cobalt">
+  <CardId variant="hook" />
+  <CardTitle class="hook">
+    <span class="hook-line">Everyone has</span>
+    <span class="hook-line">the same AI</span>
+    <span class="hook-line">now.</span>
+    <span class="hl-stack">
+      <CardHighlight shape="block" class="hl-block">The difference</CardHighlight>
+      <CardHighlight shape="block" class="hl-block">is you.</CardHighlight>
+    </span>
+  </CardTitle>
+</CardEntry>
+
+<!-- A-2 and A-3: the crossed-out line and the correction, on paper and on black -->
+{
+  [{ id: "a2", look: "a-paper" }, { id: "a3", look: "a-black" }].map(({ id, look }) => (
+    <CardEntry id={id} class={`cs-a ${look}`}>
+      <CardId variant="hook" />
+      <div class="fix">
+        <CardTitle class="wrong">
+          {strikes.map((s) => (
+            <span class="sl">
+              {s.text}
+              <svg class="strike" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+                <path class="s1" d={s.s1} />
+                <path class="s2" d={s.s2} />
+              </svg>
+            </span>
+          ))}
+        </CardTitle>
+        <CardTitle class="right">
+          AI made my <CardHighlight class="hl-swipe">judgment matter more.</CardHighlight>
+        </CardTitle>
+      </div>
+    </CardEntry>
+  ))
+}
+
+<!-- A-4: yellow, a different line from the post -->
+<CardEntry id="a4" class="cs-a a-yellow">
+  <CardId variant="hook" />
+  <CardTitle class="slop">
+    <span class="slop-a">Slop isn’t<br />an AI problem.</span>
+    <span class="slop-b"><span class="bl">It’s a</span><span class="bl">communication</span><span class="bl">problem.</span></span>
+  </CardTitle>
+</CardEntry>
+
+<style is:global>
+  /* ---- Frame: content kept inside the middle 80% (140px top, 150px bottom) ---------------------- */
+  .cs-a {
+    padding: 140px 88px 150px;
+    display: flex;
+    flex-direction: column;
+  }
+  .cs-a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .cs-a .hook,
+  .cs-a .wrong,
+  .cs-a .right,
+  .cs-a .slop {
+    letter-spacing: -0.015em;
+    word-spacing: 0.09em;
+  }
+  /* The highlighter swipe, tuned for giant type. */
+  .cs-a .hl-swipe {
+    --hl-pad: 0.14em;
+    --hl-pos: 0 78%;
+    --hl-size: 100% 80%;
+  }
+
+  /* ---- A-1: cobalt ------------------------------------------------------------------------------ */
+  .cs-a.a-cobalt {
+    background: var(--color-cobalt);
+    color: var(--color-white);
+    --cid-site: var(--color-yellow);
+    --cid-name: var(--color-white);
+  }
+  /* Big dots, a shade deeper than the fill: the texture always moves away from the text color. */
+  .cs-a.a-cobalt::before {
+    background-image: radial-gradient(circle, #1b3ac3 0 9px, #0000 9.8px), radial-gradient(circle, #1b3ac3 0 9px, #0000 9.8px);
+    background-size: 54px 54px;
+    background-position: 0 0, 27px 27px;
+  }
+  .cs-a .hook {
+    margin-top: auto;
+    font-size: 136px;
+    line-height: 0.98;
+    color: var(--color-white);
+  }
+  .cs-a .hook-line {
+    display: block;
+  }
+  .cs-a .hl-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 44px;
+    gap: 6px;
+  }
+  /* On cobalt the block gets the site's hard shadow, in ink. */
+  .cs-a .hl-block {
+    display: block;
+    width: fit-content;
+    padding: 0.02em 0.14em 0.1em;
+    box-shadow: 10px 10px 0 var(--color-black);
+  }
+
+  /* ---- A-2 and A-3: the crossed-out line and the correction ------------------------------------ */
+  .cs-a .fix {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  .cs-a .wrong {
+    font-size: 128px;
+    line-height: 1.02;
+  }
+  .cs-a .sl {
+    position: relative;
+    display: block;
+    width: fit-content;
+  }
+  /* Two uneven passes in tomato, a thick one and a thin one. The paths stretch to the width of the
+     line, the stroke does not (non-scaling-stroke). */
+  .cs-a .strike {
+    position: absolute;
+    left: -3.5%;
+    width: 107%;
+    top: 36%;
+    height: 0.34em;
+    overflow: visible;
+    fill: none;
+    stroke: var(--color-tomato);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+  .cs-a .strike path {
+    vector-effect: non-scaling-stroke;
+  }
+  .cs-a .strike .s1 {
+    stroke-width: 0.13em;
+  }
+  .cs-a .strike .s2 {
+    stroke-width: 0.055em;
+  }
+  .cs-a .right {
+    font-size: 138px;
+    line-height: 1.02;
+  }
+  .cs-a.a-paper {
+    background: var(--color-chalk);
+    color: var(--color-black);
+    --cid-site: var(--color-cobalt);
+  }
+  /* Paper: a faint dot grid, darker than the fill. */
+  .cs-a.a-paper::before {
+    background-image: radial-gradient(circle, #dcdcd0 0 3px, #0000 3.6px);
+    background-size: 36px 36px;
+  }
+  .cs-a.a-black {
+    background: var(--color-black);
+    color: var(--color-chalk);
+    --cid-site: var(--color-yellow);
+    --cid-name: var(--color-chalk);
+    --cid-ring: var(--color-chalk);
+  }
+  .cs-a.a-black::before {
+    background-image: radial-gradient(circle, #1d1d22 0 3px, #0000 3.6px);
+    background-size: 36px 36px;
+  }
+
+  /* ---- A-4: yellow ------------------------------------------------------------------------------ */
+  .cs-a.a-yellow {
+    background: var(--color-yellow);
+    color: var(--color-black);
+    --cid-site: var(--color-black);
+  }
+  .cs-a.a-yellow::before {
+    background-image: linear-gradient(135deg, #0000 46%, #ffe45c 46% 54%, #0000 54%);
+    background-size: 26px 26px;
+  }
+  .cs-a .slop {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 44px;
+  }
+  .cs-a .bl {
+    display: block;
+  }
+  .cs-a .slop-a {
+    font-size: 120px;
+    line-height: 1;
+    text-wrap: balance;
+  }
+  .cs-a .slop-b {
+    display: inline-block;
+    font-size: 120px;
+    line-height: 1;
+    background: var(--color-black);
+    color: var(--color-yellow);
+    padding: 0.12em 0.22em 0.16em;
+    transform: rotate(-1.6deg);
+    box-shadow: 16px 16px 0 var(--color-cobalt);
+    text-wrap: balance;
+  }
+</style>

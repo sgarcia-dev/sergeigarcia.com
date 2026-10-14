@@ -1,0 +1,321 @@
+---
+/**
+ * Set B: article-preview cards. They look like the top of the post: a title band with the site's
+ * hatch texture, Fraunces title, framed cover art, TL;DR box, yellow pull quote.
+ * B-8sq and B-8p are B-8 redrawn so everything important sits inside a 1080x900 safe box
+ * (LinkedIn can crop a feed image to a square or a wide box). Selectors start with .cs-b.
+ */
+import CardEntry from "./CardEntry.astro";
+import CardId from "./CardId.astro";
+import CardTitle from "./CardTitle.astro";
+import CardHighlight from "./CardHighlight.astro";
+import CardCover from "./CardCover.astro";
+import CardTldr from "./CardTldr.astro";
+import CardPullQuote from "./CardPullQuote.astro";
+import { hl } from "./hl";
+import cover from "../../assets/posts/ai-raises-the-floor/cover.jpg";
+import pickOne from "../../assets/posts/ai-raises-the-floor/cover-pick-one.jpg";
+
+const TITLE = "Everyone has the same AI now. The difference is you.";
+const TITLE_A = "Everyone has the same AI now.";
+const TITLE_B = "The difference is you.";
+const COVER_ALT = "A film director in a tall chair points a megaphone at three cheerful robots running a film set.";
+const PICK_ALT = "A friendly yellow robot and a person with a big orange marker cross out a wall of candidate cards, keeping one.";
+const SUMMARY = `AI didn't make you worthless. It made ${hl("your judgment matter more.")}`;
+// B-8 and its square and portrait versions: the longer TL;DR with the know-how line.
+const SUMMARY_B8 = `${SUMMARY} It doesn't replace know-how, ${hl("it multiplies it.")}`;
+
+// 1, 1b, 4: magazine cover (title band, cover art tilted below)
+const covers = [
+  { id: "b1", look: "cobalt", img: cover, alt: COVER_ALT },
+  { id: "b1b", look: "cobalt", img: pickOne, alt: PICK_ALT },
+  { id: "b4", look: "yellow", img: cover, alt: COVER_ALT },
+] as const;
+// 5 to 8: title + highlighted answer line + (TL;DR) + pick-one cover
+const mix = [
+  { id: "b5", look: "cobalt", tldr: SUMMARY, box: false },
+  { id: "b6", look: "cobalt", tldr: null, box: true },
+  { id: "b7", look: "yellow", tldr: SUMMARY, box: false },
+  { id: "b8", look: "cobalt", tldr: SUMMARY_B8, box: false },
+] as const;
+// B-8sq (1080x1080) and B-8p (1080x1200): same content, laid out inside a centered 900px-tall safe box.
+const safeCards = ["b8sq", "b8p"] as const;
+---
+
+{
+  covers.map(({ id, look, img, alt }) => (
+    <CardEntry id={id} class={`cs-b cover`}>
+      <div class={`band bn-${look}`}>
+        <span class="hatch" aria-hidden="true" />
+        <CardId variant="compact" />
+        <CardTitle class="title">{TITLE}</CardTitle>
+      </div>
+      <CardCover src={img} alt={alt} class="cover-frame" />
+    </CardEntry>
+  ))
+}
+
+{
+  mix.map(({ id, look, tldr, box }) => (
+    <CardEntry id={id} class={`cs-b mix mix-${look} is-${id}${box ? " no-tldr" : ""}`}>
+      <div class={`band bn-${look}`}>
+        <span class="hatch" aria-hidden="true" />
+        <CardId variant="compact" />
+        <CardTitle class="title">
+          <span class="t-a">{TITLE_A}</span>{" "}
+          {box ? (
+            <span class="t-b t-box">The difference<br />is you.</span>
+          ) : (
+            <CardHighlight tone={look === "yellow" ? "cobalt" : "yellow"} shape="block" class="t-b">{TITLE_B}</CardHighlight>
+          )}
+        </CardTitle>
+        {tldr && <CardTldr html={tldr} />}
+      </div>
+      <CardCover src={pickOne} alt={PICK_ALT} class="cover-frame" />
+    </CardEntry>
+  ))
+}
+
+{
+  safeCards.map((id) => (
+    <CardEntry id={id} class={`cs-b mix mix-cobalt b8q is-${id}`}>
+      <div class="band bn-cobalt">
+        <span class="hatch" aria-hidden="true" />
+        <CardId variant="small" />
+        <CardTitle class="title">
+          <span class="t-a">{TITLE_A}</span>{" "}
+          <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
+        </CardTitle>
+        <CardTldr html={SUMMARY_B8} />
+      </div>
+      <CardCover src={pickOne} alt={PICK_ALT} class="cover-frame" />
+    </CardEntry>
+  ))
+}
+
+<!-- 2. Title, TL;DR box, hint of the cover -->
+<CardEntry id="b2" class="cs-b tldr-card">
+  <div class="band bn-cobalt">
+    <span class="hatch" aria-hidden="true"></span>
+    <CardId variant="compact" />
+    <CardTitle class="title">{TITLE}</CardTitle>
+  </div>
+  <div class="tldr-pos"><CardTldr html={SUMMARY} /></div>
+  <CardCover src={cover} alt={COVER_ALT} width={1200} class="cover-frame hint" />
+</CardEntry>
+
+<!-- 3. Title and one yellow pull quote -->
+<CardEntry id="b3" class="cs-b quote-card">
+  <span class="hatch" aria-hidden="true"></span>
+  <CardId variant="compact" />
+  <CardTitle class="title">{TITLE}</CardTitle>
+  <div class="pq-pos"><CardPullQuote>Slop isn't an AI problem. It's a communication problem.</CardPullQuote></div>
+</CardEntry>
+
+<style is:global>
+  .cs-b {
+    background: var(--color-chalk);
+    color: var(--color-black);
+  }
+  .cs-b .hatch {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(135deg, #0000 43%, var(--hatch) 43% 57%, #0000 57%);
+    background-size: 44px 44px;
+  }
+  /* The two looks. Plain names, on purpose: the site's .band-cobalt would add its animated texture. */
+  .cs-b .bn-cobalt {
+    --hatch: #1a35bb;
+    --cid-name: var(--color-white);
+    --cid-site: var(--color-yellow);
+    background: var(--color-cobalt);
+    color: var(--color-white);
+  }
+  .cs-b .bn-yellow {
+    --hatch: #ffe45c;
+    --cid-site: var(--color-cobalt);
+    background: var(--color-yellow);
+    color: var(--color-black);
+  }
+  .cs-b .title {
+    letter-spacing: var(--tracking-tight);
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+  .cs-b .band {
+    position: absolute;
+    inset: 0 0 auto 0;
+    border-bottom: 6px solid var(--color-black);
+    isolation: isolate;
+  }
+
+  /* 1, 1b, 4: magazine cover */
+  .cs-b.cover .band {
+    height: 830px;
+    padding: 122px 72px 0;
+  }
+  .cs-b.cover .title {
+    margin-top: 56px;
+    font-size: 128px;
+    max-width: 940px;
+  }
+  .cs-b.cover .cover-frame {
+    left: 120px;
+    top: 730px;
+    width: 840px;
+  }
+
+  /* 2: TL;DR card */
+  .cs-b.tldr-card {
+    --tldr-font: 1.4rem;
+    --tldr-lh: 1.35;
+    --tldr-pad: 2rem 1.5rem 1.5rem;
+  }
+  .cs-b.tldr-card .band {
+    height: 640px;
+    padding: 122px 72px 0;
+  }
+  .cs-b.tldr-card .title {
+    margin-top: 48px;
+    font-size: 104px;
+    max-width: 940px;
+  }
+  .cs-b .tldr-pos {
+    position: absolute;
+    left: 72px;
+    top: 626px;
+    width: 936px;
+  }
+  .cs-b.tldr-card .cover-frame {
+    left: 250px;
+    top: 1040px;
+    width: 720px;
+    --cc-rot: 1.5deg;
+  }
+
+  /* 3: quote card */
+  .cs-b.quote-card {
+    padding: 122px 72px 0;
+    --hatch: #1a35bb;
+    --cid-name: var(--color-white);
+    --cid-site: var(--color-yellow);
+    background: var(--color-cobalt);
+    color: var(--color-white);
+  }
+  .cs-b.quote-card .title {
+    margin-top: 48px;
+    font-size: 100px;
+    max-width: 940px;
+  }
+  .cs-b .pq-pos {
+    position: absolute;
+    left: 72px;
+    top: 730px;
+    width: 936px;
+  }
+
+  /* 5 to 8: combined cards */
+  .cs-b.mix {
+    --tldr-gap: 30px;
+    --tldr-font: 1.12rem;
+    --tldr-pad: 1.9rem 1.5rem 1.2rem;
+  }
+  .cs-b.mix .band {
+    height: 850px;
+    padding: 135px 72px 0;
+  }
+  .cs-b.mix .title {
+    margin-top: 36px;
+    max-width: 940px;
+    font-size: 100px;
+    line-height: 1;
+    text-wrap: initial;
+  }
+  .cs-b.mix .t-a {
+    display: block;
+    text-wrap: balance;
+  }
+  .cs-b.mix .t-b {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .cs-b.mix .cover-frame {
+    left: 180px;
+    top: 830px;
+    width: 728px;
+    --cc-shadow: 14px 14px 0 #0a0a0a;
+  }
+  /* The yellow answer line (B-5, B-7, B-8) */
+  .cs-b.mix .t-b:not(.t-box) {
+    margin-top: 12px;
+    margin-left: -0.14em;
+    font-size: 94px;
+    padding: 0 0.14em 0.04em;
+  }
+  /* B-8: the longer TL;DR (two highlights) is set a bit smaller and tighter. The cover sits lower
+     so the TL;DR box's corner no longer touches the cover frame. */
+  .cs-b.is-b8 {
+    --tldr-gap: 8px;
+    --tldr-font: 0.95rem;
+    --tldr-pad: 1.2rem 1.5rem 1.2rem;
+  }
+  .cs-b.is-b8 .cover-frame {
+    top: 880px;
+  }
+  /* B-8sq and B-8p: B-8 redrawn so everything important sits in a 1080x900 safe box centered on
+     the card (--off is the box's top edge: 90px on the 1080 square, 150px on the 1200 card). The
+     title, answer block, TL;DR and cover are smaller than B-8, with the same order and weights. */
+  .cs-b.is-b8sq {
+    --off: 90px;
+  }
+  .cs-b.is-b8p {
+    --off: 150px;
+  }
+  .cs-b.b8q {
+    --tldr-gap: 4px;
+    --tldr-font: 0.88rem;
+    --tldr-lh: 1.3;
+    --tldr-pad: 0.9rem 1.1rem 0.8rem;
+    --tldr-w: 430px; /* x2.1 = 903px, so the box and its shadow keep 80px+ from the sides */
+  }
+  .cs-b.b8q .band {
+    height: calc(var(--off) + 524px);
+    padding: calc(var(--off) + 20px) 80px 0;
+  }
+  .cs-b.b8q .title {
+    margin-top: 22px;
+    font-size: 72px;
+  }
+  .cs-b.b8q .t-b:not(.t-box) {
+    margin-top: 8px;
+    font-size: 68px;
+  }
+  .cs-b.b8q .cover-frame {
+    left: 260px;
+    top: calc(var(--off) + 540px);
+    width: 560px;
+    border-width: 5px;
+    --cc-shadow: 10px 10px 0 #0a0a0a;
+  }
+  /* B-6: the answer in a tilted yellow box instead of a highlight, and a bigger title */
+  .cs-b.no-tldr .title {
+    font-size: 128px;
+  }
+  .cs-b.no-tldr .t-box {
+    margin-top: 34px;
+    font-size: 108px;
+    padding: 14px 40px 26px;
+    color: var(--color-black);
+    background: var(--color-yellow);
+    border: 6px solid var(--color-black);
+    box-shadow: 12px 12px 0 var(--color-black);
+    transform: rotate(-1.5deg);
+    transform-origin: left center;
+  }
+  .cs-b.no-tldr .cover-frame {
+    top: 850px;
+    left: 200px;
+    width: 700px;
+  }
+</style>

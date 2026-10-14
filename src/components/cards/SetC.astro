@@ -1,0 +1,697 @@
+---
+/**
+ * Set C: playful editorial collage. A taped notebook page with crossed-out lines, a stack of
+ * swatch options with one circled, and a big sticker over a pile of rejected options. C-4 and C-4b
+ * are C-3 and C-1 in orange and black. Selectors start with .cs-c.
+ * The swatch frames reuse the five textures from the site's playground, drawn flat.
+ */
+import CardEntry from "./CardEntry.astro";
+import CardId from "./CardId.astro";
+import CardTitle from "./CardTitle.astro";
+import CardHighlight from "./CardHighlight.astro";
+import figOptions from "../../assets/posts/ai-raises-the-floor/fig-options.jpg";
+import figLoop from "../../assets/posts/ai-raises-the-floor/fig-loop.jpg";
+import figHandback from "../../assets/posts/ai-raises-the-floor/fig-handback.jpg";
+import playground from "../../assets/posts/ai-raises-the-floor/playground.jpg";
+import cover from "../../assets/posts/ai-raises-the-floor/cover.jpg";
+
+// C-3 and C-4: the messy pile of rejected options behind the sticker.
+// x, y, w, h, rotation, kind, crossed out?
+type Tile = { x: number; y: number; w: number; h: number; r: number; k: string; no?: boolean; img?: string; pos?: string };
+const pile: Tile[] = [
+  { x: -50, y: -40, w: 380, h: 320, r: -6, k: "dots-b", no: true },
+  { x: 270, y: 10, w: 400, h: 290, r: 4, k: "img", img: playground.src, pos: "left top" },
+  { x: 640, y: -50, w: 360, h: 340, r: -3, k: "hatch", no: true },
+  { x: 880, y: 60, w: 280, h: 320, r: 7, k: "grid" },
+  { x: -60, y: 290, w: 310, h: 340, r: 5, k: "fade", no: true },
+  { x: 810, y: 370, w: 320, h: 330, r: -5, k: "img", img: figOptions.src, pos: "18% 40%" },
+  { x: -40, y: 650, w: 350, h: 330, r: -4, k: "dots-s", no: true },
+  { x: 790, y: 690, w: 340, h: 350, r: 4, k: "stripes", no: true },
+  { x: 20, y: 950, w: 400, h: 340, r: 3, k: "img", img: figLoop.src, pos: "center" },
+  { x: 380, y: 1000, w: 340, h: 380, r: -5, k: "dots-k" },
+  { x: 690, y: 1010, w: 400, h: 340, r: 6, k: "img", img: figHandback.src, pos: "center" },
+  { x: 190, y: 700, w: 330, h: 300, r: 6, k: "cover", img: cover.src, pos: "center" },
+];
+// C-2: the stack of options. The last one is the pick.
+type Opt = { x: number; y: number; s: number; r: number; k: string; no?: boolean; note?: string; pick?: boolean };
+const stack: Opt[] = [
+  { x: 50, y: 680, s: 280, r: -8, k: "dots-s", no: true },
+  { x: 750, y: 660, s: 280, r: 7, k: "hatch", no: true, note: "screams too much" },
+  { x: 100, y: 930, s: 250, r: 5, k: "grid", no: true },
+  { x: 740, y: 940, s: 250, r: -6, k: "dots-b", no: true },
+  { x: 365, y: 760, s: 350, r: 2, k: "fade", pick: true },
+];
+const cross = "M10 10 L90 90 M90 8 L8 92";
+---
+
+<!-- C-1 and C-4b: marked-up draft on a desk (cobalt, or orange and black) -->
+{
+  ([{ id: "c1", theme: "t-cobalt", tone: "yellow" }, { id: "c4b", theme: "t-orange", tone: "tomato" }] as const).map(({ id, theme, tone }) => (
+    <CardEntry id={id} class={`cs-c ${theme} cc-draft`}>
+      <CardId variant="display" class="idrow" />
+
+      <div class="paper">
+        <span class="tape" aria-hidden="true"></span>
+        <span class="tag draftTag">Draft</span>
+
+        <p class="line old o1"><span class="strike">It was one prompt.</span></p>
+        <p class="line old o2"><span class="strike">AI made me worthless.</span></p>
+
+        <CardTitle class="final">
+          <span class="f1">The prompt isn’t what separates the two.</span>
+          <span class="f2"><CardHighlight tone={tone} class="hot">The person is.</CardHighlight></span>
+        </CardTitle>
+
+        <svg class="tick" viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M10 56 L42 88 L112 8" />
+        </svg>
+      </div>
+
+      <p class="note n-a">try again</p>
+      <p class="note n-b">way too much</p>
+    </CardEntry>
+  ))
+}
+
+<!-- C-2: a stack of options, most crossed out, one circled -->
+<CardEntry id="c2" class="cs-c t-yellow cc-stack">
+  <span class="dotsbg" aria-hidden="true"></span>
+  <CardId variant="display-sm" class="idrow" />
+
+  <CardTitle class="title">
+    Everyone has<br />the same AI now.<br />The difference<br />is <span class="you">you.</span>
+  </CardTitle>
+
+  {
+    stack.map((o) => (
+      <div
+        class:list={["opt", `k-${o.k}`, o.pick && "pick"]}
+        style={`left:${o.x}px;top:${o.y}px;width:${o.s}px;height:${o.s}px;transform:rotate(${o.r}deg)`}
+      >
+        {o.no && (
+          <svg class="x" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="x-under" d={cross} />
+            <path class="x-over" d={cross} />
+          </svg>
+        )}
+        {o.note && <span class="note small">{o.note}</span>}
+      </div>
+    ))
+  }
+  <svg class="penring" viewBox="0 0 400 340" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M70 168 C 40 60, 300 6, 366 100 C 410 190, 270 328, 110 304 C 6 280, 12 118, 150 52 C 210 24, 290 24, 330 50" />
+  </svg>
+</CardEntry>
+
+<!-- C-3 and C-4: big sticker over a pile of options (4 is the orange and black colorway) -->
+{
+  [{ id: "c3", theme: "t-pile" }, { id: "c4", theme: "t-orangepile" }].map(({ id, theme }) => (
+    <CardEntry id={id} class={`cs-c ${theme} cc-pile`}>
+      {
+        pile.map((t) => (
+          <div
+            class:list={["tile", `k-${t.k}`]}
+            style={`left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;transform:rotate(${t.r}deg);${t.img ? `background-image:url(${t.img});background-size:cover;background-position:${t.pos}` : ""}`}
+          >
+            {t.no && (
+              <svg class="x" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <path class="x-under" d={cross} />
+                <path class="x-over" d={cross} />
+              </svg>
+            )}
+          </div>
+        ))
+      }
+      <p class="note n3a">way too much</p>
+      <p class="note n3b">screams too much</p>
+      <p class="note n3c">try again</p>
+
+      <div class="idchip">
+        <CardId variant="display-sm" />
+      </div>
+
+      <div class="sticker">
+        <span class="chip" aria-hidden="true">&ldquo;</span>
+        <p>Every decision was <span class="mine">mine.</span></p>
+      </div>
+    </CardEntry>
+  ))
+}
+
+<style is:global>
+  /* ---- Frame and the color themes. Everything is sized in px for a 1080x1350 canvas. --------- */
+  .cs-c {
+    background: var(--bg);
+    font-family: var(--font-sans);
+    color: var(--ink);
+  }
+  .cs-c * {
+    box-sizing: border-box;
+  }
+  .cs-c p {
+    margin: 0;
+  }
+  .cs-c.t-cobalt {
+    --bg: var(--color-cobalt);
+    --ink: var(--color-white);
+    --site: var(--color-yellow);
+    --sheet: var(--color-chalk);
+    --sheet-ink: var(--color-black);
+    --sheet-dim: #45453f;
+    --pen: var(--color-tomato);
+    --sticky: var(--color-yellow);
+    --sticky-ink: var(--color-black);
+    --rule: rgba(31, 63, 209, 0.16);
+    --halftone: var(--df-cobalt);
+  }
+  .cs-c.t-orange {
+    --bg: var(--color-tomato);
+    --ink: var(--color-black);
+    --site: var(--color-black);
+    --sheet: var(--color-black);
+    --sheet-ink: var(--color-chalk);
+    --sheet-dim: #a9a9a2;
+    --pen: var(--color-tomato);
+    --sticky: var(--color-chalk);
+    --sticky-ink: var(--color-black);
+    --rule: rgba(244, 244, 238, 0.12);
+    --halftone: var(--df-tomato);
+  }
+  .cs-c.t-yellow {
+    --bg: var(--color-yellow);
+    --ink: var(--color-black);
+    --site: var(--color-black);
+  }
+  .cs-c.t-pile {
+    --bg: var(--color-chalk);
+    --ink: var(--color-black);
+  }
+  /* The identity row takes the card's site color. */
+  .cs-c {
+    --cid-site: var(--site);
+  }
+
+  .cs-c .idrow {
+    position: absolute;
+  }
+  .cs-c .idchip {
+    position: absolute;
+  }
+
+  /* Yellow note sticker (the site's tilted label chip, bigger). Real phrases only. */
+  .cs-c .note {
+    position: absolute;
+    z-index: 5;
+    padding: 8px 20px 10px;
+    border: 4px solid var(--color-black);
+    background: var(--sticky, var(--color-yellow));
+    color: var(--sticky-ink, var(--color-black));
+    box-shadow: 6px 6px 0 var(--color-black);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .cs-c .note.small {
+    font-size: 26px;
+    padding: 6px 14px 8px;
+    border-width: 3px;
+    box-shadow: 5px 5px 0 var(--color-black);
+    background: var(--color-white);
+  }
+
+  /* Hand-drawn pen marks. */
+  .cs-c .tick path,
+  .cs-c .penring path {
+    fill: none;
+    stroke: var(--pen, var(--color-tomato));
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Crossed out: a fat X, black under tomato so it reads on any fill. */
+  .cs-c .x {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    overflow: visible;
+  }
+  .cs-c .x path {
+    fill: none;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .cs-c .x-under {
+    stroke: var(--color-black);
+    stroke-width: 26px;
+  }
+  .cs-c .x-over {
+    stroke: var(--color-tomato);
+    stroke-width: 14px;
+  }
+
+  /* ---- C-1 and C-4b: the marked-up draft ---------------------------------------------------------- */
+  .cs-c.cc-draft {
+    background-color: var(--bg);
+    background-image: var(--halftone);
+    background-size: 4200px 4200px;
+    background-position: -40px -40px;
+  }
+  .cs-c.cc-draft .idrow {
+    left: 84px;
+    top: 112px;
+  }
+  .cs-c .paper {
+    position: absolute;
+    left: 84px;
+    top: 322px;
+    width: 912px;
+    height: 836px;
+    padding: 76px 64px 0;
+    background-color: var(--sheet);
+    /* Faint ruled lines, like a notebook page. */
+    background-image: repeating-linear-gradient(to bottom, transparent 0 63px, var(--rule) 63px 66px);
+    border: 8px solid var(--color-black);
+    box-shadow: 18px 18px 0 var(--color-black);
+    color: var(--sheet-ink);
+    transform: rotate(-1.6deg);
+  }
+  .cs-c .tape {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    width: 190px;
+    height: 56px;
+    margin-left: -95px;
+    background: var(--color-yellow);
+    border: 4px solid var(--color-black);
+    transform: rotate(3deg);
+  }
+  .cs-c.t-orange .tape {
+    background: var(--color-tomato);
+  }
+  .cs-c .draftTag {
+    position: absolute;
+    top: 26px;
+    right: 28px;
+    display: inline-block;
+    padding: 2px 14px 4px;
+    border: 3px solid var(--color-black);
+    background: var(--color-black);
+    color: var(--color-white);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.4;
+  }
+  .cs-c.t-orange .hot {
+    --hl-size: 100% 100%;
+    --hl-pos: 0 50%;
+  }
+  .cs-c.t-orange .draftTag {
+    background: var(--color-tomato);
+    color: var(--color-black);
+    border-color: var(--color-chalk);
+  }
+  .cs-c .line.old {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--sheet-dim);
+  }
+  .cs-c .o2 {
+    margin-top: 18px;
+  }
+  .cs-c .strike {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .cs-c .strike::before,
+  .cs-c .strike::after {
+    content: "";
+    position: absolute;
+    left: -3%;
+    right: -3%;
+    background: var(--pen);
+    border-radius: 6px;
+  }
+  .cs-c .strike::after {
+    top: 54%;
+    height: 7px;
+    transform: rotate(-1.8deg);
+  }
+  .cs-c .strike::before {
+    top: 66%;
+    height: 4px;
+    transform: rotate(1.2deg);
+    left: 2%;
+    right: -1%;
+  }
+  .cs-c .final {
+    margin-top: 58px;
+    letter-spacing: -0.025em;
+    color: var(--sheet-ink);
+  }
+  .cs-c .f1 {
+    display: block;
+    font-size: 106px;
+    line-height: 1;
+    text-wrap: balance;
+  }
+  .cs-c .f2 {
+    display: block;
+    margin-top: 26px;
+    font-size: 134px;
+    line-height: 1.05;
+    white-space: nowrap;
+  }
+  .cs-c .hot {
+    --hl-size: 100% 88%;
+    --hl-pos: 0 72%;
+    --hl-pad: 0.12em;
+  }
+  .cs-c .tick {
+    position: absolute;
+    right: 150px;
+    top: 508px;
+    width: 128px;
+    height: 106px;
+    overflow: visible;
+  }
+  .cs-c .tick path {
+    stroke-width: 18px;
+  }
+  .cs-c.t-orange .tick path {
+    stroke: var(--color-tomato);
+  }
+  /* The notes sit on the paper's right edge, tilted. */
+  .cs-c .n-a {
+    left: 770px;
+    top: 420px;
+    transform: rotate(4deg);
+  }
+  .cs-c .n-b {
+    left: 760px;
+    top: 530px;
+    transform: rotate(-3deg);
+  }
+
+  /* ---- C-2: options stack -------------------------------------------------------------------------- */
+  .cs-c.cc-stack .dotsbg {
+    position: absolute;
+    inset: 0;
+    background-image: var(--df-yellow);
+    background-size: 3600px 3600px;
+    background-position: -20px -20px;
+  }
+  .cs-c.cc-stack .idrow {
+    left: 76px;
+    top: 100px;
+  }
+  .cs-c .title {
+    position: absolute;
+    left: 76px;
+    right: 76px;
+    top: 258px;
+    font-size: 92px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--color-black);
+  }
+  .cs-c .you {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+  }
+  .cs-c .you::after {
+    content: "";
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    bottom: 4px;
+    height: 14px;
+    background: var(--color-tomato);
+    transform: rotate(-1.5deg);
+    border-radius: 6px;
+    z-index: -1;
+  }
+  .cs-c .opt {
+    position: absolute;
+    border: 8px solid var(--color-black);
+    box-shadow: 14px 14px 0 var(--color-black);
+    background: var(--color-white);
+    overflow: visible;
+  }
+  .cs-c .opt .note.small {
+    left: 50%;
+    top: -24px;
+    transform: translateX(-50%) rotate(-4deg);
+  }
+  .cs-c .opt.pick {
+    z-index: 3;
+  }
+  .cs-c .penring {
+    position: absolute;
+    left: 318px;
+    top: 704px;
+    width: 462px;
+    height: 460px;
+    z-index: 6;
+    overflow: visible;
+  }
+  .cs-c .penring path {
+    stroke: var(--color-tomato);
+    stroke-width: 15px;
+  }
+
+  /* ---- Swatch patterns: the five textures from the site's playground, drawn as flat frames ------ */
+  .cs-c .k-dots-s,
+  .cs-c .k-dots-b,
+  .cs-c .k-hatch,
+  .cs-c .k-grid,
+  .cs-c .k-fade,
+  .cs-c .k-stripes,
+  .cs-c .k-dots-k {
+    position: absolute;
+  }
+  .cs-c .k-dots-s {
+    background-color: var(--color-white);
+    background-image: radial-gradient(circle, var(--color-black) 0 4.5px, transparent 5.5px);
+    background-size: 26px 26px;
+  }
+  .cs-c .k-dots-b {
+    background-color: var(--color-yellow);
+    background-image: radial-gradient(circle, var(--color-black) 0 17px, transparent 18px);
+    background-size: 68px 68px;
+    background-position: 17px 17px;
+  }
+  .cs-c .k-hatch {
+    background-color: var(--color-tomato);
+    background-image: repeating-linear-gradient(135deg, var(--color-black) 0 10px, transparent 10px 28px);
+  }
+  .cs-c .k-grid {
+    background-color: var(--color-chalk);
+    background-image:
+      linear-gradient(to right, var(--color-black) 0 4px, transparent 4px),
+      linear-gradient(to bottom, var(--color-black) 0 4px, transparent 4px);
+    background-size: 52px 52px;
+  }
+  .cs-c .k-stripes {
+    background-color: var(--color-cobalt);
+    background-image: repeating-linear-gradient(45deg, var(--color-white) 0 9px, transparent 9px 26px);
+  }
+  .cs-c .k-dots-k {
+    background-color: var(--color-black);
+    background-image: radial-gradient(circle, var(--color-yellow) 0 10px, transparent 11px);
+    background-size: 40px 40px;
+  }
+  .cs-c .k-fade {
+    background-color: var(--color-chalk);
+    background-image: radial-gradient(circle, var(--color-black) 0 7px, transparent 8px);
+    background-size: 22px 22px;
+  }
+  /* Fading dots: a cream wash over the dots, thicker toward the left. */
+  .cs-c .k-fade::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--color-chalk) 0%, var(--color-chalk) 12%, rgba(244, 244, 238, 0) 100%);
+  }
+  .cs-c .opt.pick.k-fade {
+    background-color: var(--color-chalk);
+  }
+  .cs-c .opt.pick .x {
+    display: none;
+  }
+
+  /* ---- C-3: sticker over the pile ------------------------------------------------------------------ */
+  .cs-c .tile {
+    position: absolute;
+    border: 8px solid var(--color-black);
+    box-shadow: 12px 12px 0 var(--color-black);
+    background-color: var(--color-white);
+    overflow: visible;
+  }
+  .cs-c .tile.k-cover,
+  .cs-c .tile[style*="background-image:url"] {
+    background-repeat: no-repeat;
+  }
+  .cs-c .n3a {
+    left: 36px;
+    top: 1162px;
+    transform: rotate(-5deg);
+    background: var(--color-white);
+  }
+  .cs-c .n3b {
+    left: 400px;
+    top: 1168px;
+    transform: rotate(3deg);
+  }
+  .cs-c .n3c {
+    left: 690px;
+    top: 296px;
+    transform: rotate(-4deg);
+    background: var(--color-white);
+  }
+  .cs-c .idchip {
+    left: 60px;
+    top: 84px;
+    z-index: 7;
+    padding: 20px 40px 20px 20px;
+    background: var(--color-white);
+    border: 8px solid var(--color-black);
+    box-shadow: 12px 12px 0 var(--color-black);
+    transform: rotate(-2deg);
+    --cid-site: var(--color-black);
+  }
+  .cs-c .sticker {
+    position: absolute;
+    z-index: 8;
+    left: 70px;
+    top: 396px;
+    width: 940px;
+    padding: 96px 64px 76px;
+    background: var(--color-yellow);
+    color: var(--color-black);
+    border: 10px solid var(--color-black);
+    box-shadow: 24px 24px 0 var(--color-black);
+    transform: rotate(-3.5deg);
+  }
+  .cs-c .sticker p {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+    font-size: 184px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .cs-c .sticker .chip {
+    position: absolute;
+    top: -52px;
+    left: 56px;
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    background: var(--color-black);
+    color: var(--color-yellow);
+    border: 8px solid var(--color-black);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 120px;
+    line-height: 1;
+    padding-top: 28px;
+  }
+  .cs-c .mine {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+  }
+  .cs-c .mine::after {
+    content: "";
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    bottom: 10px;
+    height: 20px;
+    background: var(--color-tomato);
+    transform: rotate(-1.2deg);
+    z-index: -1;
+    border-radius: 8px;
+  }
+
+  /* ---- C-4: C-3 in orange, black and paper -------------------------------------------------------- */
+  .cs-c.t-orangepile {
+    --bg: var(--color-tomato);
+    --ink: var(--color-black);
+  }
+  .cs-c.t-orangepile .k-dots-s {
+    background-color: var(--color-black);
+    background-image: radial-gradient(circle, var(--color-tomato) 0 4.5px, transparent 5.5px);
+  }
+  .cs-c.t-orangepile .k-dots-b {
+    background-color: var(--color-chalk);
+    background-image: radial-gradient(circle, var(--color-black) 0 17px, transparent 18px);
+  }
+  .cs-c.t-orangepile .k-hatch {
+    background-color: var(--color-black);
+    background-image: repeating-linear-gradient(135deg, var(--color-tomato) 0 10px, transparent 10px 28px);
+  }
+  .cs-c.t-orangepile .k-grid {
+    background-color: var(--color-tomato);
+  }
+  .cs-c.t-orangepile .k-stripes {
+    background-color: var(--color-chalk);
+    background-image: repeating-linear-gradient(45deg, var(--color-black) 0 9px, transparent 9px 26px);
+  }
+  .cs-c.t-orangepile .k-dots-k {
+    background-color: var(--color-black);
+    background-image: radial-gradient(circle, var(--color-chalk) 0 10px, transparent 11px);
+  }
+  .cs-c.t-orangepile .k-fade {
+    background-color: var(--color-black);
+    background-image: radial-gradient(circle, var(--color-chalk) 0 7px, transparent 8px);
+  }
+  .cs-c.t-orangepile .k-fade::after {
+    background: linear-gradient(90deg, var(--color-black) 0%, var(--color-black) 12%, rgba(10, 10, 10, 0) 100%);
+  }
+  /* The illustrations become orange and black too. */
+  .cs-c.t-orangepile .tile[style*="background-image:url"] {
+    background-color: var(--color-tomato);
+    background-blend-mode: multiply;
+  }
+  .cs-c.t-orangepile .x-under {
+    stroke: var(--color-black);
+  }
+  .cs-c.t-orangepile .x-over {
+    stroke: var(--color-chalk);
+  }
+  .cs-c.t-orangepile .sticker {
+    background: var(--color-chalk);
+  }
+  .cs-c.t-orangepile .sticker .chip {
+    background: var(--color-black);
+    color: var(--color-tomato);
+  }
+  .cs-c.t-orangepile .idchip {
+    background: var(--color-black);
+    --cid-name: var(--color-chalk);
+    --cid-site: var(--color-tomato);
+    --cid-ring: var(--color-chalk);
+  }
+  .cs-c.t-orangepile .n3a,
+  .cs-c.t-orangepile .n3c {
+    background: var(--color-chalk);
+  }
+  .cs-c.t-orangepile .n3b {
+    background: var(--color-tomato);
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+/**
+ * The TL;DR box from the article page, drawn for a card: thick border, hard shadow, a yellow
+ * label sticking out of the top edge. It is built small and scaled up 2.1x with `zoom`, so its
+ * type scale matches the article's box. Colors are fixed.
+ * The card sets: --tldr-font (default 1.12rem), --tldr-lh, --tldr-pad, --tldr-gap (space above),
+ * --tldr-w (width before the zoom, default 446px).
+ * `html` is trusted markup from the card (see hl() for highlights).
+ */
+interface Props {
+  html: string;
+  class?: string;
+}
+const { html, class: cls } = Astro.props;
+---
+
+<div class:list={["card-tldr-wrap", cls]}>
+  <div class="card-tldr">
+    <span class="card-tldr-label" aria-hidden="true">TL;DR</span>
+    <p class="card-tldr-text" set:html={html} />
+  </div>
+</div>
+
+<style>
+  .card-tldr-wrap {
+    width: var(--tldr-w, 446px); /* x2.1 zoom = 936px */
+    zoom: 2.1;
+    margin-top: var(--tldr-gap, 0);
+  }
+  .card-tldr {
+    position: relative;
+    margin-top: 1rem; /* room for the label that sticks out above the edge */
+    padding: var(--tldr-pad, 1.9rem 1.5rem 1.2rem);
+    border: 3px solid #0a0a0a;
+    box-shadow: 6px 6px 0 #0a0a0a;
+    background: #fff;
+    color: #0a0a0a;
+  }
+  .card-tldr-label {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    transform: translateY(-50%);
+    padding: 0 0.5rem;
+    border: 2px solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+  }
+  .card-tldr-text {
+    margin: 0;
+    max-width: none;
+    font-size: var(--tldr-font, 1.12rem);
+    line-height: var(--tldr-lh, 1.3);
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+</style>

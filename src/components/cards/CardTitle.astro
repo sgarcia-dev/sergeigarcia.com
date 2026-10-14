@@ -1,0 +1,22 @@
+---
+/**
+ * The big serif line on a card: Fraunces 900 at the largest optical size, same as the site's
+ * display type. Size, spacing and color are set by the card that uses it. A paragraph, not a
+ * heading, because a card is a picture and must not add headings to the page.
+ */
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+
+<p class:list={["card-title", cls]}><slot /></p>
+
+<style>
+  .card-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+  }
+</style>
