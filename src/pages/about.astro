@@ -1,7 +1,12 @@
 ---
+// Name of the company for the enterprise training bullet. Leave empty until the legal check is done:
+// the bullet then says "a consulting firm". Set it to a name (for example "Skiller Whale") to show it.
+const TRAINING_CLIENT = "";
+
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
+import PullQuote from "../components/PullQuote.astro";
 import { Picture } from "astro:assets";
 import { SITE, ABOUT_BAND } from "../lib/site";
 import { PERSON, breadcrumbs } from "../lib/seo";
@@ -18,130 +23,253 @@ const jsonLd = [
   },
   breadcrumbs([{ name: "About", path: "/about/" }]),
 ];
+
+// Quick facts under the intro: small tilted tags (the tilt comes from the pill rules in lively.css).
+const facts = ["From Mexico", "Lives in Dublin", "13+ years of software", "English and Spanish", "Front end first"];
+
+// The contact line follows the site-wide availability switch (src/lib/site.ts), never its own copy of the choice.
+const availability: Record<string, string | null> = {
+  looking: "I'm currently looking for my next role, so if your team is hiring, ",
+  open: "Always happy to hear about interesting work in developer tools and AI. ",
+  off: null,
+};
+const availabilityLead = availability[SITE.availability];
+const trainingWhere = TRAINING_CLIENT || "a consulting firm";
 ---
 
 <Base title={PAGE_META.about.title} description={PAGE_META.about.description} ogType="profile" jsonLd={jsonLd}>
-  <PageHead band={ABOUT_BAND} title="About" />
+  <PageHead band={ABOUT_BAND} title="Hi, I'm Sergei.">
+    <p class="hook font-title mt-sm max-w-prose text-xl">
+      I got into software because a <span class="lv-mark lv-mark--band">kind librarian said yes</span>.
+    </p>
+  </PageHead>
 
-  <div class="shell py-sm lg:py-md">
-    <section class="about-section grid gap-md py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-bio">
+  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-label="Introduction">
+    <div class="lg:col-span-5">
+      <figure class="photo">
+        <Picture
+          src={family}
+          formats={["avif", "webp"]}
+          widths={[400, 640, 960]}
+          sizes="(min-width: 64rem) 28rem, 100vw"
+          alt="Sergei with his wife and daughter, smiling on a lakeside hike in Ireland"
+          loading="eager"
+          decoding="async"
+          pictureAttributes={{ class: "block" }}
+        />
+      </figure>
+    </div>
+    <div class="lg:col-span-7">
+      <div class="prose">
+        <p>
+          I'm a software engineer from Mexico. Last year my wife, our young daughter and I packed up and moved to
+          Dublin, Ireland. We have been exploring the country ever since, one weekend at a time, and it already feels
+          like home.
+        </p>
+        <p>
+          I miss Mexican food, chilaquiles and pozole most of all, and how big the country is. In Ireland I love the
+          green, how easy it is to get around by bike, and the warm, kind people.
+        </p>
+        <p>
+          Most of my work has been on the front end with React and TypeScript, plus full stack when the job needs it.
+          It's all on the <a href="/work/">work page</a>.
+        </p>
+      </div>
+      <ul role="list" class="facts pill-list mt-md" aria-label="Quick facts">
+        {facts.map((f) => <li class="pill">{f}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="edge-t" aria-labelledby="about-start">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="lg:col-span-5">
-        <h2 id="about-bio" class="label">Hi, I'm Sergei</h2>
-        <figure class="photo mt-sm">
-          <Picture
-            src={family}
-            formats={["avif", "webp"]}
-            widths={[400, 640, 960]}
-            sizes="(min-width: 64rem) 28rem, 100vw"
-            alt="Sergei with his wife and daughter, smiling on a lakeside hike in Ireland"
-            loading="eager"
-            decoding="async"
-            pictureAttributes={{ class: "block" }}
-          />
-        </figure>
+        <p class="label">Around 2005</p>
+        <h2 id="about-start" class="sec-title font-display tracking-tight mt-xs">How I got here</h2>
       </div>
       <div class="prose lg:col-span-7">
         <p>
-          I'm from Mexico. Last year my wife, our young daughter and I packed up and moved to Dublin, Ireland for my
-          work. We have been exploring the country ever since, one weekend at a time, and it already feels like home.
+          I'm 13, in the school library, watching the older kids make animations and websites in Macromedia Flash and
+          Dreamweaver. I want in so badly it must show on my face, because the librarian notices and
+          <span class="lv-mark">offers to teach me</span>.
         </p>
         <p>
-          My road into software was a <span class="lv-mark">happy accident</span>. I originally wanted to study graphic design, and my background
-          is in project management, not engineering. Somewhere along the way I found out that I love building things
-          even more than planning them. That was <span class="lv-mark">more than 13 years</span> ago, and I still get the same kick when something
-          I made works for the first time.
+          That's the whole origin story. I made small animations, simple turn-based games and websites, and I had a
+          ridiculous amount of fun.
         </p>
         <p>
-          People usually describe me as cheerful and positive. I try to lead with <span class="lv-mark">empathy</span>, at work and at home. I
-          would rather understand why someone is stuck than tell them what to do, and I think that is why teaching
-          has followed me through every job.
+          I planned to study graphic design, and my background is in project management, not engineering. Somewhere
+          along the way I found out I like building even more than planning. I've been at it for
+          <span class="lv-mark">more than 13 years</span> now, and I still get the same kick when something I made works
+          for the first time.
         </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-strengths">
-      <h2 id="about-strengths" class="label lg:col-span-5">What I bring to a team</h2>
+  <section class="band-cobalt edge-t edge-b" aria-labelledby="about-work">
+    <div class="shell py-lg lg:py-xl">
+      <h2 id="about-work" class="sec-title font-display tracking-tight">How I work</h2>
+      <p class="mt-xs max-w-prose text-lg">Three habits, from three different starts.</p>
+      <ul role="list" class="work mt-md">
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Planner</h3>
+          <div class="work-body">
+            <p>
+              I started in project management, so I think about scope, deadlines and the people waiting on the work.
+              Give me a fuzzy idea and I'll turn it into a plan a team can actually ship.
+            </p>
+            <p class="eg">
+              <span class="label">For example</span>
+              At Typing.com I was handed the rebuild of the whole teacher portal, the part of the site teachers use,
+              with no tickets and no plan. I wrote a system design doc, then a plan with deliverables, risks and
+              timelines, and kept leadership up to date with <span class="lv-mark lv-mark--band">weekly demos</span>.
+            </p>
+          </div>
+        </li>
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Designer</h3>
+          <div class="work-body">
+            <p>
+              I never stopped caring about design. I sweat the details people feel without naming them: clear layouts,
+              spacing, motion that helps.
+            </p>
+            <p class="eg">
+              <span class="label">For example</span>
+              At Reddit I pushed back when something didn't feel right or wasn't as polished as it should be. When the
+              tech or the deadline ruled out the design as drawn, I worked with the designer on a
+              <span class="lv-mark lv-mark--band">compromise that still felt finished</span>.
+            </p>
+          </div>
+        </li>
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Teacher</h3>
+          <div class="work-body">
+            <p>I would rather understand why someone is stuck than tell them what to do.</p>
+            <p>
+              I taught myself, and for a long time I had no mentor. That meant a lot of frustration. Later, a few great
+              mentors got me unstuck, and I'm deeply grateful to them. Nothing is more rewarding than paying that
+              forward.
+            </p>
+            <ul role="list" class="eg bullets">
+              <li>Taught bootcamp classes at Desafio Latam.</li>
+              <li>
+                Mentored people with no coding experience at Thinkful.
+                <span class="lv-mark lv-mark--band">They went on to land full-stack engineering jobs.</span>
+              </li>
+              <li>One-on-one mentor to a handful of people.</li>
+              <li>Gave enterprise React training to engineering teams at {trainingWhere}.</li>
+            </ul>
+            <p>
+              My favorite moment is when a hard idea finally clicks, like <code>this</code> in JavaScript or how React's
+              render loop works.
+            </p>
+          </div>
+        </li>
+      </ul>
+      <p class="mt-lg max-w-prose text-lg">
+        The feedback I hear most is that I <span class="lv-mark lv-mark--band">make the people around me better</span>.
+        I walk teammates through new tools, I help whoever is stuck, and I care about the craft enough that it rubs off.
+        I plan to keep it that way.
+      </p>
+    </div>
+  </section>
+
+  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-labelledby="about-rule">
+    <div class="lg:col-span-8 xl:col-span-7">
+      <h2 id="about-rule" class="font-display text-h2 tracking-tight">My rule for the web</h2>
+      <PullQuote>A website should work for everyone, on any screen.</PullQuote>
+      <p class="prose">
+        That includes people on entry-level phones, older laptops and screens of every shape and size. Somewhere along
+        the way we got comfortable shipping bloated pages to people on MacBook Pros and flagship phones. Not everyone
+        agrees with me on this. I still think the extra work is worth it.
+      </p>
+    </div>
+  </section>
+
+  <section class="shell pb-lg lg:pb-xl" aria-labelledby="about-now">
+    <div class="now band-black">
+      <p class="label tag-now">Current experiment</p>
+      <h2 id="about-now" class="font-title mt-sm text-xl">Running AI agents from my phone</h2>
+      <p class="mt-sm max-w-prose text-lg">
+        In plain terms: I send a task from my phone, and AI agents on my laptop get it done while I'm away from my desk.
+        This month I'm running them around the clock. I use Hermes Agent to hand out the tasks and keep several going in
+        parallel, across OpenAI, Anthropic, Google and OpenCode models.
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        <li>
+          <a class="hit hit-primary" href="/writing/ai-raises-the-floor/"
+            >Read: Everyone has the same AI now. The difference is you.</a
+          >
+        </li>
+        <li><a class="hit" href="/playground/">Try the playground</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="edge-t" aria-labelledby="about-off">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5">
+        <p class="label">Off the clock</p>
+        <h2 id="about-off" class="sec-title font-display tracking-tight mt-xs">On repeat</h2>
+      </div>
       <div class="prose lg:col-span-7">
         <p>
-          <strong>A planner's habits.</strong> Thanks to that project management start, I think about scope,
-          deadlines and the people waiting on the work, and I'm good at turning a fuzzy idea into a plan a team can
-          actually ship.
+          Queen's "Who Wants to Live Forever" is one of the most beautiful songs I know, and I love it and hate it. It's
+          beautiful, and it makes me want to cry at how helpless it feels.
         </p>
         <p>
-          <strong>A designer's eye.</strong> I never stopped caring about design, so I sweat the UI and UX details:
-          clear layouts, motion that helps, accessibility, and the small things people feel without naming.
+          My favorite classical piece is Holst's "Jupiter, the Bringer of Jollity". I play it while I work, when I need
+          a little meditation time, and on walks. I'm a big André Rieu fan, and seeing him live with my mom was a
+          wonderful experience.
         </p>
+        <p>For decades it has been Michael Jackson, Queen, Journey and Linkin Park.</p>
         <p>
-          <strong>A teacher's patience.</strong> I have mentored developers one to one, taught bootcamp classes at
-          Desafio Latam, run workshops for Thinkful students and given enterprise training. I start from what the
-          person already knows, then we work through real problems together.
-        </p>
-        <p>
-          Most of my work has been on the front end with React and TypeScript, plus full-stack work when the job
-          needs it. I started in consulting, building apps for agriculture and healthcare, then worked on travel,
-          education, research and social products, including Typing.com, St. Jude Children's Research Hospital
-          and Reddit.
+          I love a long drive. My favorite in Mexico is Monterrey to Guadalajara, about 10 hours, and in Ireland my
+          favorite spot so far is the Wicklow Mountains. Also on the list: taking gadgets apart to see how they work,
+          and showing my daughter the world.
         </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-life">
-      <h2 id="about-life" class="label lg:col-span-5">Things I love</h2>
-      <div class="prose lg:col-span-7">
-        <ul>
-          <li>
-            <strong>Showing my daughter the world.</strong> We take every chance we get to travel somewhere new as a
-            family.
-          </li>
-          <li>
-            <strong>Taking things apart.</strong> Electronics, gadgets, new tools. If it just came out, I want to
-            know how it works.
-          </li>
-          <li>
-            <strong>Keeping up with tech and AI.</strong> I read about what's new and then try it myself, usually the
-            same week.
-          </li>
-          <li>
-            <strong>Teaching.</strong> My favorite moment is when something finally clicks for someone.
-          </li>
-          <li><strong>Classic rock and disco.</strong> That's most of what's on my playlists.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-languages">
-      <h2 id="about-languages" class="label lg:col-span-5">Languages</h2>
-      <div class="prose lg:col-span-7">
-        <p>English and Spanish.</p>
-      </div>
-    </section>
-
-    <section class="about-section grid gap-sm py-lg lg:grid-cols-12 lg:gap-md" aria-labelledby="about-contact">
-      <h2 id="about-contact" class="label lg:col-span-5">Contact</h2>
-      <div class="lg:col-span-7">
-        <p class="prose mb-md">The best way to reach me is by email.</p>
-        <ul role="list" class="flex flex-wrap gap-sm">
-          <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
-          <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
-          <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
-          <li>
-            <a class="hit" href={SITE.resume} download="Sergei Garcia - Resume.pdf"
-              ><Icon name="download" />Resume (PDF)</a
-            >
-          </li>
-        </ul>
-      </div>
-    </section>
-  </div>
+  <section class="band-yellow edge-t" aria-labelledby="about-contact">
+    <div class="shell py-lg lg:py-xl">
+      <h2 id="about-contact" class="font-display text-h2 tracking-tight">Say hello.</h2>
+      <p class="mt-sm max-w-prose text-lg">
+        Email is the best way to reach me.{" "}
+        {
+          availabilityLead && (
+            <>
+              {availabilityLead}
+              <span class="lv-mark lv-mark--band">let's talk</span>.
+            </>
+          )
+        }
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        <li><a class="hit hit-primary" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
+        <li><a class="hit" href={SITE.links.linkedin} rel="me"><Icon name="linkedin" />LinkedIn</a></li>
+        <li><a class="hit" href={SITE.links.github} rel="me"><Icon name="github" />GitHub</a></li>
+        <li>
+          <a class="hit" href={SITE.resume} download="Sergei Garcia - Resume.pdf"
+            ><Icon name="download" />Resume (PDF)</a
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
 </Base>
 
 <style>
-  /* Thin rules between about sections, in the page rule color. */
-  .about-section {
-    border-bottom: var(--rule-thin) solid var(--rule-color);
+  /* Section headings on this page: display serif, a notch under the big page heading. */
+  .sec-title {
+    font-size: clamp(2.25rem, 1.2rem + 4.2vw, 3.75rem);
+    line-height: 1;
   }
-  .about-section:last-child {
-    border-bottom: 0;
+  /* The hook sits in the title band; the bar must not outgrow the band's text. */
+  .hook {
+    line-height: 1.2;
   }
   /* The family photo: thick frame like the screenshots, no shadow (it is not a control). */
   .photo :global(img) {
@@ -154,5 +282,95 @@ const jsonLd = [
     .photo {
       max-width: 28rem;
     }
+  }
+  /* Quick facts: the pills sit a little crooked, like stickers. Hover keeps the pop from lively.css. */
+  .facts {
+    gap: var(--spacing-xs) var(--spacing-sm);
+  }
+  .facts .pill {
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    font-weight: var(--font-weight-medium);
+  }
+  .facts .pill:not(:hover) {
+    transform: rotate(calc(var(--lv-tilt) * 0.7));
+  }
+  /* How I work: three full-width rows on the cobalt band. Title on the left, text on the right on wide screens;
+     stacked on phones. Each row is closed by a thick rule in the band's rule color. */
+  .work-row {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding-block: var(--spacing-md);
+    border-top: var(--rule-thick) solid var(--rule-color);
+  }
+  .work-row:last-child {
+    border-bottom: var(--rule-thick) solid var(--rule-color);
+  }
+  .work-title {
+    font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+    line-height: 1.05;
+  }
+  .work-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-width: 44rem;
+  }
+  @media (min-width: 64rem) {
+    .work-row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      column-gap: var(--spacing-lg);
+      padding-block: var(--spacing-lg);
+    }
+  }
+  /* The example (or the list of places) sits inset with a thick bar on the left. */
+  .eg {
+    padding-left: var(--spacing-sm);
+    border-left: var(--rule-thick) solid var(--rule-color);
+    font-size: var(--text-base);
+  }
+  .eg .label {
+    display: block;
+    margin-bottom: var(--spacing-2xs);
+  }
+  .bullets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  .bullets li {
+    position: relative;
+    padding-left: var(--spacing-sm);
+  }
+  .bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: currentColor;
+  }
+  .work code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    padding: 0 0.25em;
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+  /* Right now: a black box with a thick edge. Black in light mode, and the chalk edge keeps it visible in dark mode. */
+  .now {
+    border: var(--rule-thick) solid var(--color-chalk);
+    padding: var(--spacing-md);
+  }
+  @media (min-width: 48rem) {
+    .now {
+      padding: var(--spacing-lg);
+    }
+  }
+  .tag-now {
+    display: inline-block;
+    background: var(--color-yellow);
+    color: var(--color-black);
+    padding: 0 var(--spacing-xs);
   }
 </style>
