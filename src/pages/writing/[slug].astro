@@ -6,6 +6,7 @@ import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
+import AuthorCard from "../../components/AuthorCard.astro";
 import TldrBox from "../../components/TldrBox.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
@@ -91,6 +92,7 @@ const jsonLd = [
           {cover && <h2 id="introduction">Introduction</h2>}
           <Content />
         </div>
+        <AuthorCard />
         <div class="end-share">
           <ShareLinks url={canonical} title={title} />
         </div>

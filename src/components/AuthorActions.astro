@@ -1,0 +1,35 @@
+---
+/** The buttons at the bottom of every author card. Colors come from the card (band or local variables). */
+import Icon from "./Icon.astro";
+import { AUTHOR } from "../lib/authorCard";
+
+interface Props {
+  linkedin?: boolean;
+  class?: string;
+}
+const { linkedin = true, class: cls } = Astro.props;
+---
+
+<ul role="list" class:list={["ac-actions", cls]}>
+  <li><a class="hit hit-primary" href={AUTHOR.mailHref}><Icon name="email" />Get in touch</a></li>
+  <li><a class="hit" href={AUTHOR.moreHref}>More about me</a></li>
+  {
+    linkedin && (
+      <li>
+        <a class="hit" href={AUTHOR.linkedin} rel="me noopener"><Icon name="linkedin" />LinkedIn</a>
+      </li>
+    )
+  }
+</ul>
+
+<style>
+  .ac-actions {
+    display: flex;
+    flex-wrap: wrap;
+    /* Wide enough that the 4px button shadows do not touch the next button. */
+    gap: var(--spacing-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

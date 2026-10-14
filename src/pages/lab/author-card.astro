@@ -1,0 +1,52 @@
+---
+/**
+ * Throwaway comparison page for the three author card looks, each in "looking" and "open" mode.
+ * Not in the sitemap (see astro.config.mjs). Delete the folder src/pages/lab when the choice is made.
+ */
+import Base from "../../layouts/Base.astro";
+import AuthorCardA from "../../components/AuthorCardA.astro";
+import AuthorCardB from "../../components/AuthorCardB.astro";
+import AuthorCardC from "../../components/AuthorCardC.astro";
+import { SITE } from "../../lib/site";
+
+const variants = [
+  { id: "A", name: "A. Quiet", Card: AuthorCardA },
+  { id: "B", name: "B. Bold", Card: AuthorCardB },
+  { id: "C", name: "C. Note from the author", Card: AuthorCardC },
+] as const;
+const modes = ["looking", "open"] as const;
+---
+
+<Base title="Author card lab" description="Comparison of the three end-of-post author card designs." >
+  <section class="edge-b">
+    <div class="shell py-lg lg:py-xl">
+      <h1 class="font-display text-h2 tracking-tight">Author card lab</h1>
+      <p class="mt-sm max-w-prose">
+        Every look in both modes. Real posts use variant {SITE.authorCardVariant} in mode "{SITE.availability}" (set in src/lib/site.ts).
+        "off" shows nothing, so it has no preview.
+      </p>
+    </div>
+  </section>
+  {
+    variants.map(({ id, name, Card }) => (
+      <section class="edge-b" id={`variant-${id}`} aria-labelledby={`h-${id}`} data-lab-variant={id}>
+        <div class="shell py-lg lg:py-xl">
+          <h2 id={`h-${id}`} class="font-title text-xl">{name}</h2>
+          {modes.map((mode) => (
+            <div class="lab-col">
+              <p class="label mt-lg">Mode: {mode}</p>
+              <Card mode={mode} />
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  /* The same width as the text column of a real post at 1280px. */
+  .lab-col {
+    max-width: 44rem;
+  }
+</style>

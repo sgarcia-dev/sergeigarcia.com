@@ -1,0 +1,102 @@
+---
+/**
+ * Author card, variant A "Quiet". A ruled band: thick rule above, thin rule below, round photo on
+ * the left and text on the right. Plain page colors (so it follows light and dark), no box, no shadow
+ * except the buttons' own. Meant to be easy to ignore and easy to find.
+ * Renders nothing when the mode is "off".
+ */
+import AuthorPhoto from "./AuthorPhoto.astro";
+import AuthorActions from "./AuthorActions.astro";
+import { SITE, type Availability } from "../lib/site";
+import { AUTHOR, authorLine } from "../lib/authorCard";
+
+interface Props {
+  mode?: Availability;
+}
+const { mode = SITE.availability } = Astro.props;
+const line = authorLine(mode);
+---
+
+{
+  line && (
+    <aside class="author-card ac-a" aria-label="About the author" data-author-card="A" data-availability={mode}>
+      <AuthorPhoto size="4.5rem" class="ac-a-photo" />
+      <div class="ac-a-head">
+        <p class="ac-a-name font-title">{AUTHOR.name}</p>
+        <p class="ac-a-intro">
+          {AUTHOR.role}. {AUTHOR.tagline}
+        </p>
+      </div>
+      <div class="ac-a-main">
+        <p class="ac-a-line">
+          {line.before}
+          <span class="lv-mark">{line.mark}</span>
+          {line.after}
+        </p>
+        <AuthorActions linkedin={false} class="ac-a-actions" />
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .ac-a {
+    margin-top: var(--spacing-lg);
+    padding-block: var(--spacing-md);
+    border-top: var(--rule-thick) solid var(--edge);
+    border-bottom: var(--rule-thin) solid var(--edge);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "photo head"
+      "main main";
+    column-gap: var(--spacing-sm);
+    row-gap: var(--spacing-sm);
+    align-items: center;
+    color: var(--color-ink);
+  }
+  .ac-a :global(.ac-a-photo) {
+    grid-area: photo;
+  }
+  .ac-a-head {
+    grid-area: head;
+  }
+  .ac-a-main {
+    grid-area: main;
+  }
+  .ac-a-name {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.15;
+  }
+  .ac-a-intro {
+    margin: var(--spacing-2xs) 0 0;
+    color: var(--color-muted);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    font-family: var(--font-mono);
+  }
+  .ac-a-line {
+    margin: 0;
+    max-width: 34rem;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  .ac-a-main :global(.ac-actions) {
+    margin-top: var(--spacing-sm);
+  }
+  @media (min-width: 48rem) {
+    .ac-a {
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+      grid-template-areas:
+        "photo head"
+        "photo main";
+      column-gap: var(--spacing-md);
+      row-gap: var(--spacing-xs);
+      align-items: start;
+    }
+    .ac-a :global(.ac-photo) {
+      --ac-size: 5.5rem;
+    }
+  }
+</style>
