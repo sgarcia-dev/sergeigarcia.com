@@ -295,10 +295,10 @@ main
    static row, clipped.
    --------------------------------------------------------------------------------------------- */
 /* Loop time is length based so the speed stays 19.93px/s (the speed Sergei approved, 1594px in 80s).
-   --ticker-w is the measured width of one copy in px (12 phrases, mono 13px bold). Re-measure it if the
-   list in index.astro changes: .ticker-list getBoundingClientRect().width at any width up to 2597px. */
+   --ticker-w is the measured width of one copy in px (11 phrases, mono 13px bold). Re-measure it if the
+   list in index.astro changes: .ticker-list getBoundingClientRect().width at any width up to 2396px. */
 .ticker {
-  --ticker-w: 2597.5;
+  --ticker-w: 2396.28;
   --ticker-speed: 19.93;
   overflow: hidden;
   background: var(--color-black);

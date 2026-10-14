@@ -1,6 +1,6 @@
 ---
-title: "AI raised the floor. Taste still sets the ceiling."
-summary: "A viral AI music video and my own site's creation show the same thing: AI raises the floor, but human direction and feedback still set the ceiling."
+title: "Everyone has the same AI now. The difference is you."
+summary: "AI didn't make you worthless. It made your judgment matter more. A viral music video and the making of this site show why, and what that looks like in practice."
 pubDate: 2026-10-13
 skills: ["AI agents", "Claude Code", "Design", "Prototyping"]
 cover: "../../assets/posts/ai-raises-the-floor/cover.jpg"
@@ -17,27 +17,29 @@ import figOptions from "../../assets/posts/ai-raises-the-floor/fig-options.jpg";
 import figLoop from "../../assets/posts/ai-raises-the-floor/fig-loop.jpg";
 import figHandback from "../../assets/posts/ai-raises-the-floor/fig-handback.jpg";
 
-Two things happened this autumn that tell the same story about AI.
+Something I've been thinking about a lot lately is how many people feel like **AI made them worthless**. If a machine can write, design and code, what's left for us? Other people look at the flood of **AI slop** online and decide the whole thing is garbage.
 
-The first is a music video about "P(doom)" that blew up in late September. It was made with Claude Opus 5.5, and it looks like the work of a professional motion designer: big, fast type, every word landing on the beat. Press play, it is worth the two and a half minutes.
+I get both feelings, but I think both are wrong, for the same reason. We all have access to the same tools now, and they're very good. Yet most of what they make is forgettable, and a little of it is great. **The prompt isn't what separates the two. The person is:** what they ask for, what they reject, and the feedback loop they use to iterate until it's right.
 
-<YouTubeEmbed id="5EoO5413dBY" title="P(doom) music video by @_mexicat" thumb={ytThumb} />
+Here's the uncomfortable part: **we humans are famously bad at saying exactly what we want.** We're vague, and when we're vague, the AI fills in the gaps with the most average answer it can find. That's why so much AI output looks the same. I wouldn't call it laziness. It's poor communication, and poor communication gets poor results. <span class="lv-mark">Slop isn't an AI problem. It's a communication problem.</span>
 
-On [r/singularity](https://www.reddit.com/r/singularity/comments/1wr4bw8/at_least_the_ai_takeover_will_come_with_sick_music/) it passed 700 upvotes and 260 comments. The mood: this used to take a small studio, and now one person with an AI can do it. Some people went further and read it as one prompt, with the AI doing the rest.
-
-The second is the site you are reading, which I built with AI agents over a couple of days.
-
-Both look like "the AI did it." Both are really proof of the opposite: AI raises the floor, but human direction and feedback still set the ceiling.
+To convince you, I'd like to go over two examples that have been top of mind for me recently: a viral AI-generated music video that people swore was one prompt, and the creation process behind the site you're reading.
 
 ## Exhibit A: the P(doom) video
 
-**The AI was not the secret ingredient.** Claude did a huge share of the work on this video. But the things that made people stop and share it came from people: a song written by humans, and a director who kept sending notes until it was right.
+In late September a music video called "P(doom)" blew up. It was made with Claude Opus 5.5, and it looks like the work of a professional motion designer: big, fast type, every word landing on the beat. Press play, it's worth the two and a half minutes.
+
+<YouTubeEmbed id="5EoO5413dBY" title="P(doom) music video by @_mexicat" thumb={ytThumb} />
+
+On [r/singularity](https://www.reddit.com/r/singularity/comments/1wr4bw8/at_least_the_ai_takeover_will_come_with_sick_music/) it passed 700 upvotes and 260 comments. The TL;DR of the internet's reaction: this used to take a small studio, and now one person with an AI can do it. Read between the lines and the person barely mattered. Some people went further and said it was one prompt, with the AI doing the rest.
+
+**I don't think that's what happened.** Claude did a huge share of the work on this video. But the things that made people stop and share it came from people: a song written by humans, and a director who kept sending notes until it was right.
 
 **First, the name.** [P(doom)](https://en.wikipedia.org/wiki/P(doom)) is short for "probability of doom": your own guess at how likely it is that AI ends badly for humanity. "What's your p(doom)?" has become an in-joke in AI circles.
 
 **The song.** Its lyrics were written by several people over a long time. [osmarks](https://docs.osmarks.net/hypha/p(doom)_song_objectively_correct_interpretation) wrote most of them in 2024, building on an opening verse and chorus by MusicPerson, with lines suggested by an online community. The music was generated with Suno. So the words, the jokes and the point of view came from people.
 
-**How the video was created.** The video is by X user [@_mexicat](https://x.com/_mexicat). When people claimed it came from one prompt to Opus, they answered with a thread explaining that their part was much deeper than anyone suspected. These are the parts that matter:
+**How the video was made.** The video is by X user [@_mexicat](https://x.com/_mexicat). When people claimed it came from one prompt to Opus, they answered with a thread explaining that their part was much deeper than anyone suspected. These are the parts that stood out to me:
 
 <XPost
   url="https://x.com/_mexicat/status/2103904518929055853"
@@ -54,9 +56,9 @@ Both look like "the AI did it." Both are really proof of the opposite: AI raises
   ]}
 />
 
-**The receipts.** You don't have to take their word for it. The whole project, including the code Claude wrote to render the video, is public in a [GitHub repository](https://github.com/mexicat/pdoom-video): a shared folder that keeps every file and every change. Its revision notes back up the thread: a realistic eye removed because "the client found it uncanny," and timings set by hand where the automatic lyric sync failed.
+**You can check this yourself.** The whole project, including the code Claude wrote to render the video, is public in a [GitHub repository](https://github.com/mexicat/pdoom-video): a shared folder that keeps every file and every change. Its revision notes back up the thread: a realistic eye removed because "the client found it uncanny," and timings set by hand where the automatic lyric sync failed.
 
-**What this proves.** What actually made it good was not the prompt, but the constraints and the notes: a tight palette, rules for the type, "don't illustrate every line," and tens of rounds of "not like that, try this." That is a director at work, with a very fast crew.
+**What I take from it.** What made it good wasn't the prompt. <span class="lv-mark">It was the constraints and the notes:</span> a tight palette, rules for the type, "don't illustrate every line," and tens of rounds of "not like that, try this." That's a director at work, with a very fast crew.
 
 <Figure
   src={figLoop}
@@ -64,13 +66,17 @@ Both look like "the AI did it." Both are really proof of the opposite: AI raises
   caption="Great work comes from rounds of feedback, not one perfect prompt."
 />
 
-## Exhibit B: how my site was built
+## Exhibit B: how this site was built
 
-Another case of this loop between AI and human feedback is the site you are reading. Two examples:
+Only recently, while writing about the P(doom) video, I realized the site you're reading is another good example of the same thing. I built it with AI agents over a couple of days, and what made it good wasn't the AI doing everything. It was my decisions, and the rounds of feedback in between. Two moments show it best:
 
-**1. The research.** Before any code, I had agents run a research spike: about twenty parallel runs across Claude, Codex and Gemini, comparing frameworks, hosting, design trends and SEO. They came back with a safe pick, a quiet editorial look. I chose something louder: yellow, cobalt and a big serif headline.
+**1. The research.** Before writing any code, I had AI agents research the options for me: frameworks, hosting, design trends, SEO. They came back with the safe pick, a quiet editorial look like a thousand other sites. **I chose something louder:** yellow, cobalt and a big serif headline.
 
-**2. The improvements.** Later I described the motion I wanted: comic-book halftone dots, a letter-by-letter text reveal I had seen on Meta's Muse Wonder page, a header that shrinks as you scroll. I asked Claude to push back and to pitch more ideas. It came back with a list: highlighter marks, sticker-style hovers, a scrolling ticker, a dot effect that follows the cursor and more. I kept five and cut the rest. Every idea then went live on a throwaway copy of the site, and I judged it on the real pages. My notes were blunt. The first dots made the text harder to read. A later round was "way too much... basically unusable." A flashy reveal on the big headings "screams too much," so a quiet one on the small text shipped instead. Five rounds for the backgrounds alone.
+**2. The experiments.** Later I described the motion I wanted: comic-book halftone dots, a header that shrinks as you scroll, text that reveals itself letter by letter. Then I asked Claude to push back and pitch its own ideas. **It threw the kitchen sink at me.** Dozens of options, some great, most wrong for this site.
+
+This is the part that got me excited. **AI made experimenting cheap**, so instead of picking one idea and hoping, I could try nearly all of them. Every idea went live on a throwaway copy of the site, and I judged it on the real pages. I threw out most of them and pushed the rest toward the balance I wanted: lively, but never in the way of reading. My notes were blunt. The first dots made the text harder to read. One round was "way too much... basically unusable." A flashy reveal on the big headings "screams too much," so a quiet one on the small text shipped instead.
+
+Notice what I used AI for: research, pushback, questions and options. The agents built every version and checked each one for contrast, accessibility and layout shifts. <span class="lv-mark">Every decision was mine.</span>
 
 <Figure
   src={figOptions}
@@ -78,27 +84,29 @@ Another case of this loop between AI and human feedback is the site you are read
   caption="AI widens your options. The final call stays yours."
 />
 
-Notice what I used AI for: research, pushback, questions and options. The agents built every version and checked each one for contrast, accessibility and layout shifts. **Every decision was mine.**
+Looking back, what excites me isn't the site itself. It's this new way of working. **I wasn't even building it full time.** I was busy with other work, and the site moved forward in the background, one round of notes at a time. AI didn't replace my judgment. It gave my judgment far more to work with.
 
-Looking back, the interesting part is not the site itself. It is how smoothly human direction and AI work fit together. **I wasn't even building it full time.** I was busy with other work, and the site moved forward in the background, one round of notes at a time. Getting something I'm proud of while my attention was mostly elsewhere is what excites me most about where this is going.
+I kept a few of those experiments around, the good ones and the bad ones. If you want to feel what that process was like, you can play with them yourself:
 
 <PlaygroundCta />
 
-## The point
+## Where you come in
 
-AI is an extension of your skills, not a replacement for them. It made me faster at everything I already knew how to judge: design, code, writing. It did not know what I wanted until I told it, and it did not know it was wrong until I said so.
+If you've been feeling like AI made you worthless, I hope this helps a little. It didn't. <span class="lv-mark">It made the parts of you it can't copy worth more:</span> knowing what good looks like, noticing when something is off, and being able to say why.
 
-So stay in control:
+For me, AI has become an extension of my skills, not a replacement for them. It made me faster at everything I already knew how to judge: design, code, writing. But it didn't know what I wanted until I told it, and it didn't know something was wrong until I said so. **That part is still on us.** When we stay vague, or skip it entirely, that's when we get slop.
+
+If you want to try this yourself, here's what has worked for me:
 
 1. **Ask for options.** Three versions teach you more than one. You find out what you want by seeing what you don't.
 2. **Judge on the real thing.** A mockup lies. Try each option in the actual product, on real content.
-3. **Set constraints early.** The video and this site both got better because of what they were not allowed to do.
-4. **Give specific notes, and say why.** "The dots are too dark" is fine. "The dots are too dark, and I can't read the text on top" is better. The reason lets the agent fix the cause, not just the symptom.
+3. **Set constraints early.** The video and this site both got better because of what they weren't allowed to do.
+4. **Give specific notes, and say why.** "The dots are too dark" is fine. "The dots are too dark, and I can't read the text on top" is better. The reason lets the AI fix the cause, not just the symptom.
 
 <Figure
   src={figHandback}
   alt="A cheerful robot hands a person a freshly painted poster. The person smiles, points at one spot marked with a check and a cross, and hands it back for another round. A stack of earlier tries sits behind the robot."
-  caption="Specific notes beat vague approval. Say what is wrong, and why."
+  caption="Specific notes beat vague approval. Say what's wrong, and why."
 />
 
-The tools raise the floor for everyone. The ceiling is still yours to set.
+Everyone has the same tools now. They raise the floor for everyone. The ceiling is still yours to set.
