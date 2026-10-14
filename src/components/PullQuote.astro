@@ -1,0 +1,92 @@
+---
+/**
+ * A pull quote: one important line from the post, set big in a yellow card so a skimming reader
+ * stops on it. Put it right after the paragraph that already contains the line, and use the exact
+ * same words.
+ *
+ * Why it looks like this: section headings on this site are Fraunces serif on the page color with a
+ * thin rule above. A pull quote must never be mistaken for one, so it shares almost nothing with
+ * them: a solid yellow fill, bold sans (Space Grotesk, not the serif), a black quote chip, a thick
+ * border with a hard shadow, a slight tilt, and from 72rem it sticks out past the text column.
+ *
+ * Why <aside aria-hidden="true">: the line is already in the paragraph above, so a screen reader
+ * would read it twice. It is a repeat of body text, not a quotation of someone else, so it is not a
+ * <blockquote>. Hiding it from assistive tech loses nothing. Sighted readers see it, and it holds
+ * no links or buttons, so nothing focusable gets hidden. The quote mark is CSS only.
+ *
+ * Usage in MDX: <PullQuote>Exact line from the post.</PullQuote>
+ */
+---
+
+<aside class="pq" aria-hidden="true">
+  <p class="pq-text"><slot /></p>
+</aside>
+
+<style>
+  .pq {
+    position: relative;
+    /* Room above for the quote chip, and below for the hard shadow. */
+    margin: var(--spacing-lg) 0 var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-sm) var(--spacing-md);
+    /* The card is yellow in light and dark, so its text and border are fixed, not theme colors. */
+    background: var(--color-yellow);
+    color: var(--color-black);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 8px 8px 0 var(--edge);
+    transform: rotate(-1deg);
+  }
+  /* The quote chip: a black square that sits on the top-left corner, holding a yellow quote mark.
+     The mark is generated text with an empty alternative, so it is never read aloud. */
+  .pq::before {
+    content: "\201C";
+    content: "\201C" / "";
+    position: absolute;
+    top: -1.5rem;
+    left: var(--spacing-sm);
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    background: var(--color-black);
+    color: var(--color-yellow);
+    border: var(--rule-thick) solid var(--edge);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 3.5rem;
+    /* The curly quote sits high in its box; the line height and padding pull it to the middle. */
+    line-height: 1;
+    padding-top: 0.75rem;
+    box-sizing: border-box;
+  }
+  .pq-text {
+    margin: 0;
+    padding-top: var(--spacing-sm);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+  }
+  @media (min-width: 48rem) {
+    .pq {
+      padding: var(--spacing-md);
+    }
+    .pq::before {
+      left: var(--spacing-md);
+    }
+  }
+  /* Where the column has room (checked at 72rem: column 43rem, text 40rem), the card sticks out
+     to the right of the text column by 3rem. */
+  @media (min-width: 72rem) {
+    .pq {
+      margin-inline-end: calc(var(--spacing-lg) * -1);
+    }
+  }
+  /* A tilted card is only for people who are fine with it; flat is calmer. */
+  @media (prefers-reduced-motion: reduce) {
+    .pq {
+      transform: none;
+    }
+  }
+</style>
