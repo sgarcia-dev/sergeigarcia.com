@@ -1,4 +1,8 @@
 ---
+// Name of the company for the enterprise training bullet. Leave empty until the legal check is done:
+// the bullet then says "a consulting firm". Set it to a name (for example "Skiller Whale") to show it.
+const TRAINING_CLIENT = "";
+
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
@@ -29,6 +33,7 @@ const availability: Record<string, string | null> = {
   off: null,
 };
 const availabilityLead = availability[SITE.availability];
+const trainingWhere = TRAINING_CLIENT || "a consulting firm";
 ---
 
 <Base
@@ -39,7 +44,7 @@ const availabilityLead = availability[SITE.availability];
 >
   <PageHead band={ABOUT_BAND} title="Hi, I'm Sergei.">
     <p class="hook font-title mt-sm max-w-prose text-xl">
-      I got into software because a librarian caught me being <span class="lv-mark lv-mark--band">jealous</span>.
+      I got into software because a <span class="lv-mark lv-mark--band">kind librarian said yes</span>.
     </p>
   </PageHead>
 
@@ -66,6 +71,10 @@ const availabilityLead = availability[SITE.availability];
           like home.
         </p>
         <p>
+          I miss Mexican food, chilaquiles and pozole most of all, and how big the country is. In Ireland I love the
+          green, how easy it is to get around by bike, and the warm, kind people.
+        </p>
+        <p>
           Most of my work has been on the front end with React and TypeScript, plus full stack when the job needs it.
           It's all on the <a href="/work/">work page</a>.
         </p>
@@ -83,21 +92,20 @@ const availabilityLead = availability[SITE.availability];
         <h2 id="about-start" class="sec-title font-display tracking-tight mt-xs">How I got here</h2>
       </div>
       <div class="prose lg:col-span-7">
-        <p>I'm 13, in the school library, and I'm jealous.</p>
         <p>
-          Grown-ups around me are making animations and websites in Macromedia Flash and Dreamweaver. I want to do that
-          so badly it must be written all over my face, because the librarian notices and
+          I'm 13, in the school library, watching the older kids make animations and websites in Macromedia Flash and
+          Dreamweaver. I want in so badly it must show on my face, because the librarian notices and
           <span class="lv-mark">offers to teach me</span>.
         </p>
         <p>
-          That's the whole origin story. I make small animations, turn-based video games with very basic code, and
-          websites. I have a ridiculous amount of fun.
+          That's the whole origin story. I made small animations, simple turn-based games and websites, and I had a
+          ridiculous amount of fun.
         </p>
         <p>
-          I originally wanted to study graphic design, and my background is in project management, not engineering.
-          Somewhere along the way I found out that I love building things even more than planning them. I've been at it
-          for <span class="lv-mark">more than 13 years</span> now, and I still get the same kick when something I made
-          works for the first time.
+          I planned to study graphic design, and my background is in project management, not engineering. Somewhere
+          along the way I found out I like building even more than planning. I've been at it for
+          <span class="lv-mark">more than 13 years</span> now, and I still get the same kick when something I made works
+          for the first time.
         </p>
       </div>
     </div>
@@ -107,106 +115,125 @@ const availabilityLead = availability[SITE.availability];
     <div class="shell py-lg lg:py-xl">
       <h2 id="about-work" class="sec-title font-display tracking-tight">How I work</h2>
       <p class="mt-xs max-w-prose text-lg">Three habits, from three different starts.</p>
-      <ul role="list" class="mt-md grid gap-md lg:grid-cols-3 lg:gap-lg">
-        <li class="card">
-          <h3 class="font-title text-xl">Planner</h3>
-          <p>
-            I started in project management, so I think about scope, deadlines and the people waiting on the work. Give
-            me a fuzzy idea and I'll turn it into a plan a team can actually ship.
-          </p>
-          <p class="eg">
-            <span class="label">For example</span>
-            This site started as a pile of options. I had AI agents research frameworks, hosting, design and SEO, picked
-            a direction, and shipped it in a couple of days.
-          </p>
+      <ul role="list" class="work mt-md">
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Planner</h3>
+          <div class="work-body">
+            <p>
+              I started in project management, so I think about scope, deadlines and the people waiting on the work.
+              Give me a fuzzy idea and I'll turn it into a plan a team can actually ship.
+            </p>
+            <p class="eg">
+              <span class="label">For example</span>
+              At Typing.com I was handed the rebuild of the whole teacher portal, the part of the site teachers use,
+              with no tickets and no plan. I wrote a system design doc, then a plan with deliverables, risks and
+              timelines, and kept leadership up to date with <span class="lv-mark lv-mark--band">weekly demos</span>.
+            </p>
+          </div>
         </li>
-        <li class="card">
-          <h3 class="font-title text-xl">Designer</h3>
-          <p>
-            I never stopped caring about design. I sweat the details people feel without naming them: clear layouts,
-            spacing, motion that helps.
-          </p>
-          <p class="eg">
-            <span class="label">For example</span>
-            On this site, anything that moves stops moving if your device asks for less motion, and every page has to
-            pass automated accessibility checks before it goes out.
-          </p>
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Designer</h3>
+          <div class="work-body">
+            <p>
+              I never stopped caring about design. I sweat the details people feel without naming them: clear layouts,
+              spacing, motion that helps.
+            </p>
+            <p class="eg">
+              <span class="label">For example</span>
+              At Reddit I pushed back when something didn't feel right or wasn't as polished as it should be. When the
+              tech or the deadline ruled out the design as drawn, I worked with the designer on a
+              <span class="lv-mark lv-mark--band">compromise that still felt finished</span>.
+            </p>
+          </div>
         </li>
-        <li class="card">
-          <h3 class="font-title text-xl">Teacher</h3>
-          <p>
-            I've taught bootcamp classes at Desafio Latam and mentored students at Thinkful. I would rather understand
-            why someone is stuck than tell them what to do.
-          </p>
-          <p class="eg">
-            <span class="label">For example</span>
-            My favorite moment is when a hard idea finally clicks. Explaining <code>this</code> in JavaScript. Walking
-            through how React's render loop works.
-          </p>
+        <li class="work-row">
+          <h3 class="work-title font-display tracking-tight">Teacher</h3>
+          <div class="work-body">
+            <p>I would rather understand why someone is stuck than tell them what to do.</p>
+            <p>
+              I taught myself, and for a long time I had no mentor. That meant a lot of frustration. Later, a few great
+              mentors got me unstuck, and I'm deeply grateful to them. Nothing is more rewarding than paying that
+              forward.
+            </p>
+            <ul role="list" class="eg bullets">
+              <li>Taught bootcamp classes at Desafio Latam.</li>
+              <li>
+                Mentored people with no coding experience at Thinkful.
+                <span class="lv-mark lv-mark--band">They went on to land full-stack engineering jobs.</span>
+              </li>
+              <li>One-on-one mentor to a handful of people.</li>
+              <li>Gave enterprise React training to engineering teams at {trainingWhere}.</li>
+            </ul>
+            <p>
+              My favorite moment is when a hard idea finally clicks, like <code>this</code> in JavaScript or how React's
+              render loop works.
+            </p>
+          </div>
         </li>
       </ul>
       <p class="mt-lg max-w-prose text-lg">
-        People who've worked with me tell me my <span class="lv-mark lv-mark--band">passion for software is
-        infectious</span>, and that everyone in the room levels up or wants to. They also tell me never to stop being
-        like that. I don't plan to.
+        The feedback I hear most is that I <span class="lv-mark lv-mark--band">make the people around me better</span>.
+        I walk teammates through new tools, I help whoever is stuck, and I care about the craft enough that it rubs off.
+        I plan to keep it that way.
       </p>
     </div>
   </section>
 
-  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-label="Something people disagree with">
+  <section class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl" aria-labelledby="about-rule">
     <div class="lg:col-span-8 xl:col-span-7">
-      <PullQuote>A website should work for everyone, including people on cheap phones.</PullQuote>
+      <h2 id="about-rule" class="font-display text-h2 tracking-tight">My rule for the web</h2>
+      <PullQuote>A website should work for everyone, on any screen.</PullQuote>
       <p class="prose">
-        Much of the web is bloated, built for the top 1% with expensive iPhones and flagship Androids. Not everyone
-        agrees with me on this. I still think it is worth the extra work.
+        That includes people on entry-level phones, older laptops and screens of every shape and size. Somewhere along
+        the way we got comfortable shipping bloated pages to people on MacBook Pros and flagship phones. Not everyone
+        agrees with me on this. I still think the extra work is worth it.
       </p>
     </div>
   </section>
 
   <section class="shell pb-lg lg:pb-xl" aria-labelledby="about-now">
     <div class="now band-black">
-      <p class="label tag-now">Right now</p>
-      <h2 id="about-now" class="font-title mt-sm text-xl">Bossing agents around from my phone</h2>
+      <p class="label tag-now">Current experiment</p>
+      <h2 id="about-now" class="font-title mt-sm text-xl">Running AI agents from my phone</h2>
       <p class="mt-sm max-w-prose text-lg">
-        This month I'm running computer-use agents around the clock on my laptop, and I control them from my phone when
-        I'm away from my desk. I use Hermes Agent to hand out tasks and keep several going in parallel, across OpenAI,
-        Anthropic, Google and OpenCode models.
+        In plain terms: I send a task from my phone, and AI agents on my laptop get it done while I'm away from my desk.
+        This month I'm running them around the clock. I use Hermes Agent to hand out the tasks and keep several going in
+        parallel, across OpenAI, Anthropic, Google and OpenCode models.
       </p>
       <ul role="list" class="mt-md flex flex-wrap gap-sm">
-        <li><a class="hit hit-primary" href="/writing/ai-raises-the-floor/">Read what I learned</a></li>
+        <li>
+          <a class="hit hit-primary" href="/writing/ai-raises-the-floor/"
+            >Read: Everyone has the same AI now. The difference is you.</a
+          >
+        </li>
         <li><a class="hit" href="/playground/">Try the playground</a></li>
       </ul>
     </div>
   </section>
 
   <section class="edge-t" aria-labelledby="about-off">
-    <div class="shell py-lg lg:py-xl">
-      <h2 id="about-off" class="sec-title font-display tracking-tight">Off the clock</h2>
-      <ul role="list" class="mt-md grid gap-md lg:grid-cols-3 lg:gap-lg">
-        <li class="off">
-          <h3 class="font-title text-xl">Music</h3>
-          <p>
-            Queen's "Who Wants to Live Forever" is one of the most beautiful songs I know, and I love it and hate it. It
-            makes me want to cry at how helpless it feels. My favorite classical piece is Holst's "Jupiter, the Bringer
-            of Jollity", and I'm a big André Rieu fan. For decades it has been Michael Jackson, Queen, Journey and
-            Linkin Park.
-          </p>
-        </li>
-        <li class="off">
-          <h3 class="font-title text-xl">Mexico</h3>
-          <p>I miss the food and how big the country is. I love driving long stretches. It relaxes me.</p>
-        </li>
-        <li class="off">
-          <h3 class="font-title text-xl">Ireland</h3>
-          <p>
-            The green, which I can't get enough of. How easy it is to get around by bike. And above all the people, so
-            warm and so kind.
-          </p>
-        </li>
-      </ul>
-      <p class="mt-md max-w-prose">
-        Also on the list: taking gadgets apart to see how they work, and showing my daughter the world.
-      </p>
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5">
+        <p class="label">Off the clock</p>
+        <h2 id="about-off" class="sec-title font-display tracking-tight mt-xs">On repeat</h2>
+      </div>
+      <div class="prose lg:col-span-7">
+        <p>
+          Queen's "Who Wants to Live Forever" is one of the most beautiful songs I know, and I love it and hate it. It's
+          beautiful, and it makes me want to cry at how helpless it feels.
+        </p>
+        <p>
+          My favorite classical piece is Holst's "Jupiter, the Bringer of Jollity". I play it while I work, when I need
+          a little meditation time, and on walks. I'm a big André Rieu fan, and seeing him live with my mom was a
+          wonderful experience.
+        </p>
+        <p>For decades it has been Michael Jackson, Queen, Journey and Linkin Park.</p>
+        <p>
+          I love a long drive. My favorite in Mexico is Monterrey to Guadalajara, about 10 hours, and in Ireland my
+          favorite spot so far is the Wicklow Mountains. Also on the list: taking gadgets apart to see how they work,
+          and showing my daughter the world.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -271,25 +298,63 @@ const availabilityLead = availability[SITE.availability];
   .facts .pill:not(:hover) {
     transform: rotate(calc(var(--lv-tilt) * 0.7));
   }
-  /* How I work: three plain cards on the cobalt band, outlined in the band's rule color. */
-  .card {
+  /* How I work: three full-width rows on the cobalt band. Title on the left, text on the right on wide screens;
+     stacked on phones. Each row is closed by a thick rule in the band's rule color. */
+  .work-row {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding-block: var(--spacing-md);
+    border-top: var(--rule-thick) solid var(--rule-color);
+  }
+  .work-row:last-child {
+    border-bottom: var(--rule-thick) solid var(--rule-color);
+  }
+  .work-title {
+    font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+    line-height: 1.05;
+  }
+  .work-body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
-    border: var(--rule-thick) solid var(--rule-color);
-    padding: var(--spacing-md);
+    max-width: 44rem;
   }
+  @media (min-width: 64rem) {
+    .work-row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      column-gap: var(--spacing-lg);
+      padding-block: var(--spacing-lg);
+    }
+  }
+  /* The example (or the list of places) sits inset with a thick bar on the left. */
   .eg {
-    margin-top: auto;
-    padding-top: var(--spacing-sm);
-    border-top: var(--rule-thin) solid var(--rule-color);
+    padding-left: var(--spacing-sm);
+    border-left: var(--rule-thick) solid var(--rule-color);
     font-size: var(--text-base);
   }
   .eg .label {
     display: block;
     margin-bottom: var(--spacing-2xs);
   }
-  .card code {
+  .bullets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  .bullets li {
+    position: relative;
+    padding-left: var(--spacing-sm);
+  }
+  .bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: currentColor;
+  }
+  .work code {
     font-family: var(--font-mono);
     font-size: 0.92em;
     padding: 0 0.25em;
@@ -311,13 +376,5 @@ const availabilityLead = availability[SITE.availability];
     background: var(--color-yellow);
     color: var(--color-black);
     padding: 0 var(--spacing-xs);
-  }
-  /* Off the clock: each topic has a thick rule on top and no box. */
-  .off {
-    border-top: var(--rule-thick) solid var(--rule-color);
-    padding-top: var(--spacing-sm);
-  }
-  .off p {
-    margin-top: var(--spacing-xs);
   }
 </style>
