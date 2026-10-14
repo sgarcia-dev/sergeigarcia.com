@@ -49,12 +49,19 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
+<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes} preloadBody>
   <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
     <p class="label mt-xs">{minutes} min read</p>
+    {
+      cover && (
+        <Fragment slot="cover">
+          <Thumb image={cover} alt={coverAlt ?? ""} size="lg" ratio="wide" eager sizes="(min-width: 30rem) 30rem, 100vw" />
+        </Fragment>
+      )
+    }
   </PageHead>
   <section class="edge-b">
     <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
@@ -69,14 +76,9 @@ const jsonLd = [
         }
       </div>
       <div class="post-body lg:col-span-8">
-        {
-          cover && (
-            <div class="mb-lg max-w-prose">
-              <Thumb image={cover} alt={coverAlt ?? ""} size="lg" ratio="wide" eager />
-            </div>
-          )
-        }
         <div class="prose" data-rt-body>
+          {/* The cover now sits in the page head, so the body opens with its own heading. */}
+          {cover && <h2 id="introduction">Introduction</h2>}
           <Content />
         </div>
         <ShareLinks url={canonical} title={title} />

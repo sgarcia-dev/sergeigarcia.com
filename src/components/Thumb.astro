@@ -15,11 +15,14 @@ interface Props {
   /** Text for the typographic fallback card. */
   fallback?: string;
   eager?: boolean;
+  /** Override the `sizes` hint when the image is shown smaller than the default for its size. */
+  sizes?: string;
 }
-const { image, alt = "", size = "sm", ratio = "natural", fallback, eager = false } = Astro.props;
+const { image, alt = "", size = "sm", ratio = "natural", fallback, eager = false, sizes: sizesProp } = Astro.props;
 const widths = size === "sm" ? [176, 352] : size === "md" ? [640, 960, 1280] : [720, 1080, 1440];
 const sizes =
-  size === "sm" ? "11rem" : size === "md" ? "(min-width: 64rem) 40rem, 100vw" : "(min-width: 64rem) 60vw, 100vw";
+  sizesProp ??
+  (size === "sm" ? "11rem" : size === "md" ? "(min-width: 64rem) 40rem, 100vw" : "(min-width: 64rem) 60vw, 100vw");
 ---
 
 {
