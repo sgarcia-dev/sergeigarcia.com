@@ -4,7 +4,7 @@
  * label sticking out of the top edge. It is built small and scaled up 2.1x with `zoom`, so its
  * type scale matches the article's box. Colors are fixed.
  * The card sets: --tldr-font (default 1.12rem), --tldr-lh, --tldr-pad, --tldr-gap (space above),
- * --tldr-w (width before the zoom, default 446px).
+ * --tldr-w (width before the zoom, default 446px), --tldr-zoom (default 2.1).
  * `html` is trusted markup from the card (see hl() for highlights).
  */
 interface Props {
@@ -24,7 +24,7 @@ const { html, class: cls } = Astro.props;
 <style>
   .card-tldr-wrap {
     width: var(--tldr-w, 446px); /* x2.1 zoom = 936px */
-    zoom: 2.1;
+    zoom: var(--tldr-zoom, 2.1);
     margin-top: var(--tldr-gap, 0);
   }
   .card-tldr {

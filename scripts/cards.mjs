@@ -7,7 +7,7 @@
 //   npm run cards -- --safe b8sq           also draw the crop-safe box (files get a -safe-outline suffix)
 //   npm run cards -- --out ~/Desktop/x     write somewhere else
 //
-// Writes <id>-<slug>.png at the card's own size (1080x1350 for most) with deviceScaleFactor 1 to
+// Writes <id>-<slug>.png at the card's own size (1080x1080 for most) with deviceScaleFactor 1 to
 // ~/Downloads/sergeigarcia-linkedin-cards/. The page runs in its native view (?raw) with reduced
 // motion, so the cards are drawn exactly as designed.
 import { chromium } from "@playwright/test";

@@ -37,7 +37,7 @@ const sets = { a: SetA, b: SetB, c: SetC };
     <div class="shell py-lg">
       <h1 class="font-display text-h2 tracking-tight">LinkedIn cards</h1>
       <p class="mt-md max-w-prose text-lg">
-        LinkedIn image cards for posts. Each is 1080 wide and most are 1350 tall; the size is on each label.
+        LinkedIn image cards for posts. Each is 1080 wide and square (1080x1080), apart from the two portrait versions of B-8; the size is on each label.
       </p>
       <p class="mt-sm max-w-prose">
         {CARDS.length} cards, shown scaled down. <strong>Native size</strong> opens one at full size. Add{" "}
@@ -85,7 +85,7 @@ const sets = { a: SetA, b: SetB, c: SetC };
 <style is:global>
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
     gap: var(--spacing-lg) var(--spacing-md);
     align-items: start;
   }

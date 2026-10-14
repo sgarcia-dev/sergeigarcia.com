@@ -21,7 +21,7 @@ export interface Card {
   post: string;
   /** One line on the idea. */
   note: string;
-  /** Pixel size of the card. Most are 1080x1350. */
+  /** Pixel size of the card. The default is square, 1080x1080. A few cards are explicit portrait variants (b8, b8p). */
   w: number;
   h: number;
   /** Debug outline (?safe on the page): the area that must hold everything important if LinkedIn crops the image. */
@@ -35,7 +35,7 @@ export const CARD_SETS: { id: CardSet; title: string; blurb: string }[] = [
 ];
 
 const POST = "ai-raises-the-floor";
-const base = { post: POST, w: 1080, h: 1350 } as const;
+const base = { post: POST, w: 1080, h: 1080 } as const;
 
 export const CARDS: Card[] = [
   { ...base, id: "a1", set: "a", name: "A-1 Cobalt hook", slug: "cobalt-hook", status: "candidate", note: "Cobalt, big white hook, the answer on a yellow block." },
@@ -51,8 +51,8 @@ export const CARDS: Card[] = [
   { ...base, id: "b5", set: "b", name: "B-5 Cobalt, all four", slug: "all-four-cobalt", status: "candidate", note: "Title, yellow answer line, TL;DR box and pick-one art together." },
   { ...base, id: "b6", set: "b", name: "B-6 No TL;DR box", slug: "no-tldr-box", status: "candidate", note: "B-5 without the TL;DR. The answer sits in a tilted yellow box." },
   { ...base, id: "b7", set: "b", name: "B-7 Yellow, all four", slug: "all-four-yellow", status: "candidate", note: "B-5 in yellow." },
-  { ...base, id: "b8", set: "b", name: "B-8 Cobalt TL;DR", slug: "cobalt-tldr", status: "candidate", note: "B-5 with the longer TL;DR (adds the know-how line). Portrait 4:5.", safe: { top: 135, height: 1080 } },
-  { ...base, id: "b8sq", set: "b", name: "B-8sq Cobalt TL;DR, square", slug: "cobalt-tldr-square", status: "posted", note: "B-8 redrawn at 1:1 so a LinkedIn crop cannot cut text. Safe box 1080x900.", h: 1080, safe: { top: 90, height: 900 } },
+  { ...base, id: "b8", set: "b", name: "B-8 Cobalt TL;DR", slug: "cobalt-tldr", status: "candidate", note: "B-5 with the longer TL;DR (adds the know-how line). Portrait 4:5.", h: 1350, safe: { top: 135, height: 1080 } },
+  { ...base, id: "b8sq", set: "b", name: "B-8sq Cobalt TL;DR, square", slug: "cobalt-tldr-square", status: "posted", note: "B-8 redrawn at 1:1 so a LinkedIn crop cannot cut text. Safe box 1080x900.", safe: { top: 90, height: 900 } },
   { ...base, id: "b8p", set: "b", name: "B-8p Cobalt TL;DR, slightly portrait", slug: "cobalt-tldr-portrait", status: "candidate", note: "Same as B-8sq on a 1080x1200 canvas. Safe box 1080x900.", h: 1200, safe: { top: 150, height: 900 } },
 
   { ...base, id: "c1", set: "c", name: "C-1 Marked-up draft", slug: "marked-up-draft", status: "candidate", note: "Old lines struck out on a taped page, the answer on top. Cobalt desk." },

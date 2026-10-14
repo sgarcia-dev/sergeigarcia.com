@@ -1,7 +1,7 @@
 ---
 /**
  * A yellow pull quote card: black quote chip on the corner, bold sans, hard shadow, a slight tilt.
- * Built small and scaled up 2.1x with `zoom`. Fixed colors, and the tilt never turns off.
+ * Built small and scaled up 2.1x with `zoom` (the card can change it with --pq-zoom and --pq-w). Fixed colors, and the tilt never turns off.
  */
 interface Props {
   class?: string;
@@ -15,8 +15,8 @@ const { class: cls } = Astro.props;
 
 <style>
   .card-pq-wrap {
-    width: 446px; /* x2.1 zoom = 936px */
-    zoom: 2.1;
+    width: var(--pq-w, 446px); /* x2.1 zoom = 936px */
+    zoom: var(--pq-zoom, 2.1);
   }
   .card-pq {
     position: relative;

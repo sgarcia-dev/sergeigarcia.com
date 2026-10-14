@@ -57,7 +57,7 @@ const safeCards = ["b8sq", "b8p"] as const;
 
 {
   mix.map(({ id, look, tldr, box }) => (
-    <CardEntry id={id} class={`cs-b mix mix-${look} is-${id}${box ? " no-tldr" : ""}`}>
+    <CardEntry id={id} class={`cs-b mix mix-${look} is-${id}${id !== "b8" ? " sq" : ""}${box ? " no-tldr" : ""}`}>
       <div class={`band bn-${look}`}>
         <span class="hatch" aria-hidden="true" />
         <CardId variant="compact" />
@@ -152,51 +152,54 @@ const safeCards = ["b8sq", "b8p"] as const;
 
   /* 1, 1b, 4: magazine cover */
   .cs-b.cover .band {
-    height: 830px;
-    padding: 122px 72px 0;
+    height: 630px;
+    padding: 72px 72px 0;
   }
   .cs-b.cover .title {
-    margin-top: 56px;
-    font-size: 128px;
+    margin-top: 36px;
+    font-size: 104px;
     max-width: 940px;
   }
   .cs-b.cover .cover-frame {
-    left: 120px;
-    top: 730px;
-    width: 840px;
+    left: 220px;
+    top: 560px;
+    width: 640px;
+    --cc-shadow: 14px 14px 0 #0a0a0a;
   }
 
   /* 2: TL;DR card */
   .cs-b.tldr-card {
-    --tldr-font: 1.4rem;
+    --tldr-font: 1.2rem;
     --tldr-lh: 1.35;
-    --tldr-pad: 2rem 1.5rem 1.5rem;
+    --tldr-pad: 1.8rem 1.4rem 1.3rem;
   }
   .cs-b.tldr-card .band {
-    height: 640px;
-    padding: 122px 72px 0;
+    height: 500px;
+    padding: 72px 72px 0;
   }
   .cs-b.tldr-card .title {
-    margin-top: 48px;
-    font-size: 104px;
+    margin-top: 30px;
+    font-size: 92px;
     max-width: 940px;
   }
   .cs-b .tldr-pos {
     position: absolute;
     left: 72px;
-    top: 626px;
+    top: 490px;
     width: 936px;
   }
+  /* Only a peek of the cover: it is meant to run off the bottom edge. */
   .cs-b.tldr-card .cover-frame {
-    left: 250px;
-    top: 1040px;
-    width: 720px;
+    left: 300px;
+    top: 800px;
+    width: 600px;
     --cc-rot: 1.5deg;
+    --cc-shadow: 12px 12px 0 #0a0a0a;
   }
 
   /* 3: quote card */
   .cs-b.quote-card {
-    padding: 122px 72px 0;
+    padding: 72px 72px 0;
     --hatch: #1a35bb;
     --cid-name: var(--color-white);
     --cid-site: var(--color-yellow);
@@ -204,14 +207,16 @@ const safeCards = ["b8sq", "b8p"] as const;
     color: var(--color-white);
   }
   .cs-b.quote-card .title {
-    margin-top: 48px;
-    font-size: 100px;
+    margin-top: 36px;
+    font-size: 104px;
     max-width: 940px;
   }
   .cs-b .pq-pos {
+    --pq-zoom: 1.7;
+    --pq-w: 550px; /* x1.7 = 935px */
     position: absolute;
     left: 72px;
-    top: 730px;
+    top: 640px;
     width: 936px;
   }
 
@@ -272,26 +277,51 @@ const safeCards = ["b8sq", "b8p"] as const;
   .cs-b.is-b8p {
     --off: 150px;
   }
-  .cs-b.b8q {
+  /* B-5, B-6 and B-7 are square too: the same layout, with the top edge --off pulled up to 70px. */
+  .cs-b.sq {
+    --off: 70px;
+  }
+  /* B-5 and B-7 have the short TL;DR, so it can be set a little bigger. */
+  .cs-b.sq.is-b5,
+  .cs-b.sq.is-b7 {
+    --tldr-font: 1rem;
+    --tldr-pad: 1.2rem 1.2rem 1rem;
+  }
+  .cs-b.sq.is-b5 .band,
+  .cs-b.sq.is-b7 .band {
+    height: calc(var(--off) + 540px);
+  }
+  .cs-b.sq.is-b5 .cover-frame,
+  .cs-b.sq.is-b7 .cover-frame {
+    top: calc(var(--off) + 558px);
+    left: 230px;
+    width: 620px;
+  }
+  .cs-b.b8q,
+  .cs-b.sq {
     --tldr-gap: 4px;
     --tldr-font: 0.88rem;
     --tldr-lh: 1.3;
     --tldr-pad: 0.9rem 1.1rem 0.8rem;
     --tldr-w: 430px; /* x2.1 = 903px, so the box and its shadow keep 80px+ from the sides */
   }
-  .cs-b.b8q .band {
+  .cs-b.b8q .band,
+  .cs-b.sq .band {
     height: calc(var(--off) + 524px);
     padding: calc(var(--off) + 20px) 80px 0;
   }
-  .cs-b.b8q .title {
+  .cs-b.b8q .title,
+  .cs-b.sq .title {
     margin-top: 22px;
     font-size: 72px;
   }
-  .cs-b.b8q .t-b:not(.t-box) {
+  .cs-b.b8q .t-b:not(.t-box),
+  .cs-b.sq .t-b:not(.t-box) {
     margin-top: 8px;
     font-size: 68px;
   }
-  .cs-b.b8q .cover-frame {
+  .cs-b.b8q .cover-frame,
+  .cs-b.sq .cover-frame {
     left: 260px;
     top: calc(var(--off) + 540px);
     width: 560px;
@@ -300,22 +330,28 @@ const safeCards = ["b8sq", "b8p"] as const;
   }
   /* B-6: the answer in a tilted yellow box instead of a highlight, and a bigger title */
   .cs-b.no-tldr .title {
-    font-size: 128px;
+    font-size: 98px;
   }
   .cs-b.no-tldr .t-box {
-    margin-top: 34px;
-    font-size: 108px;
-    padding: 14px 40px 26px;
+    margin-top: 28px;
+    font-size: 84px;
+    padding: 10px 32px 20px;
     color: var(--color-black);
     background: var(--color-yellow);
     border: 6px solid var(--color-black);
-    box-shadow: 12px 12px 0 var(--color-black);
+    box-shadow: 10px 10px 0 var(--color-black);
     transform: rotate(-1.5deg);
     transform-origin: left center;
   }
+  .cs-b.no-tldr {
+    --off: 40px;
+  }
+  .cs-b.no-tldr .band {
+    height: calc(var(--off) + 630px);
+  }
   .cs-b.no-tldr .cover-frame {
-    top: 850px;
-    left: 200px;
-    width: 700px;
+    top: calc(var(--off) + 600px);
+    left: 270px;
+    width: 540px;
   }
 </style>

@@ -64,9 +64,9 @@ const strikes = [
 </CardEntry>
 
 <style is:global>
-  /* ---- Frame: content kept inside the middle 80% (140px top, 150px bottom) ---------------------- */
+  /* ---- Frame: 1080x1080, content kept at least 80px from every edge ------------------------------ */
   .cs-a {
-    padding: 140px 88px 150px;
+    padding: 80px 84px 84px;
     display: flex;
     flex-direction: column;
   }
@@ -106,7 +106,7 @@ const strikes = [
   }
   .cs-a .hook {
     margin-top: auto;
-    font-size: 136px;
+    font-size: 112px;
     line-height: 0.98;
     color: var(--color-white);
   }
@@ -117,7 +117,7 @@ const strikes = [
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 44px;
+    margin-top: 32px;
     gap: 6px;
   }
   /* On cobalt the block gets the site's hard shadow, in ink. */
@@ -125,7 +125,7 @@ const strikes = [
     display: block;
     width: fit-content;
     padding: 0.02em 0.14em 0.1em;
-    box-shadow: 10px 10px 0 var(--color-black);
+    box-shadow: 8px 8px 0 var(--color-black);
   }
 
   /* ---- A-2 and A-3: the crossed-out line and the correction ------------------------------------ */
@@ -133,10 +133,10 @@ const strikes = [
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 64px;
+    gap: 44px;
   }
   .cs-a .wrong {
-    font-size: 128px;
+    font-size: 98px;
     line-height: 1.02;
   }
   .cs-a .sl {
@@ -169,7 +169,7 @@ const strikes = [
     stroke-width: 0.055em;
   }
   .cs-a .right {
-    font-size: 138px;
+    font-size: 104px;
     line-height: 1.02;
   }
   .cs-a.a-paper {
@@ -209,25 +209,25 @@ const strikes = [
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 44px;
+    gap: 36px;
   }
   .cs-a .bl {
     display: block;
   }
   .cs-a .slop-a {
-    font-size: 120px;
+    font-size: 98px;
     line-height: 1;
     text-wrap: balance;
   }
   .cs-a .slop-b {
     display: inline-block;
-    font-size: 120px;
+    font-size: 98px;
     line-height: 1;
     background: var(--color-black);
     color: var(--color-yellow);
     padding: 0.12em 0.22em 0.16em;
     transform: rotate(-1.6deg);
-    box-shadow: 16px 16px 0 var(--color-cobalt);
+    box-shadow: 12px 12px 0 var(--color-cobalt);
     text-wrap: balance;
   }
 </style>

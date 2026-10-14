@@ -16,7 +16,7 @@ import playground from "../../assets/posts/ai-raises-the-floor/playground.jpg";
 import cover from "../../assets/posts/ai-raises-the-floor/cover.jpg";
 
 // C-3 and C-4: the messy pile of rejected options behind the sticker.
-// x, y, w, h, rotation, kind, crossed out?
+// x, y, w, h, rotation, kind, crossed out? Positions were drawn for a 1350 tall card; PILE_Y squeezes them to 1080.
 type Tile = { x: number; y: number; w: number; h: number; r: number; k: string; no?: boolean; img?: string; pos?: string };
 const pile: Tile[] = [
   { x: -50, y: -40, w: 380, h: 320, r: -6, k: "dots-b", no: true },
@@ -35,12 +35,13 @@ const pile: Tile[] = [
 // C-2: the stack of options. The last one is the pick.
 type Opt = { x: number; y: number; s: number; r: number; k: string; no?: boolean; note?: string; pick?: boolean };
 const stack: Opt[] = [
-  { x: 50, y: 680, s: 280, r: -8, k: "dots-s", no: true },
-  { x: 750, y: 660, s: 280, r: 7, k: "hatch", no: true, note: "screams too much" },
-  { x: 100, y: 930, s: 250, r: 5, k: "grid", no: true },
-  { x: 740, y: 940, s: 250, r: -6, k: "dots-b", no: true },
-  { x: 365, y: 760, s: 350, r: 2, k: "fade", pick: true },
+  { x: 70, y: 590, s: 210, r: -8, k: "dots-s", no: true },
+  { x: 760, y: 570, s: 210, r: 7, k: "hatch", no: true, note: "screams too much" },
+  { x: 120, y: 790, s: 190, r: 5, k: "grid", no: true },
+  { x: 770, y: 800, s: 190, r: -6, k: "dots-b", no: true },
+  { x: 390, y: 600, s: 300, r: 2, k: "fade", pick: true },
 ];
+const PILE_Y = 0.8;
 const cross = "M10 10 L90 90 M90 8 L8 92";
 ---
 
@@ -111,7 +112,7 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
         pile.map((t) => (
           <div
             class:list={["tile", `k-${t.k}`]}
-            style={`left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;transform:rotate(${t.r}deg);${t.img ? `background-image:url(${t.img});background-size:cover;background-position:${t.pos}` : ""}`}
+            style={`left:${t.x}px;top:${Math.round(t.y * PILE_Y)}px;width:${t.w}px;height:${Math.round(t.h * PILE_Y)}px;transform:rotate(${t.r}deg);${t.img ? `background-image:url(${t.img});background-size:cover;background-position:${t.pos}` : ""}`}
           >
             {t.no && (
               <svg class="x" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -139,7 +140,7 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
 }
 
 <style is:global>
-  /* ---- Frame and the color themes. Everything is sized in px for a 1080x1350 canvas. --------- */
+  /* ---- Frame and the color themes. Everything is sized in px for a 1080x1080 canvas. --------- */
   .cs-c {
     background: var(--bg);
     font-family: var(--font-sans);
@@ -262,31 +263,31 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
     background-position: -40px -40px;
   }
   .cs-c.cc-draft .idrow {
-    left: 84px;
-    top: 112px;
+    left: 80px;
+    top: 70px;
   }
   .cs-c .paper {
     position: absolute;
-    left: 84px;
-    top: 322px;
-    width: 912px;
-    height: 836px;
-    padding: 76px 64px 0;
+    left: 80px;
+    top: 282px;
+    width: 920px;
+    height: 632px;
+    padding: 66px 56px 0;
     background-color: var(--sheet);
     /* Faint ruled lines, like a notebook page. */
     background-image: repeating-linear-gradient(to bottom, transparent 0 63px, var(--rule) 63px 66px);
     border: 8px solid var(--color-black);
-    box-shadow: 18px 18px 0 var(--color-black);
+    box-shadow: 14px 14px 0 var(--color-black);
     color: var(--sheet-ink);
     transform: rotate(-1.6deg);
   }
   .cs-c .tape {
     position: absolute;
-    top: -34px;
+    top: -30px;
     left: 50%;
-    width: 190px;
-    height: 56px;
-    margin-left: -95px;
+    width: 170px;
+    height: 50px;
+    margin-left: -85px;
     background: var(--color-yellow);
     border: 4px solid var(--color-black);
     transform: rotate(3deg);
@@ -320,13 +321,13 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
   .cs-c .line.old {
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 56px;
+    font-size: 46px;
     line-height: 1.15;
     letter-spacing: -0.02em;
     color: var(--sheet-dim);
   }
   .cs-c .o2 {
-    margin-top: 18px;
+    margin-top: 12px;
   }
   .cs-c .strike {
     position: relative;
@@ -355,20 +356,20 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
     right: -1%;
   }
   .cs-c .final {
-    margin-top: 58px;
+    margin-top: 48px;
     letter-spacing: -0.025em;
     color: var(--sheet-ink);
   }
   .cs-c .f1 {
     display: block;
-    font-size: 106px;
+    font-size: 84px;
     line-height: 1;
     text-wrap: balance;
   }
   .cs-c .f2 {
     display: block;
-    margin-top: 26px;
-    font-size: 134px;
+    margin-top: 24px;
+    font-size: 112px;
     line-height: 1.05;
     white-space: nowrap;
   }
@@ -379,27 +380,27 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
   }
   .cs-c .tick {
     position: absolute;
-    right: 150px;
-    top: 508px;
-    width: 128px;
-    height: 106px;
+    right: 62px;
+    top: 446px;
+    width: 104px;
+    height: 86px;
     overflow: visible;
   }
   .cs-c .tick path {
-    stroke-width: 18px;
+    stroke-width: 15px;
   }
   .cs-c.t-orange .tick path {
     stroke: var(--color-tomato);
   }
   /* The notes sit on the paper's right edge, tilted. */
   .cs-c .n-a {
-    left: 770px;
-    top: 420px;
+    left: 735px;
+    top: 356px;
     transform: rotate(4deg);
   }
   .cs-c .n-b {
-    left: 760px;
-    top: 530px;
+    left: 700px;
+    top: 436px;
     transform: rotate(-3deg);
   }
 
@@ -413,14 +414,14 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
   }
   .cs-c.cc-stack .idrow {
     left: 76px;
-    top: 100px;
+    top: 56px;
   }
   .cs-c .title {
     position: absolute;
     left: 76px;
     right: 76px;
-    top: 258px;
-    font-size: 92px;
+    top: 190px;
+    font-size: 84px;
     line-height: 0.98;
     letter-spacing: -0.025em;
     color: var(--color-black);
@@ -444,8 +445,8 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
   }
   .cs-c .opt {
     position: absolute;
-    border: 8px solid var(--color-black);
-    box-shadow: 14px 14px 0 var(--color-black);
+    border: 7px solid var(--color-black);
+    box-shadow: 11px 11px 0 var(--color-black);
     background: var(--color-white);
     overflow: visible;
   }
@@ -459,16 +460,16 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
   }
   .cs-c .penring {
     position: absolute;
-    left: 318px;
-    top: 704px;
-    width: 462px;
-    height: 460px;
+    left: 345px;
+    top: 548px;
+    width: 400px;
+    height: 396px;
     z-index: 6;
     overflow: visible;
   }
   .cs-c .penring path {
     stroke: var(--color-tomato);
-    stroke-width: 15px;
+    stroke-width: 13px;
   }
 
   /* ---- Swatch patterns: the five textures from the site's playground, drawn as flat frames ------ */
@@ -544,71 +545,71 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
     background-repeat: no-repeat;
   }
   .cs-c .n3a {
-    left: 36px;
-    top: 1162px;
+    left: 60px;
+    top: 930px;
     transform: rotate(-5deg);
     background: var(--color-white);
   }
   .cs-c .n3b {
-    left: 400px;
-    top: 1168px;
+    left: 390px;
+    top: 940px;
     transform: rotate(3deg);
   }
   .cs-c .n3c {
-    left: 690px;
-    top: 296px;
+    left: 700px;
+    top: 214px;
     transform: rotate(-4deg);
     background: var(--color-white);
   }
   .cs-c .idchip {
-    left: 60px;
-    top: 84px;
+    left: 66px;
+    top: 62px;
     z-index: 7;
-    padding: 20px 40px 20px 20px;
+    padding: 14px 32px 14px 16px;
     background: var(--color-white);
-    border: 8px solid var(--color-black);
-    box-shadow: 12px 12px 0 var(--color-black);
+    border: 7px solid var(--color-black);
+    box-shadow: 10px 10px 0 var(--color-black);
     transform: rotate(-2deg);
     --cid-site: var(--color-black);
   }
   .cs-c .sticker {
     position: absolute;
     z-index: 8;
-    left: 70px;
-    top: 396px;
-    width: 940px;
-    padding: 96px 64px 76px;
+    left: 80px;
+    top: 290px;
+    width: 900px;
+    padding: 78px 56px 56px;
     background: var(--color-yellow);
     color: var(--color-black);
-    border: 10px solid var(--color-black);
-    box-shadow: 24px 24px 0 var(--color-black);
+    border: 9px solid var(--color-black);
+    box-shadow: 18px 18px 0 var(--color-black);
     transform: rotate(-3.5deg);
   }
   .cs-c .sticker p {
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "opsz" 144;
-    font-size: 184px;
+    font-size: 138px;
     line-height: 0.92;
     letter-spacing: -0.03em;
     text-wrap: balance;
   }
   .cs-c .sticker .chip {
     position: absolute;
-    top: -52px;
-    left: 56px;
+    top: -44px;
+    left: 48px;
     display: grid;
     place-items: center;
-    width: 104px;
-    height: 104px;
+    width: 88px;
+    height: 88px;
     background: var(--color-black);
     color: var(--color-yellow);
     border: 8px solid var(--color-black);
     font-family: var(--font-display);
     font-weight: 900;
-    font-size: 120px;
+    font-size: 100px;
     line-height: 1;
-    padding-top: 28px;
+    padding-top: 24px;
   }
   .cs-c .mine {
     position: relative;
@@ -620,8 +621,8 @@ const cross = "M10 10 L90 90 M90 8 L8 92";
     position: absolute;
     left: -2%;
     right: -2%;
-    bottom: 10px;
-    height: 20px;
+    bottom: 8px;
+    height: 16px;
     background: var(--color-tomato);
     transform: rotate(-1.2deg);
     z-index: -1;

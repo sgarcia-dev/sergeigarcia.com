@@ -1,7 +1,7 @@
 ---
 /**
- * The fixed-size box every card is drawn in: 1080 wide, and by default 1350 tall (4:5, what
- * LinkedIn shows best in the feed). Nothing inside may rely on the page around it: the colors are
+ * The fixed-size box every card is drawn in: 1080 wide, and by default 1080 tall (square). A few
+ * cards are explicit portrait variants. Nothing inside may rely on the page around it: the colors are
  * fixed values, so a card looks the same in light and dark mode and in the screenshot script.
  *
  * It is a picture, so it is exposed as one: role="img" with a short label, and its children are
@@ -16,7 +16,7 @@ interface Props {
   safe?: { top: number; height: number };
   class?: string;
 }
-const { id, label, w = 1080, h = 1350, safe, class: cls } = Astro.props;
+const { id, label, w = 1080, h = 1080, safe, class: cls } = Astro.props;
 ---
 
 <section id={id} class:list={["card-frame", cls]} role="img" aria-label={label} data-card={id} style={`width:${w}px;height:${h}px`}>
