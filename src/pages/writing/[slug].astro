@@ -6,6 +6,7 @@ import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
+import TldrBox from "../../components/TldrBox.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE, WRITING_BAND } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
@@ -66,10 +67,10 @@ const jsonLd = [
   <section class="edge-b">
     <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
       <div class="lg:col-span-4">
-        <p class="max-w-prose" set:html={markHtml(summary)} />
+        <TldrBox html={markHtml(summary)} />
         {
           skills.length > 0 && (
-            <div class="mt-sm">
+            <div class="mt-md">
               <Pills skills={skills} label="Topics" />
             </div>
           )
