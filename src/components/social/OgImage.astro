@@ -1,0 +1,34 @@
+---
+/**
+ * One social image: picks the design component for a design id and fills it from a sample
+ * (see SAMPLES in src/lib/social.ts). Assets live here so src/lib/social.ts stays plain data.
+ */
+import coverPost from "../../assets/posts/ai-raises-the-floor/cover-pick-one.jpg";
+import DesignCover from "./DesignCover.astro";
+import DesignHighlight from "./DesignHighlight.astro";
+import DesignSplit from "./DesignSplit.astro";
+import DesignIdentity from "./DesignIdentity.astro";
+import DesignType from "./DesignType.astro";
+import { SAMPLES, type Design, type SampleId } from "../../lib/social";
+
+interface Props {
+  design: Design["id"];
+  sample: SampleId;
+}
+const { design, sample: sampleId } = Astro.props;
+const sample = SAMPLES.find((s) => s.id === sampleId);
+if (!sample) throw new Error(`Unknown sample: ${sampleId}`);
+const designs = { s1: DesignCover, s2: DesignHighlight, s3: DesignSplit, s4: DesignIdentity, s5: DesignType };
+const Design = designs[design];
+const props = {
+  kind: sample.kind,
+  title: sample.title,
+  highlight: sample.highlight,
+  summary: sample.summary,
+  cover: sample.kind === "post" ? coverPost : undefined,
+  design,
+  sample: sampleId,
+};
+---
+
+<Design {...props} />

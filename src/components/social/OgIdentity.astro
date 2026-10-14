@@ -1,0 +1,75 @@
+---
+/**
+ * Owner identity for the images: round headshot, name, site. Set a size to 0 to leave that part out.
+ * Colors come from --id-ink and --id-ring set by the design.
+ */
+import { Image } from "astro:assets";
+import headshot from "../../assets/about/headshot.jpg";
+
+interface Props {
+  avatar?: number;
+  ring?: number;
+  name?: number;
+  site?: number;
+  layout?: "row" | "stack";
+  class?: string;
+}
+const { avatar = 0, ring = 5, name = 0, site = 0, layout = "row", class: cls } = Astro.props;
+---
+
+<div class:list={["oid", `oid--${layout}`, cls]} style={`--av:${avatar}px;--ring:${ring}px;--nm:${name}px;--st:${site}px`}>
+  {avatar > 0 && <Image src={headshot} width={400} height={400} alt="" class="oid-avatar" data-t="avatar" loading="eager" />}
+  {
+    (name > 0 || site > 0) && (
+      <p class="oid-text">
+        {name > 0 && <span class="oid-name" data-t="name">Sergei Garcia</span>}
+        {site > 0 && <span class="oid-site" data-t="site">sergeigarcia.com</span>}
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .oid {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--av) * 0.22);
+    color: var(--id-ink, #0a0a0a);
+  }
+  .oid--stack {
+    flex-direction: column;
+    text-align: center;
+  }
+  .oid-avatar {
+    flex: none;
+    display: block;
+    width: var(--av);
+    height: var(--av);
+    border-radius: 50%;
+    border: var(--ring) solid var(--id-ring, #0a0a0a);
+    object-fit: cover;
+    background: #f4f4ee;
+  }
+  .oid-text {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .oid--stack .oid-text {
+    align-items: center;
+  }
+  .oid-name {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--nm);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .oid-site {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: var(--st);
+    line-height: 1.1;
+  }
+</style>

@@ -5,7 +5,7 @@ import AxeBuilder from "@axe-core/playwright";
 const SITE = "https://sergeigarcia.com";
 const NOT_FOUND = "/404.html";
 // Public but unlisted pages are left out of the sitemap on purpose, so they are listed here.
-const UNLISTED = ["/lab/cards/"];
+const UNLISTED = ["/lab/cards/", "/lab/social/"];
 
 // Read at test time (not at file load) so it sees the sitemap from the build
 // that the webServer command just ran.

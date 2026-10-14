@@ -1,0 +1,69 @@
+---
+/**
+ * The fixed 1200x630 box every social image is drawn in. Fixed colors and sizes, so it looks the
+ * same in light and dark mode and in a screenshot. It is a picture, so it is exposed as one.
+ * `?safe` on the lab page draws two dashed boxes: the square-crop columns and the 2:1 crop rows.
+ */
+import { OG_H, OG_W, SAFE } from "../../lib/social";
+
+interface Props {
+  label: string;
+  design: string;
+  sample: string;
+  /** Background color of the image. */
+  bg?: string;
+  class?: string;
+}
+const { label, design, sample, bg = "#f4f4ee", class: cls } = Astro.props;
+---
+
+<div class:list={["og", cls]} role="img" aria-label={label} data-og data-d={design} data-s={sample} style={`width:${OG_W}px;height:${OG_H}px;background:${bg}`}>
+  <slot />
+  <span class="og-safe" aria-hidden="true">
+    <i class="og-safe-sq" style={`left:${SAFE.x}px;width:${SAFE.w}px`}></i>
+    <i class="og-safe-wide" style={`top:${SAFE.y}px;height:${SAFE.h}px`}></i>
+  </span>
+</div>
+
+<style>
+  .og {
+    position: relative;
+    box-sizing: border-box;
+    flex: none;
+    overflow: hidden;
+    isolation: isolate;
+    font-size: 16px;
+    line-height: normal;
+    text-align: left;
+    color: #0a0a0a;
+    font-family: var(--font-sans);
+  }
+  .og :global(*) {
+    box-sizing: border-box;
+  }
+  .og-safe {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .og-safe i {
+    position: absolute;
+    display: block;
+  }
+  .og-safe-sq {
+    top: 0;
+    bottom: 0;
+    border-inline: 4px dashed #ff00c8;
+    background: rgba(255, 0, 200, 0.06);
+  }
+  .og-safe-wide {
+    left: 0;
+    right: 0;
+    border-block: 4px dashed #00a6ff;
+  }
+  :global(html[data-safe]) .og-safe {
+    display: block;
+  }
+</style>

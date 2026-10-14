@@ -1,0 +1,91 @@
+---
+/**
+ * S-3 Split. Framed art on the left, title and name on the right, a yellow arrow button on a cobalt
+ * strip at the edge. The title and name column starts at x 480 and ends at x 910, so both survive
+ * a square crop. The art and the arrow do not: a square crop keeps only a sliver of the left
+ * panel. That is the trade this design makes for a bigger picture.
+ */
+import type { ImageMetadata } from "astro";
+import OgFrame from "./OgFrame.astro";
+import OgArt from "./OgArt.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import { fitSize, type Kind } from "../../lib/social";
+
+interface Props {
+  kind: Kind;
+  title: string;
+  highlight?: string;
+  cover?: ImageMetadata;
+  summary?: string;
+  design?: string;
+  sample?: string;
+}
+const { kind, title, highlight, cover, design = "s3", sample = "post" } = Astro.props;
+const size = fitSize(title, { w: 420, h: 340 }, { highlight, max: 100, lh: 1 });
+---
+
+<OgFrame label={`Split design, 1200 by 630, ${title}`} design={design} sample={sample} bg="#f4f4ee">
+  <div class="left"><OgArt kind={kind} cover={cover} mode="framed" frameW={kind === "post" ? 372 : 300} /></div>
+  <div class="strip" aria-hidden="true"><span class="btn">→</span></div>
+  <div class="head"><OgTitle text={title} highlight={highlight} size={size} lh={1} /></div>
+  <div class="who">
+    <OgIdentity avatar={72} ring={4} name={kind === "home" ? 0 : 32} site={kind === "home" ? 28 : 22} layout="row" />
+  </div>
+</OgFrame>
+
+<style>
+  .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 448px;
+    background: #1f3fd1;
+    border-right: 8px solid #0a0a0a;
+  }
+  .strip {
+    position: absolute;
+    left: 960px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #1f3fd1;
+    border-left: 8px solid #0a0a0a;
+    display: grid;
+    place-items: center;
+  }
+  .btn {
+    display: grid;
+    place-items: center;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    border: 8px solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    font: 900 110px/1 var(--font-sans);
+    box-shadow: 8px 8px 0 #0a0a0a;
+  }
+  .head {
+    position: absolute;
+    left: 490px;
+    width: 420px;
+    top: 56px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    color: #0a0a0a;
+    --hl-bg: #ff6a44;
+    --hl-ink: #0a0a0a;
+    --hl-size: 100% 70%;
+    --hl-pos: 0 90%;
+  }
+  .who {
+    position: absolute;
+    left: 490px;
+    width: 420px;
+    top: 452px;
+    --id-ink: #0a0a0a;
+  }
+</style>

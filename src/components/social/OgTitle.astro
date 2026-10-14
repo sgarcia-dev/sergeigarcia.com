@@ -1,0 +1,43 @@
+---
+/**
+ * The big serif line on an image: Fraunces 900, same as the site's display type. A paragraph, not a
+ * heading, because an image must not add headings to the page. The highlighted words are styled
+ * by the design through --hl-bg, --hl-ink, --hl-size and --hl-pos.
+ */
+import { splitTitle } from "../../lib/social";
+
+interface Props {
+  text: string;
+  highlight?: string;
+  size: number;
+  lh?: number;
+  /** data-t value. "title" is what the safe-box check looks for. */
+  role?: string;
+  class?: string;
+}
+const { text, highlight, size, lh = 1.04, role = "title", class: cls } = Astro.props;
+const { before, mark, after } = splitTitle(text, highlight);
+---
+
+<p class:list={["og-title", cls]} data-t={role} style={`font-size:${size}px;line-height:${lh}`}>{before}{mark && <span class="og-hl">{mark}</span>}{after}</p>
+
+<style>
+  .og-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .og-hl {
+    --pad: 0.12em;
+    padding-inline: var(--pad);
+    margin-inline: calc(var(--pad) * -0.45);
+    white-space: nowrap;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background: linear-gradient(var(--hl-bg, #ffd400), var(--hl-bg, #ffd400)) var(--hl-pos, 0 82%) / var(--hl-size, 100% 60%) no-repeat;
+    color: var(--hl-ink, inherit);
+  }
+</style>

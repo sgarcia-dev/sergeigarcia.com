@@ -1,0 +1,101 @@
+---
+/**
+ * S-4 Identity card. A big round headshot, the name, then the title on a black label. Everything
+ * is stacked in the middle column (x 300 to 900), so a square thumbnail looks like a profile card.
+ * On the home page the title is the name, so the label carries the tagline instead.
+ */
+import type { ImageMetadata } from "astro";
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import { fitSize, type Kind } from "../../lib/social";
+
+interface Props {
+  kind: Kind;
+  title: string;
+  highlight?: string;
+  cover?: ImageMetadata;
+  summary?: string;
+  design?: string;
+  sample?: string;
+}
+const { kind, title, highlight, summary = "", design = "s4", sample = "post" } = Astro.props;
+const home = kind === "home";
+const labelText = home ? summary : title;
+const labelSize = fitSize(labelText, { w: 548, h: home ? 100 : 150 }, { highlight, max: home ? 38 : 58, lh: 1.05 });
+const nameSize = home ? fitSize(title, { w: 600, h: 100 }, { highlight, max: 100, lh: 1 }) : 0;
+---
+
+<OgFrame label={`Identity card design, 1200 by 630, ${title}`} design={design} sample={sample} bg="#ffd400">
+  <span class="half half-l"></span>
+  <span class="half half-r"></span>
+  <div class="stack">
+    <OgIdentity avatar={250} ring={10} />
+    {home ? <OgTitle text={title} highlight={highlight} size={nameSize} lh={1} class="nm" /> : <OgIdentity name={64} class="nm-id" />}
+    <div class="label">
+      {
+        home ? (
+          <p class="sub" data-t="sub" style={`font-size:${labelSize}px`}>{labelText}</p>
+        ) : (
+          <OgTitle text={labelText} highlight={highlight} size={labelSize} lh={1.05} />
+        )
+      }
+    </div>
+  </div>
+</OgFrame>
+
+<style>
+  .half {
+    position: absolute;
+    top: 65px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    border: 8px solid #0a0a0a;
+  }
+  .half-l {
+    left: -250px;
+    background: #1f3fd1;
+  }
+  .half-r {
+    right: -250px;
+    background: #ff6a44;
+  }
+  .stack {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 26px;
+    bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    --id-ink: #0a0a0a;
+  }
+  .nm {
+    color: #0a0a0a;
+    --hl-bg: #fff;
+    --hl-ink: #0a0a0a;
+    --hl-size: 100% 100%;
+    --hl-pos: 0 0;
+  }
+  .label {
+    max-width: 600px;
+    padding: 12px 26px 14px;
+    background: #0a0a0a;
+    color: #fff;
+    --hl-bg: #ffd400;
+    --hl-ink: #0a0a0a;
+    --hl-size: 100% 100%;
+    --hl-pos: 0 0;
+  }
+  .sub {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+</style>

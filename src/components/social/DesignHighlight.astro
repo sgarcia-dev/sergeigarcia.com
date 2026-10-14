@@ -1,0 +1,94 @@
+---
+/**
+ * S-2 Big highlight. Paper background, a huge black serif title with a yellow highlighter swipe,
+ * avatar and name underneath. Everything important is centered in the middle 600px column; the
+ * shapes at the sides are decoration and can be cropped away.
+ */
+import type { ImageMetadata } from "astro";
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import { fitSize, type Kind } from "../../lib/social";
+
+interface Props {
+  kind: Kind;
+  title: string;
+  highlight?: string;
+  cover?: ImageMetadata;
+  summary?: string;
+  design?: string;
+  sample?: string;
+}
+const { kind, title, highlight, design = "s2", sample = "post" } = Astro.props;
+const size = fitSize(title, { w: 600, h: 330 }, { highlight, max: 108, lh: 1 });
+---
+
+<OgFrame label={`Big highlight design, 1200 by 630, ${title}`} design={design} sample={sample} bg="#f4f4ee">
+  <span class="shape s-circle"></span>
+  <span class="shape s-square"></span>
+  <span class="shape s-dot"></span>
+  <div class="head"><OgTitle text={title} highlight={highlight} size={size} lh={1} /></div>
+  <div class="who">
+    <OgIdentity avatar={88} ring={5} name={kind === "home" ? 0 : 38} site={kind === "home" ? 30 : 24} />
+  </div>
+  <span class="d2-frame"></span>
+</OgFrame>
+
+<style>
+  .shape {
+    position: absolute;
+    border: 8px solid #0a0a0a;
+  }
+  .s-circle {
+    left: -120px;
+    top: 340px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: #1f3fd1;
+  }
+  .s-square {
+    right: -70px;
+    top: -50px;
+    width: 250px;
+    height: 250px;
+    background: #ffd400;
+    transform: rotate(14deg);
+  }
+  .s-dot {
+    right: -50px;
+    bottom: 60px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #ff6a44;
+  }
+  .head {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 56px;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #0a0a0a;
+    --hl-bg: #ffd400;
+    --hl-ink: #0a0a0a;
+  }
+  .who {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 454px;
+    display: flex;
+    justify-content: center;
+  }
+  .d2-frame {
+    position: absolute;
+    inset: 0;
+    border: 14px solid #0a0a0a;
+    pointer-events: none;
+  }
+</style>

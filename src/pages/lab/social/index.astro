@@ -1,0 +1,179 @@
+---
+/**
+ * Unlisted lab page: five designs for the social link-preview image (og:image, 1200x630), each
+ * shown the way it would appear on each platform, for three sample pages. It only compares
+ * designs. Nothing here is wired into og:image yet.
+ * Public but not linked from anywhere, noindex, and left out of the sitemap (astro.config.mjs).
+ * The data is in src/lib/social.ts, the drawings in src/components/social/.
+ *
+ * Query switches (read by the inline script below):
+ *   ?safe                      draws the crop lines: pink = square thumbnail, blue = 2:1 crop.
+ *   ?raw&d=<id>&s=<sample>     one image at native 1200x630 with no page around it (for PNG export).
+ *                              d is s1 to s5, s is post, home or page. Example: ?raw&d=s2&s=post
+ */
+import Base from "../../../layouts/Base.astro";
+import OgImage from "../../../components/social/OgImage.astro";
+import PlatformFrame from "../../../components/social/PlatformFrame.astro";
+import { DESIGNS, FRAMES, SAMPLES, SAFE } from "../../../lib/social";
+---
+
+<Base
+  title="Social image lab"
+  description="Unlisted lab page: five designs for the social link-preview image on sergeigarcia.com, shown on each platform."
+  noindex
+>
+  <script is:inline>
+    // Runs before the content is parsed, so there is no flash of the full page in raw view.
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var root = document.documentElement;
+      if (q.has("safe")) root.setAttribute("data-safe", "");
+      if (q.has("raw")) root.setAttribute("data-raw", "");
+    })();
+  </script>
+
+  <section class="edge-b">
+    <div class="shell py-lg">
+      <h1 class="font-display text-h2 tracking-tight">Social image lab</h1>
+      <p class="mt-md max-w-prose text-lg">
+        Five designs for the image that shows when a page is shared. Each one is 1200x630 and is shown below as it would
+        look on LinkedIn, X, Facebook, Slack, Discord, iMessage, WhatsApp and Mastodon, for the Post 2, the homepage and
+        a generic page.
+      </p>
+      <p class="mt-sm max-w-prose">
+        Nothing here is live yet. Pick a design and it gets wired in. Add <code>?safe</code> to the address to draw the crop
+        lines: pink is the square thumbnail (x {SAFE.x} to {SAFE.x + SAFE.w}), blue is the 2:1 crop (y {SAFE.y} to {SAFE.y + SAFE.h}).
+        Add <code>?raw&amp;d=s2&amp;s=post</code> for one image at full size.
+      </p>
+      <ul role="list" class="mt-md flex flex-wrap gap-sm">
+        {DESIGNS.map((d) => <li><a class="hit" href={`#${d.id}`}>{d.name}</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  {
+    DESIGNS.map((d) => (
+      <section id={d.id} class="edge-b scroll-mt" aria-labelledby={`${d.id}-h`}>
+        <div class="shell py-lg">
+          <h2 id={`${d.id}-h`} class="font-title text-xl">{d.name}</h2>
+          <p class="mt-xs max-w-prose">{d.note}</p>
+          <p class="mt-xs max-w-prose">
+            <span class="badge" data-safe-status={d.safe}>{d.safe === "pass" ? "Safe box: pass" : "Safe box: degrades"}</span>{" "}
+            {d.safeNote}
+          </p>
+          {SAMPLES.map((s) => (
+            <div class="sample">
+              <h3 class="sample-h">{s.label}</h3>
+              <div class="sample-row">
+                <figure class="nat-fig">
+                  <div class="nat" data-native={`${d.id}-${s.id}`}>
+                    <div class="nat-scale">
+                      <OgImage design={d.id} sample={s.id} />
+                    </div>
+                  </div>
+                  <figcaption class="nat-cap">
+                    <strong>{d.name} full image</strong>
+                    <span>1200x630, shown at 50%. <a href={`?raw&d=${d.id}&s=${s.id}`}>Native size</a></span>
+                  </figcaption>
+                </figure>
+                {FRAMES.map((f) => (
+                  <PlatformFrame frame={f} design={d.id} sample={s.id} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<script>
+  // Raw view: keep only the one image that ?d= and ?s= name, at its native size, and nothing else.
+  const q = new URLSearchParams(location.search);
+  if (q.has("raw")) {
+    const d = q.get("d") ?? "s1";
+    const s = q.get("s") ?? "post";
+    const img = document.querySelector<HTMLElement>(`[data-native="${d}-${s}"] .og`);
+    if (img) {
+      document.body.replaceChildren(img);
+      document.documentElement.setAttribute("data-ready", "");
+    } else {
+      document.documentElement.setAttribute("data-raw-missing", "");
+    }
+  }
+</script>
+
+<style is:global>
+  html[data-raw] body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+  /* Hide the full page for the instant before the script swaps it for the one image. */
+  html[data-raw]:not([data-ready]):not([data-raw-missing]) body {
+    visibility: hidden;
+  }
+  .scroll-mt {
+    scroll-margin-top: calc(var(--hh, 0px) + 1rem);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0 var(--spacing-xs);
+    border: var(--rule-thin) solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge[data-safe-status="degrades"] {
+    background: #ff6a44;
+  }
+  .sample {
+    margin-top: var(--spacing-lg);
+  }
+  .sample-h {
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .sample-row {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--spacing-md) var(--spacing-lg);
+  }
+  .nat-fig {
+    margin: 0;
+    flex: none;
+    width: 604px;
+    max-width: 100%;
+  }
+  .nat {
+    width: 600px;
+    max-width: 100%;
+    height: 315px;
+    overflow: hidden;
+    border: var(--rule-thin) solid var(--edge);
+    box-sizing: content-box;
+  }
+  .nat-scale {
+    width: 1200px;
+    height: 630px;
+    transform: scale(0.5);
+    transform-origin: 0 0;
+  }
+  .nat-cap {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--text-xs);
+    line-height: 1.35;
+  }
+</style>
