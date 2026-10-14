@@ -19,19 +19,19 @@ const featuredWork = work.slice(0, 4);
 const featuredProjects = projects.slice(0, 4);
 
 // Ticker under the hero: short phrases that describe Sergei. If you change the list, re-measure
-// the copy width and update --ticker-w in lively.css (the loop time follows from it).
+// the copy width and update --ticker-w in lively.css (the loop time follows from it). The list is
+// short, so each copy shows it twice (the second run is aria-hidden) to stay wider than the widest
+// screen (3000px). Screen readers get each phrase once.
 const tickerItems = [
-  "Designer at heart",
-  "Mentor",
+  "Developer tools",
   "Accessibility",
   "Web performance",
-  "Educator",
-  "Developer tools",
-  "Senior software engineer",
   "AI agent workflows",
-  "13+ years shipping",
-  "AI-assisted development",
-  "Dublin, IE",
+  "Writer",
+  "UX and motion",
+  "Mentor",
+  "Speaker",
+  "Full stack",
 ];
 
 const jsonLd = [
@@ -73,12 +73,12 @@ const jsonLd = [
         </h1>
       </div>
       <div class="band-cobalt hero-aside px-sm py-lg lg:col-span-5 lg:px-lg lg:py-xl">
-        <p class="font-title text-xl">Senior software engineer</p>
-        <p class="mt-sm text-lg font-medium">Front end, full stack, AI-assisted development.</p>
+        <p class="font-title text-xl">Designer by eye, teacher by habit, engineer by trade.</p>
+        <p class="mt-sm text-base font-medium">Software Engineer · 13+ years</p>
         <p class="label mt-xs">Based in {SITE.location}</p>
         <p class="mt-md max-w-prose text-lg">
-          I build fast, accessible web products and the tooling that helps teams ship them. Lately I design AI agent
-          workflows that check their own work.
+          I build fast, accessible websites and the tools that help teams ship them. I care how things look and feel, I love
+          helping people get unstuck, and lately I'm exploring how far AI can take all of that.
         </p>
         <ul role="list" class="mt-md flex flex-col gap-sm">
           <li><a class="hit hit-primary w-full" href={`mailto:${SITE.email}`}><Icon name="email" />{SITE.email}</a></li>
@@ -98,8 +98,10 @@ const jsonLd = [
     <div class="ticker-track">
       <ul role="list" class="ticker-list" aria-label="What I do">
         {tickerItems.map((item) => <li>{item}</li>)}
+        {tickerItems.map((item) => <li class="ticker-repeat" aria-hidden="true">{item}</li>)}
       </ul>
       <ul role="list" class="ticker-list ticker-copy" aria-hidden="true">
+        {tickerItems.map((item) => <li>{item}</li>)}
         {tickerItems.map((item) => <li>{item}</li>)}
       </ul>
     </div>

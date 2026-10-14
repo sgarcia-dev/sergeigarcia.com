@@ -1,8 +1,8 @@
 export const SITE = {
   name: "Sergei Garcia",
-  title: "Sergei Garcia | Senior software engineer",
+  title: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
   description:
-    "Sergei Garcia, senior software engineer in Dublin, Ireland. Front end, full stack and AI-assisted development.",
+    "Sergei Garcia, software engineer. Designer by eye, teacher by habit, engineer by trade: fast, accessible websites, developer tools and AI workflows.",
   url: "https://sergeigarcia.com",
   email: "hello@sergeigarcia.com",
   location: "Dublin, Ireland",

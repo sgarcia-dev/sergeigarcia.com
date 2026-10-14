@@ -295,10 +295,12 @@ main
    static row, clipped.
    --------------------------------------------------------------------------------------------- */
 /* Loop time is length based so the speed stays 19.93px/s (the speed Sergei approved, 1594px in 80s).
-   --ticker-w is the measured width of one copy in px (11 phrases, mono 13px bold). Re-measure it if the
-   list in index.astro changes: .ticker-list getBoundingClientRect().width at any width up to 2396px. */
+   --ticker-w is the measured width of one copy in px (9 phrases shown twice per copy = 18 items, mono 13px
+   bold). Re-measure it if the list in index.astro changes: .ticker-list getBoundingClientRect().width,
+   the same at 375 to 3000px. One copy must stay wider than the widest screen (3000px), or the loop shows
+   a gap; if it gets narrower, repeat the list again in index.astro. */
 .ticker {
-  --ticker-w: 2396.28;
+  --ticker-w: 3407.91;
   --ticker-speed: 19.93;
   overflow: hidden;
   background: var(--color-black);
@@ -350,7 +352,8 @@ main
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ticker-copy {
+  .ticker-copy,
+  .ticker-repeat {
     display: none;
   }
   .ticker-track {
