@@ -2,6 +2,7 @@ import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import { getPosts } from "../lib/content";
 import { SITE } from "../lib/site";
+import { plain } from "../lib/mark";
 
 export async function GET(context: APIContext) {
   const posts = await getPosts();
@@ -12,7 +13,7 @@ export async function GET(context: APIContext) {
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,
-      description: post.data.summary,
+      description: plain(post.data.summary),
       pubDate: post.data.pubDate,
       link: `/writing/${post.id}/`,
     })),

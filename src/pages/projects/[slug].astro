@@ -10,6 +10,7 @@ import { getProjects, vtName } from "../../lib/content";
 import { SITE } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
 import { AUTHOR_REF, breadcrumbs, shareImage } from "../../lib/seo";
+import { markHtml, plain } from "../../lib/mark";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -31,7 +32,7 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "Article",
     headline: title,
-    description: summary,
+    description: plain(summary),
     author: AUTHOR_REF,
     about: company,
     keywords: skills.join(", "),
@@ -45,9 +46,9 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
+<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
   <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)} progress>
-    <p class="mt-md max-w-prose text-lg">{summary}</p>
+    <p class="mt-md max-w-prose text-lg" set:html={markHtml(summary, { band: true })} />
     <p class="label mt-sm">{minutes} min read</p>
   </PageHead>
   <section class="edge-b">

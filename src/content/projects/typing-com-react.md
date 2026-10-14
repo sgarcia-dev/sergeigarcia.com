@@ -7,7 +7,7 @@ gallery:
     alt: "The Typing.com home page, captured in October 2026."
 galleryCaption: "Typing.com today, October 2026."
 title: "Typing.com React rewrite"
-summary: "Led the move of Typing.com's teacher tools from Backbone.js to React, with a shared component library and quality checks built in."
+summary: "Led the move of Typing.com's teacher tools ==from Backbone.js to React==, with a ==shared component library== and quality checks built in."
 period: "2021 to 2023"
 role: "Lead Frontend Engineer"
 company: "Teaching.com (Typing.com)"
@@ -34,7 +34,7 @@ I was the Lead Frontend Engineer, working remotely. I led the move of the compan
 
 ## Key decisions
 
-**Start small.** I began with the internal customer support portal as a first React migration, then led the full teacher portal rewrite. The small project showed what would work before the big one began.
+**Start small.** I began with the internal customer support portal as a first React migration, then <span class="lv-mark">led the full teacher portal rewrite</span>. The small project showed what would work before the big one began.
 
 **Replace the front end without a big-bang cutover.** The new React app ships as a bundle mounted inside the existing Laravel pages. It replaced the old front end without a new server or a risky switch-over day.
 
@@ -48,7 +48,7 @@ I was the Lead Frontend Engineer, working remotely. I led the move of the compan
 
 ## Outcome
 
-The teacher portal moved from Backbone.js to a modern React codebase with a shared design system and a consistent look. Teachers across schools use it. The team also got shared standards for review and testing.
+The teacher portal <span class="lv-mark">moved from Backbone.js to a modern React codebase</span> with a shared design system and a consistent look. <span class="lv-mark">Teachers across schools use it</span>. The team also got shared standards for review and testing.
 
 ## What I learned
 

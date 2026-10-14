@@ -3,7 +3,7 @@ cover: "../../assets/covers/developer-tools.jpg"
 coverAlt: "Illustration: a builder at a workbench handing tools to teammates"
 coverKind: "illustration"
 title: "Tools that make the whole team faster"
-summary: "When I spot daily friction for my teammates, I build the tool that removes it. A VS Code extension and a Chrome DevTools extension, both started without being asked."
+summary: "When I spot daily friction for my teammates, ==I build the tool that removes it==. A VS Code extension and a Chrome DevTools extension, both ==started without being asked==."
 period: "2024 to 2026"
 role: "Author and lead developer"
 company: "Reddit"
@@ -57,7 +57,7 @@ Chrome APIs sit behind small interfaces (ports and adapters), so the main logic 
 
 ## Outcome
 
-The VS Code extension reached a 1.0 release and then a 2.0 rewrite, shipped as versioned packages. Engineers got a one-command way to run the tests for their own changes locally instead of waiting on CI. The Chrome extension shipped as an internal 1.0 release and was demoed at an internal hackathon. I do not have adoption numbers, so I will not quote any.
+The VS Code extension reached a <span class="lv-mark">1.0 release and then a 2.0 rewrite</span>, shipped as versioned packages. Engineers got a one-command way to run the tests for their own changes locally <span class="lv-mark">instead of waiting on CI</span>. The Chrome extension shipped as an internal 1.0 release and was <span class="lv-mark">demoed at an internal hackathon</span>. I do not have adoption numbers, so I will not quote any.
 
 ## What I learned
 

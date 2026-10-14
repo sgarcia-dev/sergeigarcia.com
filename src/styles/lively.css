@@ -42,7 +42,9 @@
   --lv-mark-color: rgba(255, 255, 255, 0.78);
 }
 .band-cobalt .lv-mark--band {
-  --lv-mark-color: rgba(10, 10, 10, 0.4);
+  /* The old dark-blue block was almost invisible on cobalt. A yellow block with black text reads clearly. */
+  --lv-mark-color: var(--color-yellow);
+  color: var(--color-black);
 }
 @keyframes lv-mark-show {
   to {
@@ -141,6 +143,20 @@
   .row:hover :is(h2, h3)::after {
     opacity: 1;
     transform: none;
+  }
+}
+/* The row fill is yellow, so a pale yellow phrase mark would vanish on it (and in dark mode the mark is only
+   a thin bar). While a row is hovered or focused its marks become a white block with the row's black text. */
+.row:has(a.row-link:focus-visible) .lv-mark:not(.lv-mark--band) {
+  --lv-mark-color: rgba(255, 255, 255, 0.85);
+  --lv-mark-size: 100% 62%;
+  --lv-mark-pos: 0 80%;
+}
+@media (hover: hover) {
+  .row:hover .lv-mark:not(.lv-mark--band) {
+    --lv-mark-color: rgba(255, 255, 255, 0.85);
+    --lv-mark-size: 100% 62%;
+    --lv-mark-pos: 0 80%;
   }
 }
 @media (prefers-reduced-motion: no-preference) {

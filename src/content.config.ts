@@ -1,6 +1,10 @@
 import { defineCollection, type SchemaContext } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { plain } from "./lib/mark";
+
+// Summaries may carry ==highlight== markers (see src/lib/mark.ts); the 200 limit counts the visible text only.
+const summary = z.string().refine((s) => plain(s).length <= 200, "summary must be 200 characters or fewer without ==markers==");
 
 const link = z.object({
   label: z.string(),
@@ -14,7 +18,7 @@ const link = z.object({
 */
 const base = ({ image }: SchemaContext) => ({
   title: z.string(),
-  summary: z.string().max(200),
+  summary,
   period: z.string(),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
@@ -58,7 +62,7 @@ const posts = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      summary: z.string().max(200),
+      summary,
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       skills: z.array(z.string()).max(8).default([]),

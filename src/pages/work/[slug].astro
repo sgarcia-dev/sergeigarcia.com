@@ -7,6 +7,7 @@ import CaseMeta from "../../components/CaseMeta.astro";
 import Thumb from "../../components/Thumb.astro";
 import { getWork, vtName } from "../../lib/content";
 import { breadcrumbs } from "../../lib/seo";
+import { plain } from "../../lib/mark";
 
 export async function getStaticPaths() {
   const work = await getWork();
@@ -25,7 +26,7 @@ const jsonLd = breadcrumbs([
 ]);
 ---
 
-<Base title={pageTitle} description={summary} jsonLd={jsonLd}>
+<Base title={pageTitle} description={plain(summary)} jsonLd={jsonLd}>
   <PageHead title={company} band="yellow" vt={vtName("work", entry.id)}>
     <p class="font-title mt-md max-w-prose text-xl">{title}</p>
     <p class="mt-xs max-w-prose text-lg">{role !== title ? `${role}, ${period}` : period}</p>

@@ -3,7 +3,7 @@ cover: "../../assets/covers/reddit-localization.jpg"
 coverAlt: "Illustration: people around a globe trading paper planes, each marked with a different script"
 coverKind: "illustration"
 title: "Breaking Reddit's language barrier with AI translation"
-summary: "As web lead for Reddit's translations team, I moved translation work to the server for speed, automated language launches with AI agents and built real-browser checks for AI changes."
+summary: "As web lead for Reddit's translations team, I ==moved translation work to the server== for speed, ==automated language launches with AI agents== and built real-browser checks for AI changes."
 period: "Nov 2023 to Sep 2026"
 role: "Senior Software Engineer, web lead for the translations team"
 company: "Reddit"
@@ -16,7 +16,7 @@ draft: false
 
 ## The goal
 
-Remove the language barrier between Reddit users. Someone who only reads Spanish, Hindi or Portuguese should be able to read a great English thread, and join it, in their own language. Reddit uses AI translation to make that possible across 40+ countries, 20+ languages and millions of users. My job was to make it work well on the web.
+Remove the language barrier between Reddit users. Someone who only reads Spanish, Hindi or Portuguese should be able to read a great English thread, and join it, in their own language. Reddit uses AI translation to make that possible across <span class="lv-mark">40+ countries, 20+ languages and millions of users</span>. My job was to make it work well on the web.
 
 ## My role
 
@@ -118,8 +118,8 @@ A lot of my job as lead was helping everyone move fast in the same direction.
 
 ## Outcome
 
-- **Faster pages.** In a controlled experiment I set up and ran, skipping the browser translation code made pages load faster, with less layout shift.
-- **A new direction.** Product approved my plan, the team adopted it, and the next roadmap moved more translation work from the browser to the server.
+- **Faster pages.** In a controlled experiment I set up and ran, skipping the browser translation code <span class="lv-mark">made pages load faster, with less layout shift</span>.
+- **A new direction.** <span class="lv-mark">Product approved my plan, the team adopted it</span>, and the next roadmap moved more translation work from the browser to the server.
 - **Calmer launches.** New languages follow one runbook, and an agent workflow that the team used to deploy them.
 - **Trusted AI changes.** AI-assisted changes get checked in a real browser, by a process anyone on the team can run.
 

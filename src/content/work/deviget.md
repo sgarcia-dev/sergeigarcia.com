@@ -2,7 +2,7 @@
 title: "JavaScript Architect"
 company: "Deviget"
 role: "JavaScript Architect"
-summary: "Contractor through Deviget for RxVantage. Led front end development and architecture for a healthcare app, wrote GraphQL resolvers and mentored engineers."
+summary: "Contractor through Deviget for RxVantage. ==Led front end development and architecture== for a healthcare app, wrote GraphQL resolvers and ==mentored engineers==."
 period: "Feb 2020 to Jan 2021"
 skills: ["Vue", "Nuxt", "Apollo", "GraphQL", "Node.js", "JavaScript"]
 clients: ["RxVantage"]
@@ -16,7 +16,7 @@ Through Deviget, I worked remotely as a contractor for RxVantage, a healthcare c
 
 ### What I did
 
-- Led front end development of the healthcare application, built with Vue, Nuxt, Apollo and GraphQL.
+- <span class="lv-mark">Led front end development</span> of the healthcare application, built with Vue, Nuxt, Apollo and GraphQL.
 - Wrote the Node.js GraphQL resolvers behind it.
 - Shaped architecture decisions as the product took form.
 - Removed delivery blockers for the team.
@@ -24,4 +24,4 @@ Through Deviget, I worked remotely as a contractor for RxVantage, a healthcare c
 ### Mentoring and teamwork
 
 - Guided two front end developers through code reviews and hands-on mentoring, so the team built a stronger shared understanding of the stack.
-- As that understanding grew, management recognized that the team was delivering faster.
+- As that understanding grew, <span class="lv-mark">management recognized that the team was delivering faster</span>.

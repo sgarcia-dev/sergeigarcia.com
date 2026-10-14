@@ -10,6 +10,7 @@ import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE, WRITING_BAND } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
 import { AUTHOR_REF, shareImage } from "../../lib/seo";
+import { markHtml, plain } from "../../lib/mark";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -29,7 +30,7 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: title,
-    description: summary,
+    description: plain(summary),
     datePublished: pubDate.toISOString(),
     dateModified: (updatedDate ?? pubDate).toISOString(),
     author: AUTHOR_REF,
@@ -48,7 +49,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={summary} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
+<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
   <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
@@ -58,7 +59,7 @@ const jsonLd = [
   <section class="edge-b">
     <div class="shell grid gap-lg py-lg lg:grid-cols-12 lg:py-xl">
       <div class="lg:col-span-4">
-        <p class="max-w-prose">{summary}</p>
+        <p class="max-w-prose" set:html={markHtml(summary)} />
         {
           skills.length > 0 && (
             <div class="mt-sm">
