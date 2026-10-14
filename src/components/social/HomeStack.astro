@@ -1,0 +1,82 @@
+---
+/**
+ * H-4 Stacked bands. A yellow band with the giant name over a cobalt band with the role, the tiny
+ * avatar and the tagline (one highlighted block). Both bands run full width; the text sits in the
+ * middle column.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgMarked from "./OgMarked.astro";
+import { fitSize, plain, HOME, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+}
+const { s, design } = Astro.props;
+const size = fitSize(plain(s.title), { w: 600, h: 280 }, { max: 230, lh: 0.92 });
+const tag = fitSize(s.summaryShort, { w: 600, h: 140 }, { max: 48, lh: 1.1 });
+---
+
+<OgFrame label={`Stacked bands design, 1200 by 630, ${plain(s.title)}`} design={design} sample={s.id} bg="#1f3fd1">
+  <div class="top"><span class="tex tex-dots-y"></span></div>
+  <span class="tex tex-dots-c" style="top:346px"></span>
+  <div class="nm"><OgTitle text={s.title} size={size} lh={0.92} marks={false} /></div>
+  <div class="who">
+    <OgIdentity avatar={60} ring={4} />
+    <span class="role" data-t="sub">{HOME.role}</span>
+  </div>
+  <p class="tag-line" data-t="summary" style={`font-size:${tag}px`}><OgMarked text={s.summaryShort} /></p>
+</OgFrame>
+
+<style>
+  .top {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 346px;
+    border-bottom: 6px solid #0a0a0a;
+    overflow: hidden;
+  }
+  .nm {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 42px;
+    height: 288px;
+    z-index: 2;
+    color: #0a0a0a;
+  }
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 378px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    --id-ring: #fff;
+  }
+  .role {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    color: #fff;
+  }
+  .tag-line {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 456px;
+    z-index: 2;
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.1;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+</style>

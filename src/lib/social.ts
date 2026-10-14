@@ -1,10 +1,12 @@
 /**
  * The social link-preview image lab at /lab/social/ (unlisted, noindex).
  * One place for the facts the page, the labels and the later PNG export all read:
- * the five designs, the three samples, the platform frames and a few small helpers.
+ * the designs, the samples' copy rules, the platform frames and a few small helpers.
  * Plain TypeScript with no asset imports, so a Node script can read it too.
  * The drawings are in src/components/social/.
  */
+import type { ImageMetadata } from "astro";
+
 export const OG_W = 1200;
 export const OG_H = 630;
 
@@ -16,113 +18,174 @@ export const OG_H = 630;
  */
 export const SAFE = { x: 285, w: 630, y: 15, h: 600 } as const;
 
-export type SampleId = "post" | "home" | "page";
 export type Kind = "post" | "home" | "page";
 export type SafeStatus = "pass" | "degrades";
 
 export interface Design {
-  /** s1 to s5. Also the `d` value in /lab/social/?raw&d=s1&s=post */
-  id: "s1" | "s2" | "s3" | "s4" | "s5";
+  /** a1 to a4 for articles, h1 to h4 for the homepage, p1 for generic pages. Also the `d` value in /lab/social/?raw&d=a2&s=<sample id> */
+  id: string;
+  /** Which kind of page the design is for. */
+  kind: Kind;
   name: string;
-  slug: string;
   /** One line on the idea. */
   note: string;
-  /** pass = title, name and avatar all sit inside SAFE. degrades = the title and name do, the art does not. */
   safe: SafeStatus;
   /** What the crops do to this design, in plain words. */
   safeNote: string;
+  /** Which copy the design draws, so the page can say it. */
+  uses: string;
 }
 
 export const DESIGNS: Design[] = [
   {
-    id: "s1",
-    name: "S-1 Cover stage",
-    slug: "cover-stage",
-    note: "The article art fills the top, a cobalt band carries the title. Name chip on the art.",
+    id: "a1",
+    name: "A-1 Black poster",
+    kind: "post",
+    note: "Round 1's type-only design with the site's personality: faint hatch, a yellow highlighter block, avatar and name, a tilted cover sticker on the edge.",
     safe: "pass",
-    safeNote: "Title band and name chip sit in the middle column. Square crop keeps the middle of the art only.",
+    safeNote: "Title and name are centered. The cover sticker is on the edge and is cut by a square crop.",
+    uses: "short title, highlights on",
   },
   {
-    id: "s2",
-    name: "S-2 Big highlight",
-    slug: "big-highlight",
-    note: "Huge black serif title on paper with a yellow highlighter swipe. Avatar and name underneath.",
+    id: "a2",
+    name: "A-2 Magazine cover",
+    kind: "post",
+    note: "The article page in miniature: cobalt hatch band with the title, then the cover art tilted below it, like card set B.",
     safe: "pass",
-    safeNote: "Everything is centered in the middle column. The side shapes are decoration and can be cut.",
+    safeNote: "Title, name and cover all sit in the middle column. Square crops keep everything.",
+    uses: "short title, highlights on",
   },
   {
-    id: "s3",
-    name: "S-3 Split",
-    slug: "split",
-    note: "Framed art on the left, title and name on the right, a yellow arrow button at the edge.",
-    safe: "degrades",
-    safeNote: "Title and name stay whole in a square crop, but the art is cut to a sliver and the arrow disappears.",
+    id: "a3",
+    name: "A-3 TL;DR card",
+    kind: "post",
+    note: "Cobalt hatch, title, and the post's TL;DR box with its yellow label and hard shadow. The cover peeks in from the right.",
+    safe: "pass",
+    safeNote: "Title, name and TL;DR sit in the middle column. The peeking cover is cut by a square crop.",
+    uses: "short title, short TL;DR, highlights on",
   },
   {
-    id: "s4",
-    name: "S-4 Identity card",
-    slug: "identity-card",
-    note: "A big round headshot, the name, then the title on a black label. Made for square thumbnails.",
+    id: "a4",
+    name: "A-4 Yellow sticker",
+    kind: "post",
+    note: "Yellow dots like the homepage, black title with a cobalt highlighter block, a tilted Writing label and the cover on the edge.",
     safe: "pass",
-    safeNote: "A centered stack. A square crop only trims the colored half-circles on the sides.",
+    safeNote: "Title and name are centered. The label and the cover sit on the edges and can be cut.",
+    uses: "short title, highlights on",
   },
   {
-    id: "s5",
-    name: "S-5 Type only",
-    slug: "type-only",
-    note: "Black, white serif title, one yellow block on the key words. Name in small mono type. No picture.",
+    id: "h1",
+    name: "H-1 Hero split",
+    kind: "home",
+    note: "The homepage hero as an image: yellow and cobalt halves with dots, the giant name changes color where it crosses the seam. Tiny avatar, tagline on a black label.",
     safe: "pass",
-    safeNote: "Centered text. No avatar by design: the name line is the identity.",
+    safeNote: "The name and tagline sit in the middle 600px. The split seam is exactly in the middle, so any crop keeps it.",
+    uses: "tagline, highlight on",
+  },
+  {
+    id: "h2",
+    name: "H-2 Cobalt hero",
+    kind: "home",
+    note: "The cobalt half of the hero, full size: giant white name, tiny avatar with the Dublin tag, tagline with a highlighter mark.",
+    safe: "pass",
+    safeNote: "Everything is in the middle column. A yellow 13+ years sticker sits on the edge and can be cut.",
+    uses: "tagline, highlight on",
+  },
+  {
+    id: "h3",
+    name: "H-3 Yellow with ticker",
+    kind: "home",
+    note: "The yellow half of the hero, full size: giant black name, tagline with a cobalt block, and the black ticker strip from under the hero.",
+    safe: "pass",
+    safeNote: "Name and tagline are in the middle column. The ticker is decoration, so a crop only shortens it.",
+    uses: "tagline, highlight on",
+  },
+  {
+    id: "h4",
+    name: "H-4 Stacked bands",
+    kind: "home",
+    note: "A yellow band with the giant name over a cobalt band with the role, the tiny avatar and the tagline.",
+    safe: "pass",
+    safeNote: "Both bands run full width and the text sits in the middle column.",
+    uses: "tagline, highlight on",
+  },
+  {
+    id: "p1",
+    name: "P-1 Page band",
+    kind: "page",
+    note: "One cheap design for Projects, Writing and About: cobalt hatch, the page name in a yellow block, the page description in a TL;DR style box.",
+    safe: "pass",
+    safeNote: "Everything is in the middle column.",
+    uses: "page title, page description",
   },
 ];
 
 export interface Sample {
-  id: SampleId;
+  /** Post slug, or home, projects, writing, about. Also the `s` value in the raw view. */
+  id: string;
+  kind: Kind;
   /** Label above each group of previews. */
   label: string;
-  kind: Kind;
-  /** The short headline drawn on the image (3 to 6 words reads best when small). */
+  /** Full title, may carry ==highlight== markers. */
   title: string;
-  /** Words inside `title` that get the highlight. */
-  highlight?: string;
-  summary?: string;
-  /** What the platform card shows under or beside the image (the page's og:title and description). */
+  /** Short title (3 to 6 words reads best when small), may carry markers. */
+  titleShort: string;
+  /** TL;DR or description, may carry markers. */
+  summary: string;
+  summaryShort: string;
+  cover?: ImageMetadata;
+  /** What the platform cards show next to the image (the page's og:title and description, no markers). */
   pageTitle: string;
   description: string;
 }
 
-export const SAMPLES: Sample[] = [
-  {
-    id: "post",
-    label: "Post 2: Everyone has the same AI now",
-    kind: "post",
-    title: "Same AI. The difference is you.",
-    highlight: "is you.",
-    summary: "AI didn't make you worthless. It made your judgment matter more.",
-    pageTitle: "Everyone has the same AI now. The difference is you. | Sergei Garcia",
-    description: "AI didn't make you worthless. It made your judgment matter more. It doesn't replace know-how, it multiplies it.",
-  },
-  {
-    id: "home",
-    label: "Homepage",
-    kind: "home",
-    title: "Sergei Garcia",
-    highlight: "Garcia",
-    summary: "Designer by eye, teacher by habit, engineer by trade.",
-    pageTitle: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
-    description: "Sergei Garcia, software engineer. Fast, accessible websites, developer tools and AI workflows.",
-  },
-  {
-    id: "page",
-    label: "Generic page: Projects",
-    kind: "page",
-    title: "Projects",
-    highlight: "Projects",
-    summary: "Tools, products and systems I designed and built.",
-    pageTitle: "Projects | Sergei Garcia",
-    description: "Case studies from Sergei Garcia: tools, products and systems he designed and built.",
-  },
-];
+/** The same fallbacks the posts schema documents (src/content.config.ts). */
+export function ogFields(d: { title: string; summary: string; ogTitle?: string; ogTitleShort?: string; ogSummary?: string; ogSummaryShort?: string }) {
+  const title = d.ogTitle ?? d.title;
+  const titleShort = d.ogTitleShort ?? title;
+  const summary = d.ogSummary ?? d.summary;
+  const summaryShort = d.ogSummaryShort ?? summary;
+  return { title, titleShort, summary, summaryShort };
+}
+
+/**
+ * Homepage copy that is not in a content file. Keep in sync with src/pages/index.astro (the hero
+ * and the ticker). The tagline's highlight is a design choice for this lab, not on the live page.
+ */
+export const HOME = {
+  name: "Sergei Garcia",
+  tagline: "Designer by eye, teacher by habit, ==engineer by trade.==",
+  role: "Software Engineer · 13+ years",
+  location: "Dublin, IE",
+  ticker: ["Developer tools", "Accessibility", "Web performance", "AI agent workflows", "Writer", "UX and motion", "Mentor", "Speaker", "Full stack"],
+  title: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
+  description: "Sergei Garcia, software engineer. Designer by eye, teacher by habit, engineer by trade: fast, accessible websites, developer tools and AI workflows.",
+} as const;
+
+/** Generic pages: title and description as in each page's <Base> props. */
+export const PAGES = [
+  { id: "projects", title: "Projects", description: "Case studies from Sergei Garcia: tools, products and systems he designed and built." },
+  { id: "writing", title: "Writing", description: "Notes from Sergei Garcia on building software, working with AI coding agents and shipping front ends." },
+  { id: "about", title: "About", description: "About Sergei Garcia, a software engineer from Mexico living in Dublin, Ireland. 13+ years building web products, a designer's eye, and a love of teaching." },
+] as const;
+
+const MARK = /==(?=\S)(.+?)(?<=\S)==/g;
+/** Text without the == markers. */
+export function plain(text: string): string {
+  return text.replace(MARK, "$1");
+}
+/** Text cut into plain and highlighted runs. */
+export function segments(text: string): { text: string; mark: boolean }[] {
+  const out: { text: string; mark: boolean }[] = [];
+  let last = 0;
+  for (const m of text.matchAll(MARK)) {
+    if (m.index! > last) out.push({ text: text.slice(last, m.index!), mark: false });
+    out.push({ text: m[1], mark: true });
+    last = m.index! + m[0].length;
+  }
+  if (last < text.length) out.push({ text: text.slice(last), mark: false });
+  return out;
+}
 
 export type FrameKind =
   | "linkedin"
@@ -168,13 +231,6 @@ export function placeStyle(img: { w: number; h: number }): string {
   return `--s:${s.toFixed(5)};--tx:${tx.toFixed(2)}px;--ty:${ty.toFixed(2)}px`;
 }
 
-/** Splits a title around its highlighted words. If the words are not in the title, nothing is highlighted. */
-export function splitTitle(title: string, highlight?: string): { before: string; mark: string; after: string } {
-  const i = highlight ? title.indexOf(highlight) : -1;
-  if (!highlight || i < 0) return { before: title, mark: "", after: "" };
-  return { before: title.slice(0, i), mark: highlight, after: title.slice(i + highlight.length) };
-}
-
 /**
  * Biggest font size (px, steps of 2) at which the text fits a box when wrapped word by word.
  * It guesses the width of a character as 0.5em, which suits the site's heavy serif. The
@@ -183,12 +239,10 @@ export function splitTitle(title: string, highlight?: string): { before: string;
 export function fitSize(
   text: string,
   box: { w: number; h: number },
-  opts: { max: number; min?: number; lh?: number; cw?: number; highlight?: string } = { max: 96 },
+  opts: { max: number; min?: number; lh?: number; cw?: number } = { max: 96 },
 ): number {
   const { max, min = 24, lh = 1.04, cw = 0.5 } = opts;
-  // The highlighted words never break across lines (see OgTitle), so they count as one word.
-  const flat = opts.highlight && text.includes(opts.highlight) ? text.replace(opts.highlight, opts.highlight.replace(/\s+/g, "_")) : text;
-  const words = flat.split(/\s+/).filter(Boolean);
+  const words = plain(text).split(/\s+/).filter(Boolean);
   for (let size = max; size >= min; size -= 2) {
     const perLine = Math.floor(box.w / (size * cw));
     if (words.some((w) => w.length > perLine)) continue;

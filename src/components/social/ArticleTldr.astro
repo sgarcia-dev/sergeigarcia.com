@@ -1,0 +1,56 @@
+---
+/**
+ * A-3 TL;DR card. Cobalt hatch, the title, and the post's TL;DR box with its yellow label and hard
+ * shadow. The cover peeks in from the right edge. Title, name and TL;DR sit in the middle column.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgCover from "./OgCover.astro";
+import OgTldr from "./OgTldr.astro";
+import { fitSize, plain, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+}
+const { s, design } = Astro.props;
+const size = fitSize(s.titleShort, { w: 600, h: 150 }, { max: 84, lh: 1 });
+const tl = fitSize(s.summaryShort, { w: 540, h: 190 }, { max: 34, min: 18, lh: 1.28, cw: 0.54 });
+---
+
+<OgFrame label={`TL;DR card design, 1200 by 630, ${plain(s.titleShort)}`} design={design} sample={s.id} bg="#1f3fd1">
+  <span class="tex tex-hatch-c"></span>
+  {s.cover && <OgCover src={s.cover} w={300} left={956} top={300} rot={7} border={5} shadow={10} />}
+  <div class="who"><OgIdentity avatar={56} ring={4} name={26} /></div>
+  <div class="head"><OgTitle text={s.titleShort} size={size} lh={1} /></div>
+  <div class="box"><OgTldr text={s.summaryShort} size={tl} /></div>
+</OgFrame>
+
+<style>
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 24px;
+    --id-ink: #fff;
+    --id-ring: #fff;
+  }
+  .head {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 94px;
+    height: 156px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+  .box {
+    position: absolute;
+    left: 300px;
+    width: 590px;
+    top: 296px;
+  }
+</style>

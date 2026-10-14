@@ -1,0 +1,39 @@
+---
+/**
+ * The article cover in the site's frame: thick black border, hard shadow, a slight tilt. Placed
+ * with left/top (px) inside the image. Tagged data-t="art" so the safe-box check skips it.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  w: number;
+  left: number;
+  top: number;
+  rot?: number;
+  border?: number;
+  shadow?: number;
+}
+const { src, w, left, top, rot = -1.5, border = 6, shadow = 14 } = Astro.props;
+---
+
+<div class="oc" style={`left:${left}px;top:${top}px;width:${w}px;--rot:${rot}deg;--bd:${border}px;--sh:${shadow}px`}>
+  <Image src={src} width={1200} alt="" data-t="art" loading="eager" />
+</div>
+
+<style>
+  .oc {
+    position: absolute;
+    z-index: 2;
+    border: var(--bd) solid #0a0a0a;
+    box-shadow: var(--sh) var(--sh) 0 #0a0a0a;
+    background: #fff;
+    transform: rotate(var(--rot));
+  }
+  .oc :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

@@ -5,15 +5,14 @@
  * The scaling is a CSS transform computed in src/lib/social.ts (placeStyle). Colors are fixed.
  */
 import OgImage from "./OgImage.astro";
-import { placeStyle, SAMPLES, type Design, type Frame, type SampleId } from "../../lib/social";
+import { placeStyle, type Frame, type Sample } from "../../lib/social";
 
 interface Props {
   frame: Frame;
-  design: Design["id"];
-  sample: SampleId;
+  design: string;
+  sample: Sample;
 }
-const { frame, design, sample: sampleId } = Astro.props;
-const sample = SAMPLES.find((s) => s.id === sampleId)!;
+const { frame, design, sample } = Astro.props;
 const domain = "sergeigarcia.com";
 const place = placeStyle(frame.img);
 const slot = `width:${frame.img.w}px;height:${frame.img.h}px;${place}`;
@@ -22,7 +21,7 @@ const slot = `width:${frame.img.w}px;height:${frame.img.h}px;${place}`;
 <figure class="pf-fig" style={`width:${frame.w}px`}>
   <div class={`pf pf-${frame.kind}`} style={`width:${frame.w}px`}>
     <div class="pf-img" style={slot} aria-hidden="true">
-      <div class="pf-art"><OgImage design={design} sample={sampleId} /></div>
+      <div class="pf-art"><OgImage design={design} sample={sample} /></div>
       {frame.kind === "x-large" && <span class="pf-xtitle">{sample.pageTitle.replace(" | Sergei Garcia", "")}</span>}
     </div>
     {

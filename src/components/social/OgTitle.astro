@@ -1,25 +1,24 @@
 ---
 /**
- * The big serif line on an image: Fraunces 900, same as the site's display type. A paragraph, not a
- * heading, because an image must not add headings to the page. The highlighted words are styled
- * by the design through --hl-bg, --hl-ink, --hl-size and --hl-pos.
+ * The big serif line on an image: Fraunces 900 at the largest optical size, same as the site's
+ * display type. A paragraph, not a heading, because an image must not add headings to the page.
  */
-import { splitTitle } from "../../lib/social";
+import OgMarked from "./OgMarked.astro";
 
 interface Props {
+  /** May carry ==highlight== markers. */
   text: string;
-  highlight?: string;
   size: number;
   lh?: number;
-  /** data-t value. "title" is what the safe-box check looks for. */
-  role?: string;
+  marks?: boolean;
+  /** data-t value. "title" is what the safe-box check looks for. Null leaves it off (for a decorative copy). */
+  role?: string | null;
   class?: string;
 }
-const { text, highlight, size, lh = 1.04, role = "title", class: cls } = Astro.props;
-const { before, mark, after } = splitTitle(text, highlight);
+const { text, size, lh = 1, marks = true, role = "title", class: cls } = Astro.props;
 ---
 
-<p class:list={["og-title", cls]} data-t={role} style={`font-size:${size}px;line-height:${lh}`}>{before}{mark && <span class="og-hl">{mark}</span>}{after}</p>
+<p class:list={["og-title", cls]} data-t={role ?? undefined} style={`font-size:${size}px;line-height:${lh}`}><OgMarked text={text} marks={marks} /></p>
 
 <style>
   .og-title {
@@ -29,15 +28,5 @@ const { before, mark, after } = splitTitle(text, highlight);
     font-variation-settings: "opsz" 144;
     letter-spacing: -0.02em;
     text-wrap: balance;
-  }
-  .og-hl {
-    --pad: 0.12em;
-    padding-inline: var(--pad);
-    margin-inline: calc(var(--pad) * -0.45);
-    white-space: nowrap;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-    background: linear-gradient(var(--hl-bg, #ffd400), var(--hl-bg, #ffd400)) var(--hl-pos, 0 82%) / var(--hl-size, 100% 60%) no-repeat;
-    color: var(--hl-ink, inherit);
   }
 </style>

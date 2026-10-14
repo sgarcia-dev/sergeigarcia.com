@@ -14,12 +14,20 @@
 import Base from "../../../layouts/Base.astro";
 import OgImage from "../../../components/social/OgImage.astro";
 import PlatformFrame from "../../../components/social/PlatformFrame.astro";
-import { DESIGNS, FRAMES, SAMPLES, SAFE } from "../../../lib/social";
+import { DESIGNS, FRAMES, SAFE } from "../../../lib/social";
+import { getSamples } from "../../../lib/socialSamples";
+
+const SAMPLES = await getSamples();
+const GROUPS = [
+  { kind: "post", title: "Articles", blurb: "Copy comes from each post (see the og fields in src/content.config.ts). Both posts are shown for every design." },
+  { kind: "home", title: "Homepage", blurb: "Built to look like the homepage hero: giant name, yellow and cobalt halves, the tagline." },
+  { kind: "page", title: "Generic pages", blurb: "One shared design for Projects, Writing and About, from the page title and description." },
+] as const;
 ---
 
 <Base
   title="Social image lab"
-  description="Unlisted lab page: five designs for the social link-preview image on sergeigarcia.com, shown on each platform."
+  description="Unlisted lab page: designs for the social link-preview image on sergeigarcia.com, shown on each platform."
   noindex
 >
   <script is:inline>
@@ -36,14 +44,14 @@ import { DESIGNS, FRAMES, SAMPLES, SAFE } from "../../../lib/social";
     <div class="shell py-lg">
       <h1 class="font-display text-h2 tracking-tight">Social image lab</h1>
       <p class="mt-md max-w-prose text-lg">
-        Five designs for the image that shows when a page is shared. Each one is 1200x630 and is shown below as it would
-        look on LinkedIn, X, Facebook, Slack, Discord, iMessage, WhatsApp and Mastodon, for the Post 2, the homepage and
-        a generic page.
+        Round 2. Designs for the image that shows when a page is shared, each 1200x630, shown below as it would look on
+        LinkedIn, X, Facebook, Slack, Discord, iMessage, WhatsApp and Mastodon. Articles, the homepage and generic pages
+        each get their own designs.
       </p>
       <p class="mt-sm max-w-prose">
-        Nothing here is live yet. Pick a design and it gets wired in. Add <code>?safe</code> to the address to draw the crop
-        lines: pink is the square thumbnail (x {SAFE.x} to {SAFE.x + SAFE.w}), blue is the 2:1 crop (y {SAFE.y} to {SAFE.y + SAFE.h}).
-        Add <code>?raw&amp;d=s2&amp;s=post</code> for one image at full size.
+        Nothing here is live yet. Add <code>?safe</code> to the address to draw the crop lines: pink is the square
+        thumbnail (x {SAFE.x} to {SAFE.x + SAFE.w}), blue is the 2:1 crop (y {SAFE.y} to {SAFE.y + SAFE.h}). Add
+        <code>?raw&amp;d=a2&amp;s=ai-raises-the-floor</code> for one image at full size.
       </p>
       <ul role="list" class="mt-md flex flex-wrap gap-sm">
         {DESIGNS.map((d) => <li><a class="hit" href={`#${d.id}`}>{d.name}</a></li>)}
@@ -52,38 +60,50 @@ import { DESIGNS, FRAMES, SAMPLES, SAFE } from "../../../lib/social";
   </section>
 
   {
-    DESIGNS.map((d) => (
-      <section id={d.id} class="edge-b scroll-mt" aria-labelledby={`${d.id}-h`}>
-        <div class="shell py-lg">
-          <h2 id={`${d.id}-h`} class="font-title text-xl">{d.name}</h2>
-          <p class="mt-xs max-w-prose">{d.note}</p>
-          <p class="mt-xs max-w-prose">
-            <span class="badge" data-safe-status={d.safe}>{d.safe === "pass" ? "Safe box: pass" : "Safe box: degrades"}</span>{" "}
-            {d.safeNote}
-          </p>
-          {SAMPLES.map((s) => (
-            <div class="sample">
-              <h3 class="sample-h">{s.label}</h3>
-              <div class="sample-row">
-                <figure class="nat-fig">
-                  <div class="nat" data-native={`${d.id}-${s.id}`}>
-                    <div class="nat-scale">
-                      <OgImage design={d.id} sample={s.id} />
-                    </div>
-                  </div>
-                  <figcaption class="nat-cap">
-                    <strong>{d.name} full image</strong>
-                    <span>1200x630, shown at 50%. <a href={`?raw&d=${d.id}&s=${s.id}`}>Native size</a></span>
-                  </figcaption>
-                </figure>
-                {FRAMES.map((f) => (
-                  <PlatformFrame frame={f} design={d.id} sample={s.id} />
-                ))}
-              </div>
-            </div>
-          ))}
+    GROUPS.map((g) => (
+      <Fragment>
+      <section class="edge-b group-head" aria-labelledby={`g-${g.kind}`}>
+        <div class="shell py-md">
+          <h2 id={`g-${g.kind}`} class="font-display text-h2 tracking-tight">{g.title}</h2>
+          <p class="mt-xs max-w-prose">{g.blurb}</p>
         </div>
       </section>
+      {DESIGNS.filter((d) => d.kind === g.kind).map((d) => (
+        <section id={d.id} class="edge-b scroll-mt" aria-labelledby={`${d.id}-h`}>
+          <div class="shell py-lg">
+            <h3 id={`${d.id}-h`} class="font-title text-xl">{d.name}</h3>
+            <p class="mt-xs max-w-prose">{d.note}</p>
+            <p class="mt-xs max-w-prose">
+              <span class="badge" data-safe-status={d.safe}>{d.safe === "pass" ? "Safe box: pass" : "Safe box: degrades"}</span>{" "}
+              {d.safeNote} Draws: {d.uses}.
+            </p>
+            {SAMPLES.filter((s) => s.kind === d.kind).map((s) => (
+              <div class="sample">
+                <h4 class="sample-h">{s.label}</h4>
+                <div class="sample-row">
+                  <figure class="nat-fig">
+                    <div class="nat" data-native={`${d.id}-${s.id}`}>
+                      <div class="nat-scale">
+                        <OgImage design={d.id} sample={s} />
+                      </div>
+                    </div>
+                    <figcaption class="nat-cap">
+                      <strong>{d.name} full image</strong>
+                      <span>
+                        1200x630, shown at 50%. <a href={`?raw&d=${d.id}&s=${s.id}`}>Native size</a>
+                      </span>
+                    </figcaption>
+                  </figure>
+                  {FRAMES.map((f) => (
+                    <PlatformFrame frame={f} design={d.id} sample={s} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+      </Fragment>
     ))
   }
 </Base>

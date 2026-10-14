@@ -1,0 +1,57 @@
+---
+/**
+ * A-2 Magazine cover. The article page in miniature, like LinkedIn card set B: a cobalt hatch band
+ * with the title, then the cover art tilted below it and running off the bottom edge.
+ * Everything sits in the middle column, so square and 2:1 crops keep it.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgCover from "./OgCover.astro";
+import { fitSize, plain, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+}
+const { s, design } = Astro.props;
+const size = fitSize(s.titleShort, { w: 600, h: 226 }, { max: 100, lh: 1 });
+---
+
+<OgFrame label={`Magazine cover design, 1200 by 630, ${plain(s.titleShort)}`} design={design} sample={s.id} bg="#f4f4ee">
+  <div class="band"><span class="tex tex-hatch-c"></span></div>
+  <div class="who"><OgIdentity avatar={56} ring={4} name={26} /></div>
+  <div class="head"><OgTitle text={s.titleShort} size={size} lh={1} /></div>
+  {s.cover && <OgCover src={s.cover} w={560} left={320} top={378} rot={-1.5} border={6} shadow={14} />}
+</OgFrame>
+
+<style>
+  .band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 352px;
+    border-bottom: 6px solid #0a0a0a;
+    overflow: hidden;
+  }
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 26px;
+    --id-ink: #fff;
+    --id-ring: #fff;
+  }
+  .head {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 100px;
+    height: 232px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+</style>

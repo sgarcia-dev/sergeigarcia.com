@@ -1,0 +1,55 @@
+---
+/**
+ * P-1 Page band. One cheap design for Projects, Writing and About, from the article direction:
+ * cobalt hatch, the page name in a yellow block, the description in a TL;DR style box.
+ * Everything sits in the middle column.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgTldr from "./OgTldr.astro";
+import { fitSize, plain, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+}
+const { s, design } = Astro.props;
+const size = fitSize(s.title, { w: 600, h: 150 }, { max: 150, lh: 1 });
+const tl = fitSize(s.summary, { w: 540, h: 200 }, { max: 30, min: 18, lh: 1.28, cw: 0.54 });
+---
+
+<OgFrame label={`Page band design, 1200 by 630, ${plain(s.title)}`} design={design} sample={s.id} bg="#1f3fd1">
+  <span class="tex tex-hatch-c"></span>
+  <div class="who"><OgIdentity avatar={56} ring={4} name={26} /></div>
+  <div class="head"><OgTitle text={s.title} size={size} lh={1} /></div>
+  <div class="box"><OgTldr text={s.summary} size={tl} label="sergeigarcia.com" /></div>
+</OgFrame>
+
+<style>
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 24px;
+    --id-ink: #fff;
+    --id-ring: #fff;
+  }
+  .head {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 100px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+  .box {
+    position: absolute;
+    left: 300px;
+    width: 590px;
+    top: 316px;
+  }
+</style>

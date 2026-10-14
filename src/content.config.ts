@@ -6,6 +6,11 @@ import { plain } from "./lib/mark";
 // Summaries may carry ==highlight== markers (see src/lib/mark.ts); the 200 limit counts the visible text only.
 const summary = z.string().refine((s) => plain(s).length <= 200, "summary must be 200 characters or fewer without ==markers==");
 
+// Copy for the social share image (see src/lib/social.ts). All four are optional and may carry
+// ==highlight== markers, which the designs that draw highlights turn into a yellow swipe.
+// Fallbacks: ogTitle -> title, ogTitleShort -> ogTitle, ogSummary -> summary, ogSummaryShort -> ogSummary.
+const ogText = (max: number) => z.string().refine((s) => plain(s).length <= max, `must be ${max} characters or fewer without ==markers==`).optional();
+
 const link = z.object({
   label: z.string(),
   url: z.url(),
@@ -63,6 +68,10 @@ const posts = defineCollection({
     z.object({
       title: z.string(),
       summary,
+      ogTitle: ogText(120),
+      ogTitleShort: ogText(60),
+      ogSummary: ogText(200),
+      ogSummaryShort: ogText(120),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       skills: z.array(z.string()).max(8).default([]),

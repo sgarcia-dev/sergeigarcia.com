@@ -1,0 +1,107 @@
+---
+/**
+ * H-3 Yellow with ticker. The yellow half of the homepage hero at full size: giant black name, a
+ * tagline with a cobalt block, a tiny avatar with the role, and the black ticker strip that sits
+ * under the real hero. The ticker is decoration: a square crop only shortens it.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgMarked from "./OgMarked.astro";
+import { fitSize, plain, HOME, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+}
+const { s, design } = Astro.props;
+const size = fitSize(plain(s.title), { w: 600, h: 290 }, { max: 230, lh: 0.92 });
+const tag = fitSize(s.summaryShort, { w: 600, h: 90 }, { max: 40, lh: 1.12 });
+---
+
+<OgFrame label={`Yellow with ticker design, 1200 by 630, ${plain(s.title)}`} design={design} sample={s.id} bg="#ffd400">
+  <span class="tex tex-dots-y"></span>
+  <div class="nm"><OgTitle text={s.title} size={size} lh={0.92} marks={false} /></div>
+  <p class="tag-line" data-t="summary" style={`font-size:${tag}px`}><OgMarked text={s.summaryShort} /></p>
+  <div class="who">
+    <OgIdentity avatar={56} ring={4} />
+    <span class="role" data-t="sub">{HOME.role}</span>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <ul>{HOME.ticker.map((t) => <li>{t}</li>)}</ul>
+  </div>
+</OgFrame>
+
+<style>
+  .nm {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 44px;
+    height: 296px;
+    z-index: 2;
+    color: #0a0a0a;
+  }
+  .tag-line {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 352px;
+    z-index: 2;
+    margin: 0;
+    color: #0a0a0a;
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.12;
+    --mk-bg: #1f3fd1;
+    --mk-ink: #fff;
+  }
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 462px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .role {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    color: #0a0a0a;
+  }
+  .ticker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 548px;
+    bottom: 0;
+    z-index: 2;
+    background: #0a0a0a;
+    border-top: 5px solid #0a0a0a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .ticker ul {
+    margin: 0;
+    padding: 0 0 0 150px;
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    white-space: nowrap;
+    color: #ffd400;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 34px;
+  }
+  .ticker li::after {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 40px;
+    background: #fff;
+  }
+</style>

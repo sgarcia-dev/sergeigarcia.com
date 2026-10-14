@@ -1,0 +1,48 @@
+/*
+  Shared look for the social images (src/components/social/). Global because several components
+  use it. Everything starts with .og, and the colors are fixed on purpose so an image looks the
+  same in light mode, dark mode and a screenshot. Textures copy the site: dots for the homepage
+  halves, diagonal hatch for the article bands and the LinkedIn cards.
+*/
+.og .tex {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.og .tex-dots-y {
+  background-color: #ffd400;
+  background-image: radial-gradient(circle at 11px 11px, #ffe142 6.5px, #0000 7px), radial-gradient(circle at 33px 33px, #ffe142 6.5px, #0000 7px);
+  background-size: 44px 44px;
+}
+.og .tex-dots-c {
+  background-color: #1f3fd1;
+  background-image: radial-gradient(circle at 11px 11px, #1a35b8 6.5px, #0000 7px), radial-gradient(circle at 33px 33px, #1a35b8 6.5px, #0000 7px);
+  background-size: 44px 44px;
+}
+.og .tex-hatch-c {
+  background-color: #1f3fd1;
+  background-image: linear-gradient(135deg, #0000 43%, #1a35bb 43% 57%, #0000 57%);
+  background-size: 44px 44px;
+}
+.og .tex-hatch-k {
+  background-color: #0a0a0a;
+  background-image: linear-gradient(135deg, #0000 43%, #181818 43% 57%, #0000 57%);
+  background-size: 44px 44px;
+}
+.og .tex-hatch-y {
+  background-color: #ffd400;
+  background-image: linear-gradient(135deg, #0000 43%, #ffe45c 43% 57%, #0000 57%);
+  background-size: 44px 44px;
+}
+/* A small mono label with a border, like the site's chips. */
+.og .chip {
+  display: inline-block;
+  border: 3px solid #0a0a0a;
+  background: #fff;
+  color: #0a0a0a;
+  padding: 3px 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  line-height: 1.3;
+}
