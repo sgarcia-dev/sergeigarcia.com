@@ -2,14 +2,18 @@ import { test, expect } from "@playwright/test";
 
 // The social image lab (/lab/social/) draws each design at 1200x630. Whatever a platform crops
 // (a center square thumbnail, a 2:1 card), the title, the owner's name and the avatar must stay
-// whole. Safe box: x 285 to 915 (square crop) and y 15 to 615 (2:1 crop). See SAFE in src/lib/social.ts.
+// whole. Each case also reports a rough "fill": the share of the center square (x 285 to 915, full
+// height) covered by the boxes of the title, name, summary, avatar and main art. Low fill means dead
+// space in the part of the image that every crop keeps. Safe box: x 285 to 915 (square crop) and y 15 to 615 (2:1 crop). See SAFE in src/lib/social.ts.
 const POSTS = ["ai-raises-the-floor", "agents-workspace-tour"];
 const CASES: { d: string; s: string }[] = [
-  ...["a1", "a2", "a3", "a4"].flatMap((d) => POSTS.map((s) => ({ d, s }))),
+  ...["a1", "a2", "a3"].flatMap((d) => POSTS.map((s) => ({ d, s }))),
   ...["h1", "h2", "h3", "h4"].map((d) => ({ d, s: "home" })),
   ...["projects", "writing", "about"].map((s) => ({ d: "p1", s })),
 ];
 const SAFE = { left: 285, right: 915, top: 15, bottom: 615 };
+// Fails a design that leaves most of the center square empty. Round 2 designs sat between 36% and 71%.
+const MIN_FILL = 0.5;
 
 for (const { d, s } of CASES) {
   test(`social ${d} ${s}: copy stays in the safe box`, async ({ page }) => {
@@ -37,17 +41,45 @@ for (const { d, s } of CASES) {
         }
         out.push({ role, left: r.left - og.left, right: r.right - og.left, top: r.top - og.top, bottom: r.bottom - og.top });
       }
-      return out;
+      // Fill: paint each box (clipped to the square) on a 1px grid and count the painted share.
+      const X0 = 285, X1 = 915, W = X1 - X0, H = 630;
+      const grid = new Uint8Array(W * H);
+      for (const el of document.querySelectorAll<HTMLElement>(".og [data-t]")) {
+        let r: DOMRect;
+        if (el instanceof HTMLImageElement) r = el.getBoundingClientRect();
+        else {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          r = range.getBoundingClientRect();
+        }
+        const l = Math.max(X0, Math.round(r.left - og.left)), rr = Math.min(X1, Math.round(r.right - og.left));
+        const t = Math.max(0, Math.round(r.top - og.top)), b = Math.min(H, Math.round(r.bottom - og.top));
+        for (let y = t; y < b; y++) for (let x = l; x < rr; x++) grid[y * W + (x - X0)] = 1;
+      }
+      let painted = 0;
+      for (const v of grid) painted += v;
+      const titleEl = document.querySelector<HTMLElement>('.og [data-t="title"]');
+      return {
+        out,
+        fill: painted / (W * H),
+        variant: titleEl?.dataset.variant ?? "n/a",
+        titlePx: titleEl ? parseFloat(getComputedStyle(titleEl).fontSize) : 0,
+      };
     });
+    const { out: items, fill, variant, titlePx } = found;
+    const note = `fill ${(fill * 100).toFixed(0)}%, title ${variant} ${titlePx}px`;
+    test.info().annotations.push({ type: "fill", description: note });
+    console.log(`social ${d} ${s}: ${note}`);
+    expect(fill, `fill of the center square (${note})`).toBeGreaterThanOrEqual(MIN_FILL);
 
-    const roles = found.map((f) => f.role);
+    const roles = items.map((f) => f.role);
     expect(roles, "title is drawn").toContain("title");
     // The name and avatar are drawn by every design except the homepage ones (where the title is the name).
     if (d.startsWith("a") || d === "p1") {
       expect(roles, "name is drawn").toContain("name");
       expect(roles, "avatar is drawn").toContain("avatar");
     }
-    for (const f of found) {
+    for (const f of items) {
       expect(f.left, `${f.role} left`).toBeGreaterThanOrEqual(SAFE.left);
       expect(f.right, `${f.role} right`).toBeLessThanOrEqual(SAFE.right);
       expect(f.top, `${f.role} top`).toBeGreaterThanOrEqual(SAFE.top);

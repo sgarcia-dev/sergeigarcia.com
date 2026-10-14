@@ -1,28 +1,28 @@
 ---
 /**
  * A-2 Magazine cover. The article page in miniature, like LinkedIn card set B: a cobalt hatch band
- * with the title, then the cover art tilted below it and running off the bottom edge.
+ * with the full title, then the cover art tilted below it and running off the bottom edge.
  * Everything sits in the middle column, so square and 2:1 crops keep it.
  */
 import OgFrame from "./OgFrame.astro";
 import OgTitle from "./OgTitle.astro";
 import OgIdentity from "./OgIdentity.astro";
 import OgCover from "./OgCover.astro";
-import { fitSize, plain, type Sample } from "../../lib/social";
+import { chooseTitle, plain, TITLE_SPECS, type Sample } from "../../lib/social";
 
 interface Props {
   s: Sample;
   design: string;
 }
 const { s, design } = Astro.props;
-const size = fitSize(s.titleShort, { w: 600, h: 226 }, { max: 100, lh: 1 });
+const t = chooseTitle(s, TITLE_SPECS.a2);
 ---
 
-<OgFrame label={`Magazine cover design, 1200 by 630, ${plain(s.titleShort)}`} design={design} sample={s.id} bg="#f4f4ee">
+<OgFrame label={`Magazine cover design, 1200 by 630, ${plain(t.text)}`} design={design} sample={s.id} bg="#f4f4ee">
   <div class="band"><span class="tex tex-hatch-c"></span></div>
-  <div class="who"><OgIdentity avatar={56} ring={4} name={26} /></div>
-  <div class="head"><OgTitle text={s.titleShort} size={size} lh={1} /></div>
-  {s.cover && <OgCover src={s.cover} w={560} left={320} top={378} rot={-1.5} border={6} shadow={14} />}
+  <div class="who"><OgIdentity avatar={60} ring={4} name={28} /></div>
+  <div class="head"><OgTitle text={t.text} size={t.size} lh={1} variant={t.variant} /></div>
+  {s.cover && <OgCover src={s.cover} w={600} left={300} top={380} rot={-1.5} border={6} shadow={14} />}
 </OgFrame>
 
 <style>
@@ -31,14 +31,14 @@ const size = fitSize(s.titleShort, { w: 600, h: 226 }, { max: 100, lh: 1 });
     left: 0;
     right: 0;
     top: 0;
-    height: 352px;
+    height: 360px;
     border-bottom: 6px solid #0a0a0a;
     overflow: hidden;
   }
   .who {
     position: absolute;
     left: 300px;
-    top: 26px;
+    top: 24px;
     --id-ink: #fff;
     --id-ring: #fff;
   }
@@ -47,7 +47,7 @@ const size = fitSize(s.titleShort, { w: 600, h: 226 }, { max: 100, lh: 1 });
     left: 300px;
     width: 600px;
     top: 100px;
-    height: 232px;
+    height: 244px;
     display: flex;
     align-items: center;
     color: #fff;

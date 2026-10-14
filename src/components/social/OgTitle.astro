@@ -13,12 +13,14 @@ interface Props {
   marks?: boolean;
   /** data-t value. "title" is what the safe-box check looks for. Null leaves it off (for a decorative copy). */
   role?: string | null;
+  /** Which title was used: full or short. Shown as data-variant for the lab labels and the test. */
+  variant?: string;
   class?: string;
 }
-const { text, size, lh = 1, marks = true, role = "title", class: cls } = Astro.props;
+const { text, size, lh = 1, marks = true, role = "title", variant, class: cls } = Astro.props;
 ---
 
-<p class:list={["og-title", cls]} data-t={role ?? undefined} style={`font-size:${size}px;line-height:${lh}`}><OgMarked text={text} marks={marks} /></p>
+<p class:list={["og-title", cls]} data-t={role ?? undefined} data-variant={variant} style={`font-size:${size}px;line-height:${lh}`}><OgMarked text={text} marks={marks} /></p>
 
 <style>
   .og-title {

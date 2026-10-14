@@ -1,7 +1,7 @@
 ---
 /**
  * H-3 Yellow with ticker. The yellow half of the homepage hero at full size: giant black name, a
- * tagline with a cobalt block, a tiny avatar with the role, and the black ticker strip that sits
+ * tagline with a black block, a tiny avatar with the role, and the black ticker strip that sits
  * under the real hero. The ticker is decoration: a square crop only shortens it.
  */
 import OgFrame from "./OgFrame.astro";
@@ -15,8 +15,8 @@ interface Props {
   design: string;
 }
 const { s, design } = Astro.props;
-const size = fitSize(plain(s.title), { w: 600, h: 290 }, { max: 230, lh: 0.92 });
-const tag = fitSize(s.summaryShort, { w: 600, h: 90 }, { max: 40, lh: 1.12 });
+const size = fitSize(plain(s.title), { w: 600, h: 326 }, { max: 230, lh: 0.92 });
+const tag = fitSize(s.summaryShort, { w: 600, h: 100 }, { max: 50, lh: 1.1 });
 ---
 
 <OgFrame label={`Yellow with ticker design, 1200 by 630, ${plain(s.title)}`} design={design} sample={s.id} bg="#ffd400">
@@ -37,8 +37,8 @@ const tag = fitSize(s.summaryShort, { w: 600, h: 90 }, { max: 40, lh: 1.12 });
     position: absolute;
     left: 300px;
     width: 600px;
-    top: 44px;
-    height: 296px;
+    top: 46px;
+    height: 326px;
     z-index: 2;
     color: #0a0a0a;
   }
@@ -46,20 +46,20 @@ const tag = fitSize(s.summaryShort, { w: 600, h: 90 }, { max: 40, lh: 1.12 });
     position: absolute;
     left: 300px;
     width: 600px;
-    top: 352px;
+    top: 380px;
     z-index: 2;
     margin: 0;
     color: #0a0a0a;
     font-family: var(--font-display);
     font-weight: 700;
     line-height: 1.12;
-    --mk-bg: #1f3fd1;
-    --mk-ink: #fff;
+    --mk-bg: #0a0a0a;
+    --mk-ink: #ffd400;
   }
   .who {
     position: absolute;
     left: 300px;
-    top: 462px;
+    top: 490px;
     z-index: 2;
     display: flex;
     align-items: center;
@@ -75,7 +75,7 @@ const tag = fitSize(s.summaryShort, { w: 600, h: 90 }, { max: 40, lh: 1.12 });
     position: absolute;
     left: 0;
     right: 0;
-    top: 548px;
+    top: 558px;
     bottom: 0;
     z-index: 2;
     background: #0a0a0a;

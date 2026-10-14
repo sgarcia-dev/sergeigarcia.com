@@ -1,29 +1,30 @@
 ---
 /**
- * A-1 Black poster. Round 1's type-only design, which the owner liked, with the site's personality
- * added: faint hatch, a yellow highlighter block, avatar and name in the card style, and a tilted
- * cover on the edge. Title and name are centered in the middle column.
+ * A-1 Black poster. Text on the left, image on the right, almost no empty space. The full title
+ * fills the top of the middle square, avatar and name sit bottom left, and the cover is big at the
+ * bottom right with a yellow hard shadow. It runs off the right edge, so a square crop keeps its
+ * left 60 percent (the robot and most of the grid); the 2:1 crop keeps all of it.
  */
 import OgFrame from "./OgFrame.astro";
 import OgTitle from "./OgTitle.astro";
 import OgIdentity from "./OgIdentity.astro";
 import OgCover from "./OgCover.astro";
-import { fitSize, plain, type Sample } from "../../lib/social";
+import { chooseTitle, plain, TITLE_SPECS, type Sample } from "../../lib/social";
 
 interface Props {
   s: Sample;
   design: string;
 }
 const { s, design } = Astro.props;
-const size = fitSize(s.titleShort, { w: 600, h: 350 }, { max: 112, lh: 1 });
+const t = chooseTitle(s, TITLE_SPECS.a1);
 ---
 
-<OgFrame label={`Black poster design, 1200 by 630, ${plain(s.titleShort)}`} design={design} sample={s.id} bg="#0a0a0a">
+<OgFrame label={`Black poster design, 1200 by 630, ${plain(t.text)}`} design={design} sample={s.id} bg="#0a0a0a">
   <span class="tex tex-hatch-k"></span>
   <span class="bar"></span>
-  {s.cover && <OgCover src={s.cover} w={236} left={944} top={96} rot={6} border={5} shadow={10} />}
-  <div class="head"><OgTitle text={s.titleShort} size={size} lh={1} /></div>
-  <div class="who"><OgIdentity avatar={76} ring={4} name={34} site={24} /></div>
+  <div class="head"><OgTitle text={t.text} size={t.size} lh={1} variant={t.variant} /></div>
+  <div class="who"><OgIdentity avatar={128} ring={5} name={30} site={18} layout="stack" /></div>
+  {s.cover && <OgCover src={s.cover} w={572} left={548} top={322} rot={-2} border={6} shadow={12} borderColor="#ffffff" shadowColor="#ffd400" />}
 </OgFrame>
 
 <style>
@@ -39,12 +40,10 @@ const size = fitSize(s.titleShort, { w: 600, h: 350 }, { max: 112, lh: 1 });
     position: absolute;
     left: 300px;
     width: 600px;
-    top: 56px;
-    height: 380px;
+    top: 44px;
+    height: 268px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
     color: #fff;
     --mk-bg: #ffd400;
     --mk-ink: #0a0a0a;
@@ -52,12 +51,10 @@ const size = fitSize(s.titleShort, { w: 600, h: 350 }, { max: 112, lh: 1 });
   .who {
     position: absolute;
     left: 300px;
-    width: 600px;
-    top: 484px;
-    display: flex;
-    justify-content: center;
+    width: 236px;
+    top: 350px;
     --id-ink: #fff;
     --id-site: #ffd400;
-    --id-ring: #fff;
+    --id-ring: #ffd400;
   }
 </style>

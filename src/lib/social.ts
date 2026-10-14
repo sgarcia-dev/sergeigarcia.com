@@ -41,10 +41,10 @@ export const DESIGNS: Design[] = [
     id: "a1",
     name: "A-1 Black poster",
     kind: "post",
-    note: "Round 1's type-only design with the site's personality: faint hatch, a yellow highlighter block, avatar and name, a tilted cover sticker on the edge.",
-    safe: "pass",
-    safeNote: "Title and name are centered. The cover sticker is on the edge and is cut by a square crop.",
-    uses: "short title, highlights on",
+    note: "Black poster with the site's hatch. Full title on top, avatar and name bottom left, the cover big at the bottom right with a yellow hard shadow.",
+    safe: "degrades",
+    safeNote: "Title and name fill the middle square. The cover runs off the right edge, so a square crop shows its left 60%, which still has the robot and the grid.",
+    uses: "title (full unless it does not fit), highlights on",
   },
   {
     id: "a2",
@@ -53,25 +53,16 @@ export const DESIGNS: Design[] = [
     note: "The article page in miniature: cobalt hatch band with the title, then the cover art tilted below it, like card set B.",
     safe: "pass",
     safeNote: "Title, name and cover all sit in the middle column. Square crops keep everything.",
-    uses: "short title, highlights on",
+    uses: "title (full unless it does not fit), highlights on",
   },
   {
     id: "a3",
     name: "A-3 TL;DR card",
     kind: "post",
-    note: "Cobalt hatch, title, and the post's TL;DR box with its yellow label and hard shadow. The cover peeks in from the right.",
+    note: "Cobalt hatch, a big title and a big TL;DR box with its yellow label and hard shadow. The cover peeks in from the right.",
     safe: "pass",
     safeNote: "Title, name and TL;DR sit in the middle column. The peeking cover is cut by a square crop.",
-    uses: "short title, short TL;DR, highlights on",
-  },
-  {
-    id: "a4",
-    name: "A-4 Yellow sticker",
-    kind: "post",
-    note: "Yellow dots like the homepage, black title with a cobalt highlighter block, a tilted Writing label and the cover on the edge.",
-    safe: "pass",
-    safeNote: "Title and name are centered. The label and the cover sit on the edges and can be cut.",
-    uses: "short title, highlights on",
+    uses: "title (full unless it does not fit), short TL;DR, highlights on",
   },
   {
     id: "h1",
@@ -95,7 +86,7 @@ export const DESIGNS: Design[] = [
     id: "h3",
     name: "H-3 Yellow with ticker",
     kind: "home",
-    note: "The yellow half of the hero, full size: giant black name, tagline with a cobalt block, and the black ticker strip from under the hero.",
+    note: "The yellow half of the hero, full size: giant black name, tagline with a black highlighter block, role line, and the black ticker strip from under the hero.",
     safe: "pass",
     safeNote: "Name and tagline are in the middle column. The ticker is decoration, so a crop only shortens it.",
     uses: "tagline, highlight on",
@@ -104,7 +95,7 @@ export const DESIGNS: Design[] = [
     id: "h4",
     name: "H-4 Stacked bands",
     kind: "home",
-    note: "A yellow band with the giant name over a cobalt band with the role, the tiny avatar and the tagline.",
+    note: "A tall yellow band with the giant name over a cobalt band: a tilted role chip with the tiny avatar sits on the seam, then a big tagline with a yellow block.",
     safe: "pass",
     safeNote: "Both bands run full width and the text sits in the middle column.",
     uses: "tagline, highlight on",
@@ -258,4 +249,60 @@ export function fitSize(
     if (lines * size * lh <= box.h) return size;
   }
   return min;
+}
+
+/** The title box each design gives its title. chooseTitle() fits the full title into it. */
+export interface TitleSpec {
+  w: number;
+  h: number;
+  /** Biggest font size to try, in px. */
+  max: number;
+  /** Smallest font size that still counts as readable. Below this the full title is not used. */
+  min: number;
+  lh: number;
+  cw?: number;
+}
+export const TITLE_SPECS: Record<string, TitleSpec> = {
+  a1: { w: 600, h: 268, max: 96, min: 58, lh: 1 },
+  a2: { w: 600, h: 236, max: 96, min: 58, lh: 1 },
+  a3: { w: 600, h: 250, max: 96, min: 58, lh: 1 },
+};
+
+export interface TitleChoice {
+  text: string;
+  size: number;
+  variant: "full" | "short";
+}
+
+/** Biggest size at which the text fits the box, or null when even the smallest readable size does not fit. */
+function tryFit(text: string, spec: TitleSpec): number | null {
+  const words = plain(text).split(/\s+/).filter(Boolean);
+  const cw = spec.cw ?? 0.45;
+  for (let size = spec.max; size >= spec.min; size -= 2) {
+    const perLine = Math.floor(spec.w / (size * cw));
+    if (words.some((w) => w.length > perLine)) continue;
+    let lines = 1;
+    let cur = 0;
+    for (const w of words) {
+      const add = (cur ? 1 : 0) + w.length;
+      if (cur + add > perLine) {
+        lines++;
+        cur = w.length;
+      } else cur += add;
+    }
+    if (lines * size * spec.lh <= spec.h) return size;
+  }
+  return null;
+}
+
+/**
+ * The full title (ogTitle) is the default. It is used when it fits the box at the readable minimum
+ * or bigger. Otherwise the short title is used, at the biggest size that fits.
+ */
+export function chooseTitle(s: { title: string; titleShort: string }, spec: TitleSpec): TitleChoice {
+  const full = tryFit(s.title, spec);
+  if (full !== null) return { text: s.title, size: full, variant: "full" };
+  const short = tryFit(s.titleShort, spec);
+  if (short !== null) return { text: s.titleShort, size: short, variant: "short" };
+  return { text: s.titleShort, size: fitSize(s.titleShort, spec, { max: spec.max, min: 24, lh: spec.lh, cw: spec.cw ?? 0.45 }), variant: "short" };
 }

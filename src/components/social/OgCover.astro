@@ -14,11 +14,13 @@ interface Props {
   rot?: number;
   border?: number;
   shadow?: number;
+  borderColor?: string;
+  shadowColor?: string;
 }
-const { src, w, left, top, rot = -1.5, border = 6, shadow = 14 } = Astro.props;
+const { src, w, left, top, rot = -1.5, border = 6, shadow = 14, borderColor = "#0a0a0a", shadowColor = "#0a0a0a" } = Astro.props;
 ---
 
-<div class="oc" style={`left:${left}px;top:${top}px;width:${w}px;--rot:${rot}deg;--bd:${border}px;--sh:${shadow}px`}>
+<div class="oc" style={`left:${left}px;top:${top}px;width:${w}px;--rot:${rot}deg;--bd:${border}px;--sh:${shadow}px;--bc:${borderColor};--sc:${shadowColor}`}>
   <Image src={src} width={1200} alt="" data-t="art" loading="eager" />
 </div>
 
@@ -26,8 +28,8 @@ const { src, w, left, top, rot = -1.5, border = 6, shadow = 14 } = Astro.props;
   .oc {
     position: absolute;
     z-index: 2;
-    border: var(--bd) solid #0a0a0a;
-    box-shadow: var(--sh) var(--sh) 0 #0a0a0a;
+    border: var(--bd) solid var(--bc);
+    box-shadow: var(--sh) var(--sh) 0 var(--sc);
     background: #fff;
     transform: rotate(var(--rot));
   }

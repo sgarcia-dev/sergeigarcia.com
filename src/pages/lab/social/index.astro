@@ -14,7 +14,7 @@
 import Base from "../../../layouts/Base.astro";
 import OgImage from "../../../components/social/OgImage.astro";
 import PlatformFrame from "../../../components/social/PlatformFrame.astro";
-import { DESIGNS, FRAMES, SAFE } from "../../../lib/social";
+import { chooseTitle, DESIGNS, FRAMES, SAFE, TITLE_SPECS, plain } from "../../../lib/social";
 import { getSamples } from "../../../lib/socialSamples";
 
 const SAMPLES = await getSamples();
@@ -89,6 +89,10 @@ const GROUPS = [
                     </div>
                     <figcaption class="nat-cap">
                       <strong>{d.name} full image</strong>
+                      {TITLE_SPECS[d.id] && (() => {
+                        const t = chooseTitle(s, TITLE_SPECS[d.id]);
+                        return <span class="title-info">Title used: {t.variant}, {t.size}px. "{plain(t.text)}"</span>;
+                      })()}
                       <span>
                         1200x630, shown at 50%. <a href={`?raw&d=${d.id}&s=${s.id}`}>Native size</a>
                       </span>
@@ -187,6 +191,10 @@ const GROUPS = [
     height: 630px;
     transform: scale(0.5);
     transform-origin: 0 0;
+  }
+  .title-info {
+    font-family: var(--font-mono);
+    font-weight: 700;
   }
   .nat-cap {
     margin-top: 6px;
