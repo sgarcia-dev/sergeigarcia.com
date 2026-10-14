@@ -277,12 +277,12 @@
    4. Links: every inline text link in the main content (paragraphs, list items, quotes, captions)
    carries a thick yellow bar under the text that grows into a full block on hover or focus. The
    normal underline stays, so a link never depends on color alone. Left alone: buttons and chips
-   (.hit), list title links (.row-link), hidden duplicates, anything with a view-transition-name, and
+   (.hit), the contents list (.toc-link, it paints its own yellow block), list title links (.row-link), hidden duplicates, anything with a view-transition-name, and
    links on the cobalt, yellow and black bands (the bar would vanish or clash with the text color).
    --------------------------------------------------------------------------------------------- */
 main
   :is(p, li, dd, blockquote, figcaption)
-  a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
+  a:not(.hit, .row-link, .toc-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
   text-decoration-line: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
@@ -290,14 +290,14 @@ main
 }
 main
   :is(p, li, dd, blockquote, figcaption)
-  a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *):is(:hover, :focus-visible) {
+  a:not(.hit, .row-link, .toc-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *):is(:hover, :focus-visible) {
   background-size: 100% 100%;
   color: var(--color-black);
 }
 @media (prefers-reduced-motion: no-preference) {
   main
     :is(p, li, dd, blockquote, figcaption)
-    a:not(.hit, .row-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
+    a:not(.hit, .row-link, .toc-link, [aria-hidden="true"], [style*="view-transition-name"], .band-cobalt *, .band-yellow *, .band-black *) {
     transition:
       background-size 200ms var(--ease-out),
       color 200ms ease-out;
