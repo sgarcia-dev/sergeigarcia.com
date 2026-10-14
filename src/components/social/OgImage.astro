@@ -1,12 +1,7 @@
 ---
 /** One social image: picks the design component for a design id and draws it from a sample. */
 import ArticleBlack from "./ArticleBlack.astro";
-import ArticleCover from "./ArticleCover.astro";
-import ArticleTldr from "./ArticleTldr.astro";
 import HomeSplit from "./HomeSplit.astro";
-import HomeCobalt from "./HomeCobalt.astro";
-import HomeTicker from "./HomeTicker.astro";
-import HomeStack from "./HomeStack.astro";
 import PageBand from "./PageBand.astro";
 import type { Sample } from "../../lib/social";
 
@@ -15,18 +10,21 @@ interface Props {
   sample: Sample;
 }
 const { design, sample } = Astro.props;
-const designs: Record<string, typeof ArticleBlack> = {
-  a1: ArticleBlack,
-  a2: ArticleCover,
-  a3: ArticleTldr,
-  h1: HomeSplit,
-  h2: HomeCobalt,
-  h3: HomeTicker,
-  h4: HomeStack,
-  p1: PageBand,
+// design id -> component and its options
+const designs: Record<string, [any, Record<string, unknown>]> = {
+  a1: [ArticleBlack, { variant: "base" }],
+  a1t1: [ArticleBlack, { variant: "t1" }],
+  a1t2: [ArticleBlack, { variant: "t2" }],
+  a1t3: [ArticleBlack, { variant: "t3" }],
+  h1: [HomeSplit, {}],
+  hx1: [HomeSplit, { sticker: true }],
+  hx2: [HomeSplit, { ticker: true }],
+  hx3: [HomeSplit, { sticker: true, ticker: true }],
+  p1: [PageBand, {}],
 };
-const Design = designs[design];
-if (!Design) throw new Error(`Unknown design: ${design}`);
+const entry = designs[design];
+if (!entry) throw new Error(`Unknown design: ${design}`);
+const [Design, options] = entry;
 ---
 
-<Design s={sample} design={design} />
+<Design s={sample} design={design} {...options} />

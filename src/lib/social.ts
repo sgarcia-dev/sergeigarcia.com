@@ -22,7 +22,7 @@ export type Kind = "post" | "home" | "page";
 export type SafeStatus = "pass" | "degrades";
 
 export interface Design {
-  /** a1 to a4 for articles, h1 to h4 for the homepage, p1 for generic pages. Also the `d` value in /lab/social/?raw&d=a2&s=<sample id> */
+  /** a1 and a1t1 to a1t3 for articles, h1 and hx1 to hx3 for the homepage, p1 for generic pages. Also the `d` value in /lab/social/?raw&d=a1t1&s=<sample id> */
   id: string;
   /** Which kind of page the design is for. */
   kind: Kind;
@@ -47,21 +47,30 @@ export const DESIGNS: Design[] = [
     uses: "title (full unless it does not fit), highlights on",
   },
   {
-    id: "a2",
-    name: "A-2 Magazine cover",
+    id: "a1t1",
+    name: "A-1 T1 TL;DR under the title",
     kind: "post",
-    note: "The article page in miniature: cobalt hatch band with the title, then the cover art tilted below it, like card set B.",
-    safe: "pass",
-    safeNote: "Title, name and cover all sit in the middle column. Square crops keep everything.",
-    uses: "title (full unless it does not fit), highlights on",
+    note: "A-1 with the long TL;DR box right under the title. Avatar and name on a row below it, the cover tucked under the box corner at the bottom right.",
+    safe: "degrades",
+    safeNote: "Title, TL;DR and name fill the middle square. A square crop shows about the left half of the cover.",
+    uses: "title (full unless it does not fit), long TL;DR, highlights on",
   },
   {
-    id: "a3",
-    name: "A-3 TL;DR card",
+    id: "a1t2",
+    name: "A-1 T2 TL;DR beside the cover",
     kind: "post",
-    note: "Cobalt hatch, a big title and a big TL;DR box with its yellow label and hard shadow. The cover peeks in from the right.",
-    safe: "pass",
-    safeNote: "Title, name and TL;DR sit in the middle column. The peeking cover is cut by a square crop.",
+    note: "A-1 with the short TL;DR box on the left and the cover on the right of it, under the title. Avatar and name under the box.",
+    safe: "degrades",
+    safeNote: "Title, TL;DR and name are inside the square. A square crop shows about half of the cover.",
+    uses: "title (full unless it does not fit), short TL;DR, highlights on",
+  },
+  {
+    id: "a1t3",
+    name: "A-1 T3 TL;DR on the cover corner",
+    kind: "post",
+    note: "A-1 with the short TL;DR as a tilted card laid over the lower left corner of the cover. Avatar column as in A-1.",
+    safe: "degrades",
+    safeNote: "Title, name and the TL;DR card are inside the square. The cover's right side is cut by a square crop.",
     uses: "title (full unless it does not fit), short TL;DR, highlights on",
   },
   {
@@ -74,30 +83,30 @@ export const DESIGNS: Design[] = [
     uses: "tagline, highlight on",
   },
   {
-    id: "h2",
-    name: "H-2 Cobalt hero",
+    id: "hx1",
+    name: "H-X1 Hero split + sticker",
     kind: "home",
-    note: "The cobalt half of the hero, full size: giant white name, tiny avatar with the Dublin tag, tagline with a highlighter mark.",
+    note: "H-1 with the yellow 13+ years sticker from H-2 on the right edge.",
     safe: "pass",
-    safeNote: "Everything is in the middle column. A yellow 13+ years sticker sits on the edge and can be cut.",
+    safeNote: "Same as H-1. The sticker is on the edge and is cut by a square crop, which is fine.",
     uses: "tagline, highlight on",
   },
   {
-    id: "h3",
-    name: "H-3 Yellow with ticker",
+    id: "hx2",
+    name: "H-X2 Hero split + ticker",
     kind: "home",
-    note: "The yellow half of the hero, full size: giant black name, tagline with a black highlighter block, role line, and the black ticker strip from under the hero.",
+    note: "H-1 with the black ticker strip from H-3 along the bottom. The tiny avatar moves to the right of the name.",
     safe: "pass",
-    safeNote: "Name and tagline are in the middle column. The ticker is decoration, so a crop only shortens it.",
+    safeNote: "Name, tagline and avatar sit in the middle square. A square crop only shortens the ticker.",
     uses: "tagline, highlight on",
   },
   {
-    id: "h4",
-    name: "H-4 Stacked bands",
+    id: "hx3",
+    name: "H-X3 Hero split + sticker + ticker",
     kind: "home",
-    note: "A tall yellow band with the giant name over a cobalt band: a tilted role chip with the tiny avatar sits on the seam, then a big tagline with a yellow block.",
+    note: "Both: the 13+ years sticker and the ticker strip on H-1.",
     safe: "pass",
-    safeNote: "Both bands run full width and the text sits in the middle column.",
+    safeNote: "Same as H-X2. The sticker is on the edge and can be cut.",
     uses: "tagline, highlight on",
   },
   {
@@ -264,8 +273,9 @@ export interface TitleSpec {
 }
 export const TITLE_SPECS: Record<string, TitleSpec> = {
   a1: { w: 600, h: 268, max: 96, min: 58, lh: 1 },
-  a2: { w: 600, h: 236, max: 96, min: 58, lh: 1 },
-  a3: { w: 600, h: 250, max: 96, min: 58, lh: 1 },
+  a1t1: { w: 600, h: 224, max: 96, min: 58, lh: 1 },
+  a1t2: { w: 600, h: 224, max: 96, min: 58, lh: 1 },
+  a1t3: { w: 600, h: 250, max: 96, min: 58, lh: 1 },
 };
 
 export interface TitleChoice {

@@ -7,8 +7,8 @@ import { test, expect } from "@playwright/test";
 // space in the part of the image that every crop keeps. Safe box: x 285 to 915 (square crop) and y 15 to 615 (2:1 crop). See SAFE in src/lib/social.ts.
 const POSTS = ["ai-raises-the-floor", "agents-workspace-tour"];
 const CASES: { d: string; s: string }[] = [
-  ...["a1", "a2", "a3"].flatMap((d) => POSTS.map((s) => ({ d, s }))),
-  ...["h1", "h2", "h3", "h4"].map((d) => ({ d, s: "home" })),
+  ...["a1", "a1t1", "a1t2", "a1t3"].flatMap((d) => POSTS.map((s) => ({ d, s }))),
+  ...["h1", "hx1", "hx2", "hx3"].map((d) => ({ d, s: "home" })),
   ...["projects", "writing", "about"].map((s) => ({ d: "p1", s })),
 ];
 const SAFE = { left: 285, right: 915, top: 15, bottom: 615 };
