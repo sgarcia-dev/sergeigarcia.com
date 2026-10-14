@@ -3,7 +3,7 @@ cover: "../../assets/covers/agents-workspace.jpg"
 coverAlt: "Illustration: a conductor directing four robot helpers"
 coverKind: "illustration"
 title: "The Agents workspace"
-summary: "A plain-text, git-tracked home for how I work with AI coding tools, so context, decisions and rules carry over between sessions and between tools."
+summary: "A ==plain-text, git-tracked home== for how I work with AI coding tools, so context, decisions and rules ==carry over between sessions and between tools==."
 period: "2026 to now"
 role: "Creator and sole maintainer"
 skills: ["Git", "Markdown", "Shell scripting", "Model Context Protocol", "AI agents"]
@@ -41,9 +41,9 @@ I created the workspace and I am its only maintainer. The repository is private,
 
 ## Outcome
 
-Since June 2026 the workspace has grown past 1,400 commits, with adapters for six AI tools. Work now carries over between sessions and between tools. Switching to or adding a tool means writing an adapter, not starting over.
+Since June 2026 the workspace has grown <span class="lv-mark">past 1,400 commits</span>, with <span class="lv-mark">adapters for six AI tools</span>. Work now carries over between sessions and between tools. Switching to or adding a tool means writing an adapter, not starting over.
 
-This website was built with it. Research, planning and decisions for the site are recorded in the same workspace.
+<span class="lv-mark">This website was built with it</span>. Research, planning and decisions for the site are recorded in the same workspace.
 
 ## What I learned
 

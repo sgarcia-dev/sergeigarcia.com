@@ -8,6 +8,7 @@ import type { CollectionEntry } from "astro:content";
 import Pills from "./Pills.astro";
 import Thumb from "./Thumb.astro";
 import { vtName } from "../lib/content";
+import { markHtml } from "../lib/mark";
 
 interface Props {
   entry: CollectionEntry<"projects">;
@@ -36,7 +37,7 @@ const Heading = level;
               {title}
             </a>
           </Heading>
-          <p class="mt-xs max-w-prose">{summary}</p>
+          <p class="mt-xs max-w-prose" set:html={markHtml(summary)} />
           <div class="mt-sm">
             <Pills skills={skills} />
           </div>
@@ -60,7 +61,7 @@ const Heading = level;
         <p class="mt-xs">
           {company ? <><strong class="font-bold">{company}</strong>, {role}</> : role}
         </p>
-        <p class="mt-xs max-w-prose">{summary}</p>
+        <p class="mt-xs max-w-prose" set:html={markHtml(summary)} />
         {skills.length > 0 && (
           <div class="mt-sm">
             <Pills skills={skills} />

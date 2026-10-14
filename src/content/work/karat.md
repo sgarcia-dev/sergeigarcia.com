@@ -2,7 +2,7 @@
 title: "Interview Engineer"
 company: "Karat"
 role: "Interview Engineer"
-summary: "Ran technical interviews for hiring teams, with a focus on fair, consistent assessment and a constructive experience for candidates."
+summary: "Ran technical interviews for hiring teams, with a focus on ==fair, consistent assessment== and a ==constructive experience for candidates==."
 period: "Jun 2021 to Feb 2022"
 skills: []
 links: []
@@ -16,7 +16,7 @@ Karat runs technical interviews for companies that are hiring software engineers
 ### What I did
 
 - Conducted technical interviews covering computer science fundamentals, software craftsmanship and role-specific technologies.
-- Graded how candidates wrote their code, not only whether they solved the problem.
+- <span class="lv-mark">Graded how candidates wrote their code</span>, not only whether they solved the problem.
 - Wrote up feedback for hiring teams after each interview.
-- Assessed every candidate against the same standard, while making room for them to explain their thinking.
+- <span class="lv-mark">Assessed every candidate against the same standard</span>, while making room for them to explain their thinking.
 - Offered guidance and encouragement so each person could show their best work, without compromising the evaluation.

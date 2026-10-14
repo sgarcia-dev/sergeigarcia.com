@@ -8,7 +8,7 @@ gallery:
     alt: "The rebuilt About page, running locally."
 galleryCaption: "My rebuild, running locally. The hospital has not launched it."
 title: "St. Jude Cloud website rebuild"
-summary: "Built a complete, launch-ready rebuild of the St. Jude Cloud website, a pediatric research data platform, as a Vue and Nuxt design system with accessibility and speed built in."
+summary: "Built a complete, ==launch-ready rebuild== of the ==St. Jude Cloud== website, a pediatric research data platform, as a Vue and Nuxt design system with accessibility and speed built in."
 period: "2025"
 role: "Frontend Developer"
 company: "St. Jude Children's Research Hospital (via Toptal)"
@@ -21,7 +21,7 @@ draft: false
 
 ## The problem
 
-St. Jude Cloud is a data and analysis platform that St. Jude Children's Research Hospital offers to the global pediatric research community. Its public website needed a rebuild from new Figma designs.
+St. Jude Cloud is a data and analysis platform that St. Jude Children's Research Hospital offers to the <span class="lv-mark">global pediatric research community</span>. Its public website needed a rebuild from new Figma designs.
 
 - The site had to be modern, responsive and accessible.
 - It had to load fast on phones and desktops while still using rich animation.
@@ -47,7 +47,7 @@ I was a frontend developer on the team, hired through Toptal. I built the new si
 
 ## Outcome
 
-I delivered the full rebuild: every page and component finished, tested and ready to launch, with accessibility and performance built in from the start. The client team that asked for it pushed hard to ship it, but as of late 2026 the hospital has not launched the new site, so the public St. Jude Cloud site still runs the older design. The updated Sprocket and LearnGenomics.dev work is in the same position. Launch decisions sat with the client, and large healthcare organizations move slowly.
+I delivered the full rebuild: <span class="lv-mark">every page and component finished, tested and ready to launch</span>, with accessibility and performance built in from the start. The client team that asked for it pushed hard to ship it, but as of late 2026 the hospital has not launched the new site, so the public St. Jude Cloud site still runs the older design. The updated Sprocket and LearnGenomics.dev work is in the same position. Launch decisions sat with the client, and large healthcare organizations move slowly.
 
 ## What I learned
 
