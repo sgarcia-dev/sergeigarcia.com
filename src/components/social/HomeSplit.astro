@@ -1,7 +1,7 @@
 ---
 /**
- * H-1 Hero split and its hybrids. hx1 adds the 13+ years sticker from the old cobalt hero, hx2 the
- * black ticker strip from the old yellow hero, hx3 both. With the ticker the tagline label and the
+ * H-1 Hero split and its hybrids. hx1 adds the 13+ years sticker from the old cobalt hero, hx2 a static
+ * three-phrase strip (HOME.ticker), hx3 both. With the ticker the tagline label and the
  * name are a little smaller and the tiny avatar moves to the right of the name.
  * H-1 Hero split. The homepage hero as an image: a yellow and a cobalt half with the site's dots
  * and a thick seam exactly in the middle, a giant name that changes color where it crosses the
@@ -40,7 +40,7 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
   {
     ticker && (
       <div class="ticker" aria-hidden="true">
-        <ul>{HOME.ticker.map((t) => <li>{t}</li>)}</ul>
+        <ul>{HOME.ticker.map((t) => <li><span data-t="ticker">{t}</span></li>)}</ul>
       </div>
     )
   }
@@ -130,25 +130,30 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
     display: flex;
     align-items: center;
   }
+  /* Static strip: exactly the items in HOME.ticker, centered, with the homepage ticker's square separator. Nothing scrolls and nothing is cut. */
+  .ticker {
+    justify-content: center;
+  }
   .ticker ul {
     margin: 0;
-    padding: 0 0 0 150px;
+    padding: 0;
     list-style: none;
     display: flex;
-    gap: 40px;
+    align-items: center;
     white-space: nowrap;
     color: #ffd400;
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 34px;
+    font-size: 24px;
   }
-  .ticker li::after {
+  .ticker li + li::before {
     content: "";
     display: inline-block;
-    width: 12px;
-    height: 12px;
-    margin-left: 40px;
+    width: 9px;
+    height: 9px;
+    margin: 0 12px;
     background: #fff;
+    vertical-align: middle;
   }
   .sticker {
     position: absolute;

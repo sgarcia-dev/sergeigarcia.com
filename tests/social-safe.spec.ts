@@ -80,6 +80,8 @@ for (const { d, s } of CASES) {
       expect(roles, "name is drawn").toContain("name");
       expect(roles, "avatar is drawn").toContain("avatar");
     }
+    // The ticker strip shows exactly the three phrases, whole (they are checked against the safe box below).
+    if (d === "hx2" || d === "hx3") expect(roles.filter((r) => r === "ticker"), "ticker phrases").toHaveLength(3);
     for (const f of items) {
       expect(f.left, `${f.role} left`).toBeGreaterThanOrEqual(SAFE.left);
       expect(f.right, `${f.role} right`).toBeLessThanOrEqual(SAFE.right);

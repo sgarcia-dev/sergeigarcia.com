@@ -9,6 +9,7 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Pills from "../components/Pills.astro";
 import { breadcrumbs } from "../lib/seo";
+import { PAGE_META } from "../lib/pageMeta";
 
 const patterns = [
   { value: "dots-fade", label: "Dots fade" },
@@ -61,11 +62,7 @@ const rejected = [
 const jsonLd = [breadcrumbs([{ name: "Playground", path: "/playground/" }])];
 ---
 
-<Base
-  title="Playground"
-  description="Play with the real motion and texture effects from sergeigarcia.com: band textures, glyph reveal, marker, row sweep and more."
-  jsonLd={jsonLd}
->
+<Base title={PAGE_META.playground.title} description={PAGE_META.playground.description} jsonLd={jsonLd}>
   <PageHead title="Playground" band="yellow">
     <p class="mt-md max-w-prose text-lg">Every effect on this site, with the knobs I used to choose them.</p>
     <p class="mt-sm max-w-prose">

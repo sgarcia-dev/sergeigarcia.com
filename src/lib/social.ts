@@ -7,6 +7,7 @@
  */
 import type { ImageMetadata } from "astro";
 import { SITE } from "./site";
+import { PAGE_META } from "./pageMeta";
 
 export const OG_W = 1200;
 export const OG_H = 630;
@@ -99,9 +100,9 @@ export const DESIGNS: Design[] = [
     id: "hx2",
     name: "H-X2 Hero split + ticker",
     kind: "home",
-    note: "H-1 with the black ticker strip from H-3 along the bottom. The tiny avatar moves to the right of the name.",
+    note: "H-1 with a static black strip along the bottom: three phrases, centered, same square separator as the homepage ticker. The tiny avatar moves to the right of the name.",
     safe: "pass",
-    safeNote: "Name, tagline and avatar sit in the middle square. A square crop only shortens the ticker.",
+    safeNote: "Name, tagline, avatar and the three ticker phrases all sit in the middle square. A square crop only shortens the black strip.",
     uses: "tagline, highlight on",
   },
   {
@@ -109,9 +110,9 @@ export const DESIGNS: Design[] = [
     chosen: true,
     name: "H-X3 Hero split + sticker + ticker",
     kind: "home",
-    note: "Both: the 13+ years sticker and the ticker strip on H-1.",
+    note: "Both: the 13+ years sticker and the three-phrase strip on H-1.",
     safe: "pass",
-    safeNote: "Same as H-X2. The sticker is on the edge and can be cut.",
+    safeNote: "Same as H-X2: the strip text is inside the square. The sticker is on the edge and can be cut.",
     uses: "tagline, highlight on",
   },
   {
@@ -159,7 +160,7 @@ export function ogFields(d: { title: string; summary: string; ogTitle?: string; 
 
 /**
  * Homepage copy that is not in a content file. Keep in sync with src/pages/index.astro (the hero
- * and the ticker). The tagline's highlight is a design choice for this lab, not on the live page.
+ * only). The tagline's highlight is a design choice for this lab, not on the live page.
  */
 export const HOME = {
   name: "Sergei Garcia",
@@ -167,17 +168,14 @@ export const HOME = {
   role: "Software Engineer · 13+ years",
   /** The tag next to the tiny avatar. One value, in SITE.locationTag; empty hides it. */
   location: SITE.locationTag as string,
-  ticker: ["Developer tools", "Accessibility", "Web performance", "AI agent workflows", "Writer", "UX and motion", "Mentor", "Speaker", "Full stack"],
-  title: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
-  description: "Sergei Garcia, software engineer. Designer by eye, teacher by habit, engineer by trade: fast, accessible websites, developer tools and AI workflows.",
+  /** The three phrases on the static strip along the bottom of H-X2 and H-X3. Keep it to 3 short items: they are centered, never cut, and must fit the middle 630px. Swap them here. */
+  ticker: ["AI agent workflows", "Accessibility", "Developer tools"],
+  title: SITE.title,
+  description: SITE.description,
 } as const;
 
-/** Generic pages: title and description as in each page's <Base> props. */
-export const PAGES = [
-  { id: "projects", title: "Projects", description: "Case studies from Sergei Garcia: tools, products and systems he designed and built." },
-  { id: "writing", title: "Writing", description: "Notes from Sergei Garcia on building software, working with AI coding agents and shipping front ends." },
-  { id: "about", title: "About", description: "About Sergei Garcia, a software engineer from Mexico living in Dublin, Ireland. 13+ years building web products, a designer's eye, and a love of teaching." },
-] as const;
+/** The generic pages the lab draws: title and description come from src/lib/pageMeta.ts, the same values the pages use. */
+export const PAGES = (["projects", "writing", "about"] as const).map((id) => ({ id, ...PAGE_META[id] }));
 
 const MARK = /==(?=\S)(.+?)(?<=\S)==/g;
 /** Text without the == markers. */

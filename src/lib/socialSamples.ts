@@ -6,6 +6,24 @@
 import { getPosts } from "./content";
 import { HOME, PAGES, ogFields, plain, type Sample } from "./social";
 
+/**
+ * A generic-page sample (design p1): the page name in the yellow block, the description in the
+ * box. Pages without a content file, and project and work entries, all use it.
+ */
+export function pageSample(id: string, title: string, description: string, label = `Page: ${title}`): Sample {
+  return {
+    id,
+    kind: "page",
+    label,
+    title: `==${title}==`,
+    titleShort: `==${title}==`,
+    summary: description,
+    summaryShort: description,
+    pageTitle: `${title} | Sergei Garcia`,
+    description: plain(description),
+  };
+}
+
 export async function getSamples(): Promise<Sample[]> {
   const posts = await getPosts();
   const postSamples: Sample[] = posts.map((p) => ({
@@ -28,16 +46,6 @@ export async function getSamples(): Promise<Sample[]> {
     pageTitle: HOME.title,
     description: HOME.description,
   };
-  const pages: Sample[] = PAGES.map((pg) => ({
-    id: pg.id,
-    kind: "page",
-    label: `Page: ${pg.title}`,
-    title: `==${pg.title}==`,
-    titleShort: `==${pg.title}==`,
-    summary: pg.description,
-    summaryShort: pg.description,
-    pageTitle: `${pg.title} | Sergei Garcia`,
-    description: pg.description,
-  }));
+  const pages: Sample[] = PAGES.map((pg) => pageSample(pg.id, pg.title, pg.description, `Page: ${pg.title}`));
   return [...postSamples, home, ...pages];
 }
