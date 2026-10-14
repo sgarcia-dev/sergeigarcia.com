@@ -30,6 +30,8 @@
      right after the phrase does not drift away from it. "slice" keeps the block flush with the text where
      a phrase wraps, so a wrapped second line is not pushed in by the padding. */
   padding-inline: 0.12em 0.08em;
+  /* A small gap before the block, so its edge never touches the last letter of the word in front. */
+  margin-inline-start: 0.1em;
   -webkit-box-decoration-break: slice;
   box-decoration-break: slice;
   background: linear-gradient(var(--lv-mark-color), var(--lv-mark-color)) var(--lv-mark-pos) / var(--lv-mark-size) no-repeat;
