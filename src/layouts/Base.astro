@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url";
+import spaceUrl from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE } from "../lib/site";
@@ -27,13 +28,15 @@ interface Props {
   ogImageAlt?: string;
   /** Whole minutes to read the page. Only posts and case studies pass it; it turns on the "minutes left" chip. */
   readMinutes?: number;
+  /** Also preload the body font. Posts pass it because body text is now visible at first paint, so a late font swap would shift it. */
+  preloadBody?: boolean;
 }
 
-const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes } = Astro.props;
+const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes, preloadBody = false } = Astro.props;
 const pageTitle = fullTitle ? title : `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(ogPath ?? SITE.ogImage, Astro.site);
-const ogAlt = ogImageAlt ?? "Sergei Garcia, senior software engineer";
+const ogAlt = ogImageAlt ?? "Sergei Garcia, software engineer";
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -47,6 +50,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+    {preloadBody && <link rel="preload" href={spaceUrl} as="font" type="font/woff2" crossorigin />}
     <!-- Hold first paint until <main> is parsed, so a cross-document view transition
          always finds the new page's named elements instead of capturing a half-built page. -->
     <link rel="expect" href="#main" blocking="render" />

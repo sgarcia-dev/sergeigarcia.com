@@ -16,7 +16,7 @@ export const PERSON = {
   url: `${SITE.url}/`,
   jobTitle: SITE.jobTitle,
   description:
-    "Senior software engineer from Mexico, based in Dublin, Ireland. 13+ years building web products with React and TypeScript, plus AI-assisted development and teaching.",
+    "Software engineer from Mexico, based in Dublin, Ireland. 13+ years building web products with React and TypeScript, plus AI-assisted development and teaching.",
   email: `mailto:${SITE.email}`,
   address: { "@type": "PostalAddress", addressLocality: "Dublin", addressCountry: "IE" },
   nationality: { "@type": "Country", name: "Mexico" },

@@ -1,0 +1,49 @@
+---
+/**
+ * The key takeaway of an article, shown as a boxed "TL;DR" in the left column. It uses the same
+ * frame as images and figures: thick ink border and the hard offset shadow. A small yellow mono
+ * label sits on the top edge like a sticker. The box fill is the page background, so highlighter
+ * marks keep the contrast they already have on paper. `html` is already-escaped markup from `markHtml`.
+ */
+interface Props {
+  html: string;
+}
+const { html } = Astro.props;
+---
+
+<aside class="tldr" aria-label="Summary">
+  <span class="tldr-label label" aria-hidden="true">TL;DR</span>
+  <p class="tldr-text max-w-prose" set:html={html} />
+</aside>
+
+<style>
+  .tldr {
+    position: relative;
+    /* The top margin leaves room for the label that sticks out above the edge. */
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-sm) var(--spacing-sm);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  /* Yellow sticker with black text, the same pair used on the yellow band and primary buttons. */
+  .tldr-label {
+    position: absolute;
+    top: 0;
+    left: var(--spacing-sm);
+    transform: translateY(-50%);
+    padding: 0 var(--spacing-xs);
+    border: var(--rule-thin) solid var(--color-black);
+    background: var(--color-yellow);
+    color: var(--color-black);
+    letter-spacing: var(--tracking-wide);
+    line-height: 1.7;
+  }
+  .tldr-text {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+    font-weight: var(--font-weight-medium);
+  }
+</style>

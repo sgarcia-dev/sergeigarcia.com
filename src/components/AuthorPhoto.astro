@@ -1,0 +1,42 @@
+---
+/**
+ * The round headshot used by every author card. The size is fixed in CSS (and the picture has real
+ * width and height), so nothing moves when it loads. Decorative: the name always sits beside it, so
+ * the alt text is empty and screen readers do not hear the name twice.
+ */
+import { Picture } from "astro:assets";
+import headshot from "../assets/about/headshot.jpg";
+
+interface Props {
+  /** Display width and height, as a CSS length. */
+  size?: string;
+  class?: string;
+}
+const { size = "5rem", class: cls } = Astro.props;
+---
+
+<Picture
+  src={headshot}
+  formats={["avif", "webp"]}
+  widths={[96, 192, 288]}
+  sizes={size}
+  alt=""
+  loading="lazy"
+  decoding="async"
+  class="ac-photo"
+  pictureAttributes={{ class: cls ? `block ${cls}` : "block", style: `--ac-size:${size}` }}
+/>
+
+<style is:global>
+  /* The outline matches the home page headshot: a thick rule, no radius tricks. It follows the page
+     ink so it stays visible on the dark page; cards with a fixed background override --ac-edge. */
+  .ac-photo {
+    display: block;
+    width: var(--ac-size);
+    height: var(--ac-size);
+    border-radius: 50%;
+    border: var(--rule-thick) solid var(--ac-edge, var(--edge));
+    object-fit: cover;
+    background: var(--color-chalk);
+  }
+</style>

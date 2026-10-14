@@ -1,0 +1,165 @@
+---
+/**
+ * "Contents" list for a long post, built from its h2 headings (Astro's render() `headings`).
+ * Renders two versions of the same links and CSS shows one:
+ *   - from lg up: a plain list for the sticky left column (class toc-side)
+ *   - below lg: a collapsed <details> block near the top of the post, because the sticky column
+ *     does not fit on phones and tablets (class toc-fold)
+ * The links are normal #anchors, so everything works without JavaScript. The small script below
+ * only marks the section being read with aria-current, and the CSS paints that yellow.
+ * Posts with fewer than two sections get no list at all.
+ */
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+const items = Astro.props.headings.filter((h) => h.depth === 2);
+---
+
+{
+  items.length >= 2 && (
+    <>
+      <nav class="toc toc-side" aria-labelledby="toc-h-side" data-toc>
+        <h2 id="toc-h-side" class="label">Contents</h2>
+        <ol role="list" class="mt-xs">
+          {items.map((h) => (
+            <li>
+              <a class="toc-link" href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <details class="toc toc-fold" data-toc>
+        <summary class="label">Contents</summary>
+        <ol role="list">
+          {items.map((h) => (
+            <li>
+              <a class="toc-link" href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </details>
+      <script is:inline>
+        // The list sits above the post text in the page, so wait until the headings exist.
+        function tocInit() {
+          var links = document.querySelectorAll("[data-toc] a[href^='#']");
+          if (!links.length || !("IntersectionObserver" in window)) return;
+          var heads = [];
+          links.forEach(function (a) {
+            var h = document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+            if (h && heads.indexOf(h) < 0) heads.push(h);
+          });
+          // The line a heading must cross to count as "being read": 35% down the screen, but never
+          // above the sticky header area (scroll-padding-top is set to exactly that height).
+          function line() {
+            var pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+            return Math.max(pad + 24, window.innerHeight * 0.35);
+          }
+          function update() {
+            var y = line();
+            var current = null;
+            heads.forEach(function (h) {
+              if (h.getBoundingClientRect().top <= y) current = h;
+            });
+            links.forEach(function (a) {
+              var on = current && a.getAttribute("href") === "#" + current.id;
+              if (on) a.setAttribute("aria-current", "true");
+              else a.removeAttribute("aria-current");
+            });
+          }
+          // Each heading fires when it crosses the 35% line (the observed zone is the top 35% of the screen).
+          var io = new IntersectionObserver(update, { rootMargin: "0px 0px -65% 0px" });
+          heads.forEach(function (h) {
+            io.observe(h);
+          });
+          // A big jump (End key, restored scroll position, an anchor link) can pass over every heading
+          // without any of them landing in the observed zone, so also re-check on scroll, once per frame.
+          var queued = false;
+          window.addEventListener(
+            "scroll",
+            function () {
+              if (queued) return;
+              queued = true;
+              requestAnimationFrame(function () {
+                queued = false;
+                update();
+              });
+            },
+            { passive: true },
+          );
+          update();
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tocInit);
+        else tocInit();
+      </script>
+    </>
+  )
+}
+
+<style>
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: var(--rule-thick) solid var(--rule-color);
+  }
+  .toc a {
+    display: block;
+    padding: var(--spacing-2xs) var(--spacing-xs);
+    font-size: var(--text-base);
+    line-height: 1.35;
+    text-decoration: none;
+    color: inherit;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+  /* The section being read: a solid yellow block with black text, readable on every page color. */
+  .toc a[aria-current="true"] {
+    background: var(--color-yellow);
+    color: var(--color-black);
+    font-weight: 700;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .toc a {
+      transition:
+        background-color var(--duration-fast) ease-out,
+        color var(--duration-fast) ease-out;
+    }
+  }
+
+  /* Phones and tablets: the folded block. */
+  .toc-fold {
+    border: var(--rule-thick) solid var(--edge);
+  }
+  .toc-fold summary {
+    cursor: pointer;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+  .toc-fold summary::after {
+    content: "+";
+    margin-left: auto;
+    font-size: var(--text-lg);
+  }
+  .toc-fold[open] summary::after {
+    content: "\2212";
+  }
+  .toc-fold ol {
+    margin: 0 var(--spacing-sm) var(--spacing-sm);
+  }
+
+  /* Desktop: the sticky column shows the plain list; the fold is hidden. */
+  .toc-side {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .toc-side {
+      display: block;
+    }
+    .toc-fold {
+      display: none;
+    }
+  }
+</style>

@@ -1,3 +1,13 @@
+/**
+ * Availability note shown on the card at the end of every post. One switch for the whole site.
+ *   "looking": the card says Sergei is looking for his next role and invites hiring teams to talk.
+ *   "open":    the card says he is happy to hear about interesting work, with no job-search wording.
+ *   "off":     no card at all (nothing is rendered, not even an empty box).
+ */
+export type Availability = "looking" | "open" | "off";
+/** Which look the end-of-post card uses on real posts: A quiet band, B bold cobalt block, C note. */
+export type AuthorCardVariant = "A" | "B" | "C";
+
 export const SITE = {
   name: "Sergei Garcia",
   title: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
@@ -6,8 +16,10 @@ export const SITE = {
   url: "https://sergeigarcia.com",
   email: "hello@sergeigarcia.com",
   location: "Dublin, Ireland",
-  jobTitle: "Senior Software Engineer",
+  jobTitle: "Software Engineer",
   ogImage: "/og-default.png",
+  availability: "looking" as Availability,
+  authorCardVariant: "C" as AuthorCardVariant,
   resume: "/resume/sergei-garcia-resume.pdf",
   links: {
     linkedin: "https://www.linkedin.com/in/sergeigarcia",

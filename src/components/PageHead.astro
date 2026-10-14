@@ -4,16 +4,24 @@
  * `vt` sets the view-transition name so a list title morphs into this heading.
  * `progress` adds the thin reading bar at the top of the viewport (posts and case studies).
  * src/scripts/motion.ts makes the band stick under the header and shrink to a thin banner.
+ * size "post" is the larger long-title size used by article pages (set in the style block below).
+ * Optional named slot `cover`: a framed image. On wide screens it sits at the right of the band
+ * and hangs over the band's bottom edge; on phones it goes under the meta and hangs over by less.
+ * Without the slot the markup is exactly what it was, so other pages do not change.
  */
 interface Props {
   title: string;
   band?: "yellow" | "cobalt" | "tomato";
   eyebrow?: string;
   vt?: string;
-  size?: "h2" | "xl";
+  size?: "h2" | "xl" | "post";
   progress?: boolean;
 }
 const { title, band = "yellow", eyebrow, vt, size = "h2", progress = false } = Astro.props;
+const hasCover = Astro.slots.has("cover");
+// With a cover the text gets its own column; without one there is no wrapper at all.
+const Text = hasCover ? "div" : Fragment;
+const textProps = hasCover ? { class: "ph-text" } : {};
 ---
 
 {
@@ -24,17 +32,75 @@ const { title, band = "yellow", eyebrow, vt, size = "h2", progress = false } = A
   )
 }
 <section class:list={["edge-b", `band-${band}`, "page-head"]}>
-  <div class="shell py-lg lg:py-xl">
-    {eyebrow && <p class="label mb-sm">{eyebrow}</p>}
-    <h1
-      class:list={[
-        "page-head-title max-w-title tracking-tight",
-        size === "h2" ? "font-display text-h2" : "font-title text-xl",
-      ]}
-      style={vt ? `view-transition-name: ${vt}` : undefined}
-    >
-      {title}
-    </h1>
-    <slot />
+  <div class:list={["shell py-lg lg:py-xl", hasCover && "ph-with-cover"]}>
+    <Text {...textProps}>
+      {eyebrow && <p class="label mb-sm">{eyebrow}</p>}
+      <h1
+        class:list={[
+          "page-head-title max-w-title tracking-tight",
+          size === "h2" && "font-display text-h2",
+          size === "xl" && "font-title text-xl",
+          size === "post" && "font-title ph-post-title",
+        ]}
+        style={vt ? `view-transition-name: ${vt}` : undefined}
+      >
+        {title}
+      </h1>
+      <slot />
+    </Text>
+    {
+      hasCover && (
+        <div class="ph-cover">
+          <slot name="cover" />
+        </div>
+      )
+    }
   </div>
 </section>
+
+<style>
+  /* Article title: bigger than "xl" so it holds its own next to the cover. Phones stay near the
+     "xl" size (long Fraunces words must not overflow 375px); desktop grows to fill the 7-column
+     text side in two to four lines. The 18ch cap on titles is lifted here; the column limits it. */
+  .ph-post-title {
+    font-size: clamp(1.75rem, 0.5rem + 4.8vw, 4.75rem);
+    line-height: 1.05;
+    max-width: none;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  /* Band with a cover image. The cover's bottom margin is negative by the band's bottom padding,
+     the 3px rule and the overlap, so the band ends --over above the image's bottom edge and the
+     image hangs out by exactly --over, whatever the title length. Image size comes from the
+     16:9 frame, so nothing moves when it loads. */
+  .ph-with-cover {
+    --pad: var(--spacing-lg);
+    --over: var(--spacing-md);
+    padding-block: var(--pad);
+    display: flex;
+    flex-direction: column;
+  }
+  .ph-cover {
+    position: relative;
+    z-index: 1; /* above the section below, which it overlaps */
+    width: 100%;
+    max-width: 30rem;
+    margin-top: var(--spacing-md);
+    margin-bottom: calc(-1 * (var(--pad) + var(--rule-thick) + var(--over)));
+  }
+  @media (min-width: 64rem) {
+    .ph-with-cover {
+      --pad: var(--spacing-xl);
+      --over: var(--spacing-lg);
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: var(--spacing-lg);
+      align-items: start;
+    }
+    .ph-cover {
+      align-self: end;
+      max-width: none;
+      margin-top: 0;
+    }
+  }
+</style>

@@ -10,8 +10,12 @@ interface Props {
   /** Canonical absolute URL of the page. */
   url: string;
   title: string;
+  /** Extra classes for the wrapper. Default is the gap above it. */
+  class?: string;
+  /** Heading id. Give each copy on a page its own, since a post can show it in two places. */
+  headingId?: string;
 }
-const { url, title } = Astro.props;
+const { url, title, class: cls = "mt-lg", headingId = "share-h" } = Astro.props;
 const u = encodeURIComponent(url);
 const t = encodeURIComponent(title);
 
@@ -26,8 +30,8 @@ const links: { name: string; icon: IconName; href: string }[] = [
 const mail = `mailto:?subject=${t}&body=${encodeURIComponent(`${title}\r\n\r\n${url}`)}`;
 ---
 
-<aside class="share mt-lg" aria-labelledby="share-h" data-url={url} data-title={title}>
-  <h2 id="share-h" class="font-title text-xl">Share this post</h2>
+<aside class:list={["share", cls]} aria-labelledby={headingId} data-url={url} data-title={title}>
+  <h2 id={headingId} class="font-title text-xl">Share this post</h2>
   <ul role="list" class="mt-sm flex flex-wrap gap-sm" data-share-row>
     {
       links.map((link) => (
