@@ -7,9 +7,9 @@ import CaseMeta from "../../components/CaseMeta.astro";
 import Media from "../../components/Media.astro";
 import Gallery from "../../components/Gallery.astro";
 import { getProjects, vtName } from "../../lib/content";
-import { SITE } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
-import { AUTHOR_REF, breadcrumbs, shareImage } from "../../lib/seo";
+import { AUTHOR_REF, breadcrumbs } from "../../lib/seo";
+import { ogImageUrl } from "../../lib/ogTargets";
 import { markHtml, plain } from "../../lib/mark";
 
 export async function getStaticPaths() {
@@ -19,14 +19,13 @@ export async function getStaticPaths() {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
-const { title, summary, company, role, period, skills, links, gallery, galleryCaption, cover, coverAlt, confidential, coverKind } =
+const { title, summary, company, role, period, skills, links, gallery, galleryCaption } =
   entry.data;
 const { Content } = await render(entry);
 const minutes = readingMinutes(entry.body);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const showCover = cover && !(confidential && coverKind !== "illustration");
-const ogImage = showCover ? await shareImage(cover) : undefined;
+const ogImage = await ogImageUrl(Astro.url.pathname);
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -36,7 +35,7 @@ const jsonLd = [
     author: AUTHOR_REF,
     about: company,
     keywords: skills.join(", "),
-    ...(ogImage ? { image: new URL(ogImage, SITE.url).href } : {}),
+    ...(ogImage ? { image: ogImage } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   },
   breadcrumbs([
@@ -46,7 +45,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes}>
+<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} readMinutes={minutes}>
   <PageHead title={title} band="cobalt" vt={vtName("projects", entry.id)} progress>
     <p class="mt-md max-w-prose text-lg" set:html={markHtml(summary, { band: true })} />
     <p class="label mt-sm">{minutes} min read</p>

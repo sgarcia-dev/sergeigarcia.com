@@ -1,0 +1,29 @@
+---
+/**
+ * Text with ==highlight== runs. With marks on, a highlighted run gets the design's highlight,
+ * set through --mk-bg, --mk-ink, --mk-size and --mk-pos on a parent. With marks off, it is plain
+ * text, so a design that does not draw highlights still reads right.
+ */
+import { segments } from "../../lib/social";
+
+interface Props {
+  text: string;
+  marks?: boolean;
+}
+const { text, marks = true } = Astro.props;
+const parts = segments(text);
+---
+
+{parts.map((p) => (p.mark && marks ? <span class="mk">{p.text}</span> : p.text))}
+
+<style>
+  .mk {
+    --pad: 0.12em;
+    padding-inline: var(--pad);
+    margin-inline: calc(var(--pad) * -0.45);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background: linear-gradient(var(--mk-bg, #ffd400), var(--mk-bg, #ffd400)) var(--mk-pos, 0 0) / var(--mk-size, 100% 100%) no-repeat;
+    color: var(--mk-ink, inherit);
+  }
+</style>

@@ -12,7 +12,8 @@ import TableOfContents from "../../components/TableOfContents.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE, WRITING_BAND } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
-import { AUTHOR_REF, shareImage } from "../../lib/seo";
+import { AUTHOR_REF } from "../../lib/seo";
+import { ogImageUrl } from "../../lib/ogTargets";
 import { markHtml, plain } from "../../lib/mark";
 
 export async function getStaticPaths() {
@@ -29,7 +30,7 @@ const minutes = readingMinutes(entry.body);
 const tocHeadings = cover ? [{ depth: 2, slug: "introduction", text: "Introduction" }, ...headings] : headings;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = cover ? await shareImage(cover) : undefined;
+const ogImage = await ogImageUrl(Astro.url.pathname);
 const jsonLd = [
   {
     "@context": "https://schema.org",
@@ -39,7 +40,7 @@ const jsonLd = [
     datePublished: pubDate.toISOString(),
     dateModified: (updatedDate ?? pubDate).toISOString(),
     author: AUTHOR_REF,
-    ...(ogImage ? { image: new URL(ogImage, SITE.url).href } : {}),
+    ...(ogImage ? { image: ogImage } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   },
   {
@@ -54,7 +55,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes} preloadBody>
+<Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} readMinutes={minutes} preloadBody>
   <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size="post" progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>

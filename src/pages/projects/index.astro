@@ -3,14 +3,12 @@ import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import ProjectRow from "../../components/ProjectRow.astro";
 import { getProjects } from "../../lib/content";
+import { PAGE_META } from "../../lib/pageMeta";
 
 const projects = await getProjects();
 ---
 
-<Base
-  title="Projects"
-  description="Case studies from Sergei Garcia: tools, products and systems he designed and built."
->
+<Base title={PAGE_META.projects.title} description={PAGE_META.projects.description}>
   <PageHead title="Projects" band="cobalt">
     <p class="mt-md max-w-prose text-lg">
       Things I designed and built, with the problem, my part and what shipped.

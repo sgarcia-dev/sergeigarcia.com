@@ -1,6 +1,10 @@
 ---
 title: "The operating manual behind all my AI work"
 summary: "A guided tour of the folder of plain-text rules, memory and procedures that every AI tool I use reads first, and how it runs my engineering, research and planning."
+ogTitle: "The ==operating manual== behind all my AI work"
+ogTitleShort: "The ==operating manual== behind my AI work"
+ogSummary: "A guided tour of the ==folder of plain-text rules, memory and procedures== that every AI tool I use reads first."
+ogSummaryShort: "One ==folder of plain text files== that every AI tool I use reads before it does anything."
 pubDate: 2026-10-12
 skills: ["AI agents", "Spec-driven development", "Git", "Markdown", "Claude Code", "Codex", "OpenCode", "Gemini"]
 cover: "../../assets/posts/agents-workspace/cover.jpg"

@@ -1,0 +1,119 @@
+---
+/**
+ * A-1 Black poster and its three TL;DR variants. Black with the site's hatch, a yellow bar on the
+ * left edge, the full title in the middle square with yellow highlighter blocks, avatar and name,
+ * and the cover with a yellow hard shadow.
+ *   base  title on top, avatar column bottom left, big cover bottom right.
+ *   t1    long TL;DR box under the title, avatar row under it, cover tucked under the box corner.
+ *   t2    short TL;DR box on the left, cover to the right of it, avatar row under the box.
+ *   t3    short TL;DR as a tilted card laid over the lower left corner of the cover.
+ * Title, TL;DR and name always sit in the middle square (x 285 to 915). The cover runs off the
+ * right or bottom edge, so a square crop shows part of it.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgCover from "./OgCover.astro";
+import OgTldr from "./OgTldr.astro";
+import { chooseTitle, fitSize, plain, TITLE_SPECS, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+  variant?: "base" | "t1" | "t2" | "t3";
+}
+const { s, design, variant = "base" } = Astro.props;
+const t = chooseTitle(s, TITLE_SPECS[design]);
+const tl = (text: string, w: number, h: number, max: number) => fitSize(text, { w, h }, { max, min: 20, lh: 1.28, cw: 0.54 });
+const t1 = tl(s.summary, 536, 150, 40);
+const t2 = tl(s.summaryShort, 268, 150, 34);
+const t3 = tl(s.summaryShort, 268, 124, 32);
+const cover = { borderColor: "#ffffff", shadowColor: "#ffd400" };
+const idColors = "--id-ink:#fff;--id-site:#ffd400;--id-ring:#ffd400";
+---
+
+<OgFrame label={`Black poster design, 1200 by 630, ${plain(t.text)}`} design={design} sample={s.id} bg="#0a0a0a">
+  <span class="tex tex-hatch-k"></span>
+  <span class="bar"></span>
+  <div class={`head h-${variant}`}><OgTitle text={t.text} size={t.size} lh={1} variant={t.variant} /></div>
+
+  {
+    variant === "base" && (
+      <>
+        <div class="who" style={`left:300px;top:350px;width:236px;${idColors}`}><OgIdentity avatar={128} ring={5} name={30} site={18} layout="stack" /></div>
+        {s.cover && <OgCover src={s.cover} w={572} left={548} top={322} rot={-2} border={6} shadow={12} {...cover} />}
+      </>
+    )
+  }
+  {
+    variant === "t1" && (
+      <>
+        <div class="box" style="left:300px;top:278px;width:596px"><OgTldr text={s.summary} size={t1} /></div>
+        <div class="who" style={`left:300px;top:518px;${idColors}`}><OgIdentity avatar={76} ring={4} name={32} site={20} /></div>
+        {s.cover && <OgCover src={s.cover} w={580} left={612} top={454} rot={-3} border={6} shadow={12} {...cover} />}
+      </>
+    )
+  }
+  {
+    variant === "t2" && (
+      <>
+        <div class="box" style="left:300px;top:292px;width:330px"><OgTldr text={s.summaryShort} size={t2} /></div>
+        <div class="who" style={`left:300px;top:528px;${idColors}`}><OgIdentity avatar={64} ring={4} name={30} site={18} /></div>
+        {s.cover && <OgCover src={s.cover} w={520} left={650} top={300} rot={-2} border={6} shadow={12} {...cover} />}
+      </>
+    )
+  }
+  {
+    variant === "t3" && (
+      <>
+        <div class="who" style={`left:300px;top:330px;width:226px;${idColors}`}><OgIdentity avatar={112} ring={5} name={28} site={17} layout="stack" /></div>
+        {s.cover && <OgCover src={s.cover} w={540} left={590} top={296} rot={-2} border={6} shadow={12} {...cover} />}
+        <div class="box tilt" style="left:546px;top:438px;width:340px"><OgTldr text={s.summaryShort} size={t3} /></div>
+      </>
+    )
+  }
+</OgFrame>
+
+<style>
+  .bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: #ffd400;
+  }
+  .head {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+  .h-base {
+    top: 44px;
+    height: 268px;
+  }
+  .h-t1,
+  .h-t2 {
+    top: 26px;
+    height: 224px;
+  }
+  .h-t3 {
+    top: 30px;
+    height: 252px;
+  }
+  .who {
+    position: absolute;
+  }
+  .box {
+    position: absolute;
+    z-index: 4;
+  }
+  .tilt {
+    transform: rotate(3deg);
+  }
+</style>

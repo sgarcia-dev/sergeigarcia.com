@@ -4,15 +4,13 @@ import PageHead from "../../components/PageHead.astro";
 import PostRow from "../../components/PostRow.astro";
 import { getPosts, getAllPosts } from "../../lib/content";
 import { WRITING_BAND } from "../../lib/site";
+import { PAGE_META } from "../../lib/pageMeta";
 
 const posts = await getPosts();
 const drafts = posts.length === 0 ? await getAllPosts() : [];
 ---
 
-<Base
-  title="Writing"
-  description="Notes from Sergei Garcia on building software, working with AI coding agents and shipping front ends."
->
+<Base title={PAGE_META.writing.title} description={PAGE_META.writing.description}>
   <PageHead title="Writing" band={WRITING_BAND}>
     <p class="mt-md max-w-prose text-lg">
       Notes on building software and working with AI coding agents.

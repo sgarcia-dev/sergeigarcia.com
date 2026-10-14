@@ -5,6 +5,7 @@ import Icon from "../components/Icon.astro";
 import { Picture } from "astro:assets";
 import { SITE, ABOUT_BAND } from "../lib/site";
 import { PERSON, breadcrumbs } from "../lib/seo";
+import { PAGE_META } from "../lib/pageMeta";
 import family from "../assets/about/family.jpg";
 
 const jsonLd = [
@@ -19,12 +20,7 @@ const jsonLd = [
 ];
 ---
 
-<Base
-  title="About"
-  description="About Sergei Garcia, a software engineer from Mexico living in Dublin, Ireland. 13+ years building web products, a designer's eye, and a love of teaching."
-  ogType="profile"
-  jsonLd={jsonLd}
->
+<Base title={PAGE_META.about.title} description={PAGE_META.about.description} ogType="profile" jsonLd={jsonLd}>
   <PageHead band={ABOUT_BAND} title="About" />
 
   <div class="shell py-sm lg:py-md">

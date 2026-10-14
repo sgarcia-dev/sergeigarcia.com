@@ -3,14 +3,12 @@ import Base from "../../layouts/Base.astro";
 import PageHead from "../../components/PageHead.astro";
 import WorkRow from "../../components/WorkRow.astro";
 import { getWork } from "../../lib/content";
+import { PAGE_META } from "../../lib/pageMeta";
 
 const work = await getWork();
 ---
 
-<Base
-  title="Work"
-  description="Roles and engagements from Sergei Garcia: what he built, who for, and the tools he used."
->
+<Base title={PAGE_META.work.title} description={PAGE_META.work.description}>
   <PageHead title="Work" band="yellow">
     <p class="mt-md max-w-prose text-lg">
       The roles and engagements I have held as a software engineer, newest first.

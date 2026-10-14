@@ -1,0 +1,34 @@
+---
+/**
+ * The big serif line on an image: Fraunces 900 at the largest optical size, same as the site's
+ * display type. A paragraph, not a heading, because an image must not add headings to the page.
+ */
+import OgMarked from "./OgMarked.astro";
+
+interface Props {
+  /** May carry ==highlight== markers. */
+  text: string;
+  size: number;
+  lh?: number;
+  marks?: boolean;
+  /** data-t value. "title" is what the safe-box check looks for. Null leaves it off (for a decorative copy). */
+  role?: string | null;
+  /** Which title was used: full or short. Shown as data-variant for the lab labels and the test. */
+  variant?: string;
+  class?: string;
+}
+const { text, size, lh = 1, marks = true, role = "title", variant, class: cls } = Astro.props;
+---
+
+<p class:list={["og-title", cls]} data-t={role ?? undefined} data-variant={variant} style={`font-size:${size}px;line-height:${lh}`}><OgMarked text={text} marks={marks} /></p>
+
+<style>
+  .og-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+</style>

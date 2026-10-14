@@ -1,0 +1,191 @@
+---
+/**
+ * H-1 Hero split and its hybrids. hx1 adds the 13+ years sticker from the old cobalt hero, hx2 a static
+ * three-phrase strip (HOME.ticker), hx3 both. With the ticker the tagline label and the
+ * name are a little smaller and the tiny avatar moves to the right of the name.
+ * H-1 Hero split. The homepage hero as an image: a yellow and a cobalt half with the site's dots
+ * and a thick seam exactly in the middle, a giant name that changes color where it crosses the
+ * seam (black on yellow, white on cobalt), a tiny avatar with the Dublin tag, the tagline on a
+ * black label. The name and label sit in the middle 600px, so any crop keeps them.
+ */
+import OgFrame from "./OgFrame.astro";
+import OgTitle from "./OgTitle.astro";
+import OgIdentity from "./OgIdentity.astro";
+import OgMarked from "./OgMarked.astro";
+import { fitSize, plain, HOME, type Sample } from "../../lib/social";
+
+interface Props {
+  s: Sample;
+  design: string;
+  sticker?: boolean;
+  ticker?: boolean;
+}
+const { s, design, sticker = false, ticker = false } = Astro.props;
+const size = ticker ? fitSize(plain(s.title), { w: 600, h: 326 }, { max: 230, lh: 0.92 }) : fitSize(plain(s.title), { w: 600, h: 336 }, { max: 230, lh: 0.92 });
+const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min: 24, lh: 1.2, cw: 0.6 }) : fitSize(s.summaryShort, { w: 556, h: 134 }, { max: 44, min: 24, lh: 1.2, cw: 0.6 });
+---
+
+<OgFrame label={`Hero split design, 1200 by 630, ${plain(s.title)}`} design={design} sample={s.id} bg="#ffd400">
+  <span class="tex tex-dots-y" style="right:600px"></span>
+  <span class="tex tex-dots-c" style="left:600px"></span>
+  <span class="seam"></span>
+  {sticker && <div class:list={["sticker", ticker && "st-t"]} aria-hidden="true"><b>13+</b><i>years</i></div>}
+  <div class:list={["who", ticker && "who-r"]}>
+    <OgIdentity avatar={64} ring={4} />
+    {HOME.location && <span class="chip tag">{HOME.location}</span>}
+  </div>
+  <div class:list={["nm", ticker && "nm-t"]}><OgTitle text={s.title} size={size} lh={0.92} marks={false} /></div>
+  <div class:list={["nm", "ov", ticker && "nm-t"]} aria-hidden="true"><OgTitle text={s.title} size={size} lh={0.92} marks={false} role={null} /></div>
+  <p class:list={["tag-line", ticker && "tag-t"]} data-t="summary" style={`font-size:${tag}px`}><OgMarked text={s.summaryShort} /></p>
+  {
+    ticker && (
+      <div class="ticker" aria-hidden="true">
+        <ul>{HOME.ticker.map((t) => <li><span data-t="ticker">{t}</span></li>)}</ul>
+      </div>
+    )
+  }
+</OgFrame>
+
+<style>
+  .seam {
+    position: absolute;
+    left: 597px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: #0a0a0a;
+    z-index: 1;
+  }
+  .who {
+    position: absolute;
+    left: 300px;
+    top: 24px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tag {
+    font-size: 22px;
+    transform: rotate(4deg);
+    box-shadow: 4px 4px 0 #0a0a0a;
+  }
+  .nm {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 96px;
+    height: 340px;
+    z-index: 2;
+    color: #0a0a0a;
+  }
+  .ov {
+    color: #fff;
+    clip-path: inset(0 0 0 300px);
+  }
+  .tag-line {
+    position: absolute;
+    left: 300px;
+    width: 600px;
+    top: 452px;
+    z-index: 3;
+    margin: 0;
+    padding: 12px 20px 14px;
+    background: #0a0a0a;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+    --mk-bg: #ffd400;
+    --mk-ink: #0a0a0a;
+  }
+  /* Ticker variants: avatar to the right of the name, smaller name and label, ticker strip. */
+  .who-r {
+    left: 800px;
+    top: 36px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .who-r .tag {
+    margin-left: -8px;
+  }
+  .nm-t {
+    top: 70px;
+    height: 332px;
+  }
+  .tag-t {
+    top: 420px;
+  }
+  .ticker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 558px;
+    bottom: 0;
+    z-index: 4;
+    background: #0a0a0a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  /* Static strip: exactly the items in HOME.ticker, centered, with the homepage ticker's square separator. Nothing scrolls and nothing is cut. */
+  .ticker {
+    justify-content: center;
+  }
+  .ticker ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    color: #ffd400;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 24px;
+  }
+  .ticker li + li::before {
+    content: "";
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin: 0 12px;
+    background: #fff;
+    vertical-align: middle;
+  }
+  .sticker {
+    position: absolute;
+    left: 950px;
+    top: 120px;
+    width: 190px;
+    padding: 14px 10px 16px;
+    border: 5px solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    box-shadow: 10px 10px 0 #0a0a0a;
+    transform: rotate(7deg);
+    text-align: center;
+    z-index: 2;
+  }
+  .st-t {
+    left: 988px;
+    top: 150px;
+  }
+  .sticker b {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "opsz" 144;
+    font-size: 84px;
+    line-height: 0.95;
+  }
+  .sticker i {
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 26px;
+  }
+</style>

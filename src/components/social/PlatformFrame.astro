@@ -1,0 +1,401 @@
+---
+/**
+ * One social image shown the way a platform would show it: light imitation of the card (image,
+ * title, domain), with the 1200x630 art scaled and center-cropped into the platform's image slot.
+ * The scaling is a CSS transform computed in src/lib/social.ts (placeStyle). Colors are fixed.
+ */
+import OgImage from "./OgImage.astro";
+import { placeStyle, type Frame, type Sample } from "../../lib/social";
+
+interface Props {
+  frame: Frame;
+  design: string;
+  sample: Sample;
+}
+const { frame, design, sample } = Astro.props;
+const domain = "sergeigarcia.com";
+const place = placeStyle(frame.img);
+const slot = `width:${frame.img.w}px;height:${frame.img.h}px;${place}`;
+---
+
+<figure class="pf-fig" style={`width:${frame.w}px`}>
+  <div class={`pf pf-${frame.kind}`} style={`width:${frame.w}px`}>
+    <div class="pf-img" style={slot} aria-hidden="true">
+      <div class="pf-art"><OgImage design={design} sample={sample} /></div>
+      {frame.kind === "x-large" && <span class="pf-xtitle">{sample.pageTitle.replace(" | Sergei Garcia", "")}</span>}
+    </div>
+    {
+      frame.kind === "x-large" ? (
+        <p class="pf-from">From {domain}</p>
+      ) : frame.kind === "linkedin" ? (
+        <div class="pf-text">
+          <p class="pf-title">{sample.pageTitle}</p>
+          <p class="pf-domain">{domain}</p>
+        </div>
+      ) : frame.kind === "facebook" ? (
+        <div class="pf-text">
+          <p class="pf-domain">{domain}</p>
+          <p class="pf-title">{sample.pageTitle}</p>
+          <p class="pf-desc">{sample.description}</p>
+        </div>
+      ) : frame.kind === "slack" ? (
+        <div class="pf-text">
+          <p class="pf-site">Sergei Garcia</p>
+          <p class="pf-title">{sample.pageTitle}</p>
+          <p class="pf-desc">{sample.description}</p>
+        </div>
+      ) : frame.kind === "discord" ? (
+        <div class="pf-text">
+          <p class="pf-site">Sergei Garcia</p>
+          <p class="pf-title">{sample.pageTitle}</p>
+          <p class="pf-desc">{sample.description}</p>
+        </div>
+      ) : frame.kind === "imessage" ? (
+        <div class="pf-text">
+          <p class="pf-title">{sample.pageTitle}</p>
+          <p class="pf-domain">{domain}</p>
+        </div>
+      ) : (
+        <div class="pf-text">
+          <p class="pf-domain">{domain}</p>
+          <p class="pf-title">{sample.pageTitle}</p>
+          {frame.kind !== "whatsapp" && <p class="pf-desc">{sample.description}</p>}
+        </div>
+      )
+    }
+  </div>
+  <figcaption class="pf-cap">
+    <strong>{frame.name}</strong>
+    <span>{frame.img.w}x{frame.img.h} image. {frame.note}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .pf-fig {
+    margin: 0;
+    flex: none;
+    max-width: 100%;
+  }
+  .pf-cap {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--text-xs);
+    line-height: 1.35;
+  }
+  .pf-cap strong {
+    font-family: var(--font-sans);
+  }
+  .pf {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .pf p {
+    margin: 0;
+  }
+  .pf-slack,
+  .pf-discord,
+  .pf-whatsapp {
+    box-sizing: border-box;
+  }
+  /* The slot crops; the art inside is the full 1200x630 moved and scaled. */
+  .pf-img {
+    position: relative;
+    flex: none;
+    overflow: hidden;
+    background: #ddd;
+  }
+  .pf-art {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1200px;
+    height: 630px;
+    transform: translate(var(--tx), var(--ty)) scale(var(--s));
+    transform-origin: 0 0;
+  }
+  .pf-title,
+  .pf-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pf-title {
+    -webkit-line-clamp: 2;
+  }
+  .pf-desc {
+    -webkit-line-clamp: 2;
+  }
+  .pf-domain,
+  .pf-site {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* LinkedIn: image on top, white text block, light border. */
+  .pf-linkedin {
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #c8c8c8;
+    border-radius: 2px;
+    color: #000;
+  }
+  .pf-linkedin .pf-text {
+    padding: 8px 12px 12px;
+    background: #edf3f8;
+  }
+  .pf-linkedin .pf-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+  }
+  .pf-linkedin .pf-domain {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #4a4a4a;
+  }
+
+  /* X large: rounded image, title chip on the image, "From domain" line under. Fixed total height. */
+  .pf-x-large {
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #cfd9de;
+    border-radius: 16px;
+    color: #0f1419;
+  }
+  .pf-xtitle {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    max-width: 80%;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.78);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pf-from {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #536471;
+  }
+
+  /* X summary: square thumb on the left, text on the right. */
+  .pf-x-summary {
+    background: #fff;
+    border: 1px solid #cfd9de;
+    border-radius: 16px;
+    color: #0f1419;
+  }
+  .pf-x-summary .pf-text {
+    min-width: 0;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+  .pf-x-summary .pf-domain {
+    order: -1;
+    font-size: 13px;
+    color: #536471;
+  }
+  .pf-x-summary .pf-title {
+    font-size: 15px;
+  }
+  .pf-x-summary .pf-desc {
+    font-size: 13px;
+    color: #536471;
+  }
+
+  /* Facebook: image on top, grey text bar. */
+  .pf-facebook {
+    flex-direction: column;
+    background: #f0f2f5;
+    border: 1px solid #ced0d4;
+    color: #050505;
+  }
+  .pf-facebook .pf-text {
+    padding: 10px 12px 12px;
+  }
+  .pf-facebook .pf-domain {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #5b5f66;
+  }
+  .pf-facebook .pf-title {
+    margin-top: 2px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .pf-facebook .pf-desc {
+    margin-top: 2px;
+    font-size: 14px;
+    color: #5b5f66;
+    -webkit-line-clamp: 1;
+  }
+
+  /* Slack: left bar, site, blue title, description, image under. */
+  .pf-slack {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 0 0 14px;
+    border-left: 4px solid #ddd;
+    background: #fff;
+    color: #1d1c1d;
+    font-size: 15px;
+  }
+  .pf-slack .pf-text {
+    order: -1;
+  }
+  .pf-slack .pf-img {
+    border-radius: 8px;
+    margin: 4px 0 2px;
+  }
+  .pf-slack .pf-site {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .pf-slack .pf-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0b5394;
+  }
+  .pf-slack .pf-desc {
+    font-size: 15px;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Discord: dark embed with a colored left edge. */
+  .pf-discord {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px 14px;
+    border-left: 4px solid #1f3fd1;
+    border-radius: 4px;
+    background: #2b2d31;
+    color: #dbdee1;
+    font-size: 14px;
+  }
+  .pf-discord .pf-text {
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pf-discord .pf-img {
+    border-radius: 4px;
+  }
+  .pf-discord .pf-site {
+    font-size: 12px;
+    color: #c4c9ce;
+  }
+  .pf-discord .pf-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #5cc0ff;
+  }
+
+  /* iMessage: image on top, grey block under. */
+  .pf-imessage {
+    flex-direction: column;
+    border-radius: 18px;
+    background: #e9e9eb;
+    color: #000;
+  }
+  .pf-imessage .pf-text {
+    padding: 8px 12px 10px;
+  }
+  .pf-imessage .pf-title {
+    font-size: 15px;
+    font-weight: 600;
+    -webkit-line-clamp: 1;
+  }
+  .pf-imessage .pf-domain {
+    font-size: 13px;
+    color: #4a4a4f;
+  }
+
+  /* WhatsApp: green bubble holding a small card with a square thumb. */
+  .pf-whatsapp {
+    padding: 6px;
+    border-radius: 10px 10px 2px 10px;
+    background: #d9fdd3;
+    color: #111b21;
+  }
+  .pf-whatsapp::before {
+    content: "";
+    position: absolute;
+    inset: 6px 6px auto 6px;
+    height: 88px;
+    border-radius: 6px;
+    background: #c6f0bf;
+    z-index: 0;
+  }
+  .pf-whatsapp .pf-img {
+    z-index: 1;
+    border-radius: 6px 0 0 6px;
+  }
+  .pf-whatsapp .pf-text {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    height: 88px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+  .pf-whatsapp .pf-title {
+    font-size: 14px;
+    font-weight: 600;
+    -webkit-line-clamp: 2;
+  }
+  .pf-whatsapp .pf-domain {
+    order: 2;
+    font-size: 12px;
+    color: #3d4a50;
+  }
+
+  /* Mastodon: dark card, 120px square thumb on the left. */
+  .pf-mastodon {
+    border: 1px solid #393f4f;
+    border-radius: 8px;
+    background: #282c37;
+    color: #d9e1e8;
+  }
+  .pf-mastodon .pf-text {
+    min-width: 0;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+  .pf-mastodon .pf-domain {
+    order: -1;
+    font-size: 12px;
+    color: #a9b6c8;
+  }
+  .pf-mastodon .pf-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .pf-mastodon .pf-desc {
+    font-size: 13px;
+    color: #c4cedb;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+/**
+ * Draws ONE real page's social image at exactly 1200x630 with nothing around it. It is the source
+ * for `npm run og` (scripts/og.mjs), which screenshots every page here and saves the PNGs to
+ * public/og/. Which pages exist, which design each one uses and the copy all come from
+ * src/lib/ogTargets.ts, so there is no second list to keep in sync.
+ * Public but not linked, noindex, and left out of the sitemap (astro.config.mjs). The lab page
+ * /lab/social/ is where designs are compared; this route is only the plumbing that draws real pages.
+ */
+import "../../styles/global.css";
+import OgImage from "../../components/social/OgImage.astro";
+import { getOgTargets } from "../../lib/ogTargets";
+
+export async function getStaticPaths() {
+  const targets = await getOgTargets();
+  return targets.map((t) => ({ params: { key: t.key }, props: { target: t } }));
+}
+
+const { target } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-ready data-key={target.key}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1200" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Social image: {target.key}</title>
+  </head>
+  <body>
+    <OgImage design={target.design} sample={target.sample} />
+  </body>
+</html>
+
+<style is:global>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+</style>

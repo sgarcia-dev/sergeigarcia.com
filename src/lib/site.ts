@@ -16,6 +16,8 @@ export const SITE = {
   url: "https://sergeigarcia.com",
   email: "hello@sergeigarcia.com",
   location: "Dublin, Ireland",
+  /** Short place tag on the social share images (see src/lib/social.ts). Set it to "" to remove the tag from every image. */
+  locationTag: "Dublin, IE",
   jobTitle: "Software Engineer",
   ogImage: "/og-default.png",
   availability: "looking" as Availability,

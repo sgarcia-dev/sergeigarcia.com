@@ -1,0 +1,55 @@
+---
+/**
+ * The TL;DR box from the article page, drawn for an image: thick border, hard shadow, a yellow
+ * label sticking out of the top edge. Positioned by its parent. Highlights are a pale swipe.
+ */
+import OgMarked from "./OgMarked.astro";
+
+interface Props {
+  text: string;
+  size: number;
+  label?: string;
+}
+const { text, size, label = "TL;DR" } = Astro.props;
+---
+
+<div class="tl">
+  <span class="tl-label" aria-hidden="true">{label}</span>
+  <p class="tl-text" data-t="summary" style={`font-size:${size}px`}><OgMarked text={text} /></p>
+</div>
+
+<style>
+  .tl {
+    position: relative;
+    padding: 30px 26px 22px;
+    border: 5px solid #0a0a0a;
+    box-shadow: 10px 10px 0 #0a0a0a;
+    background: #fff;
+    color: #0a0a0a;
+    --mk-bg: #ffe98a;
+    --mk-ink: #0a0a0a;
+    --mk-size: 100% 62%;
+    --mk-pos: 0 80%;
+  }
+  .tl-label {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    transform: translateY(-50%);
+    padding: 0 12px;
+    border: 3px solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .tl-text {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    line-height: 1.28;
+    text-wrap: pretty;
+  }
+</style>
