@@ -6,6 +6,7 @@
  * The drawings are in src/components/social/.
  */
 import type { ImageMetadata } from "astro";
+import { SITE } from "./site";
 
 export const OG_W = 1200;
 export const OG_H = 630;
@@ -34,6 +35,8 @@ export interface Design {
   safeNote: string;
   /** Which copy the design draws, so the page can say it. */
   uses: string;
+  /** The owner's pick for this kind of page. The others stay as alternates. */
+  chosen?: boolean;
 }
 
 export const DESIGNS: Design[] = [
@@ -48,6 +51,7 @@ export const DESIGNS: Design[] = [
   },
   {
     id: "a1t1",
+    chosen: true,
     name: "A-1 T1 TL;DR under the title",
     kind: "post",
     note: "A-1 with the long TL;DR box right under the title. Avatar and name on a row below it, the cover tucked under the box corner at the bottom right.",
@@ -102,6 +106,7 @@ export const DESIGNS: Design[] = [
   },
   {
     id: "hx3",
+    chosen: true,
     name: "H-X3 Hero split + sticker + ticker",
     kind: "home",
     note: "Both: the 13+ years sticker and the ticker strip on H-1.",
@@ -111,6 +116,7 @@ export const DESIGNS: Design[] = [
   },
   {
     id: "p1",
+    chosen: true,
     name: "P-1 Page band",
     kind: "page",
     note: "One cheap design for Projects, Writing and About: cobalt hatch, the page name in a yellow block, the page description in a TL;DR style box.",
@@ -119,6 +125,9 @@ export const DESIGNS: Design[] = [
     uses: "page title, page description",
   },
 ];
+
+/** The design each kind of page opens on in the lab, and its first sample. */
+export const DEFAULT_DESIGN: Record<Kind, string> = { post: "a1t1", home: "hx3", page: "p1" };
 
 export interface Sample {
   /** Post slug, or home, projects, writing, about. Also the `s` value in the raw view. */
@@ -156,7 +165,8 @@ export const HOME = {
   name: "Sergei Garcia",
   tagline: "Designer by eye, teacher by habit, ==engineer by trade.==",
   role: "Software Engineer · 13+ years",
-  location: "Dublin, IE",
+  /** The tag next to the tiny avatar. One value, in SITE.locationTag; empty hides it. */
+  location: SITE.locationTag as string,
   ticker: ["Developer tools", "Accessibility", "Web performance", "AI agent workflows", "Writer", "UX and motion", "Mentor", "Speaker", "Full stack"],
   title: "Sergei Garcia · Designer by eye, teacher by habit, engineer by trade",
   description: "Sergei Garcia, software engineer. Designer by eye, teacher by habit, engineer by trade: fast, accessible websites, developer tools and AI workflows.",

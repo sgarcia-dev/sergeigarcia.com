@@ -32,7 +32,7 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
   {sticker && <div class:list={["sticker", ticker && "st-t"]} aria-hidden="true"><b>13+</b><i>years</i></div>}
   <div class:list={["who", ticker && "who-r"]}>
     <OgIdentity avatar={64} ring={4} />
-    <span class="chip tag">{HOME.location}</span>
+    {HOME.location && <span class="chip tag">{HOME.location}</span>}
   </div>
   <div class:list={["nm", ticker && "nm-t"]}><OgTitle text={s.title} size={size} lh={0.92} marks={false} /></div>
   <div class:list={["nm", "ov", ticker && "nm-t"]} aria-hidden="true"><OgTitle text={s.title} size={size} lh={0.92} marks={false} role={null} /></div>

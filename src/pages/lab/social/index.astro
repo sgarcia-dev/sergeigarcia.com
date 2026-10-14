@@ -1,28 +1,45 @@
 ---
 /**
- * Unlisted lab page: five designs for the social link-preview image (og:image, 1200x630), each
- * shown the way it would appear on each platform, for three sample pages. It only compares
- * designs. Nothing here is wired into og:image yet.
+ * Unlisted lab page for the social link-preview image (og:image, 1200x630): the designs, each
+ * shown the way it would appear on each platform. It shows ONE design for ONE sample at a time,
+ * picked by the address. Nothing here is wired into og:image yet.
  * Public but not linked from anywhere, noindex, and left out of the sitemap (astro.config.mjs).
  * The data is in src/lib/social.ts, the drawings in src/components/social/.
  *
- * Query switches (read by the inline script below):
- *   ?safe                      draws the crop lines: pink = square thumbnail, blue = 2:1 crop.
- *   ?raw&d=<id>&s=<sample>     one image at native 1200x630 with no page around it (for PNG export).
- *                              d is s1 to s5, s is post, home or page. Example: ?raw&d=s2&s=post
+ * Query switches (read by the inline script in the head, which sets attributes on <html>):
+ *   ?d=<design id>     which design to show. a1t1 (default for articles), a1, a1t2, a1t3,
+ *                      hx3 (default for the homepage), h1, hx1, hx2, p1 (pages).
+ *   ?s=<sample id>     which page to draw it for: a post slug, home, projects, writing or about.
+ *                      Must fit the design's kind, else the first sample of that kind is used.
+ *   ?safe              draws the crop lines: pink = square thumbnail, blue = 2:1 crop.
+ *   ?raw&d=<id>&s=<id> one image at native 1200x630 with no page around it (for PNG export).
+ *                      Example: ?raw&d=a1t1&s=ai-raises-the-floor
+ * Every design and sample is rendered in the HTML and the ones not picked are hidden with CSS
+ * (rules built below), so switching is just a link and a reload.
  */
 import Base from "../../../layouts/Base.astro";
 import OgImage from "../../../components/social/OgImage.astro";
 import PlatformFrame from "../../../components/social/PlatformFrame.astro";
-import { chooseTitle, DESIGNS, FRAMES, SAFE, TITLE_SPECS, plain } from "../../../lib/social";
+import { chooseTitle, DEFAULT_DESIGN, DESIGNS, FRAMES, SAFE, TITLE_SPECS, plain } from "../../../lib/social";
 import { getSamples } from "../../../lib/socialSamples";
 
 const SAMPLES = await getSamples();
-const GROUPS = [
-  { kind: "post", title: "Articles", blurb: "Copy comes from each post (see the og fields in src/content.config.ts). Both posts are shown for every design." },
-  { kind: "home", title: "Homepage", blurb: "Built to look like the homepage hero: giant name, yellow and cobalt halves, the tagline." },
-  { kind: "page", title: "Generic pages", blurb: "One shared design for Projects, Writing and About, from the page title and description." },
+const KINDS = [
+  { kind: "post", title: "Articles" },
+  { kind: "home", title: "Homepage" },
+  { kind: "page", title: "Generic pages" },
 ] as const;
+const designKinds = Object.fromEntries(DESIGNS.map((d) => [d.id, d.kind]));
+const sampleKinds = Object.fromEntries(SAMPLES.map((s) => [s.id, s.kind]));
+const firstSample = Object.fromEntries(KINDS.map((k) => [k.kind, SAMPLES.find((s) => s.kind === k.kind)!.id]));
+const key = (d: string, s: string) => `${d}--${s}`;
+// CSS that hides everything but the picked design, sample and sample switcher.
+const hide = [
+  ...DESIGNS.map((d) => `html:not([data-d="${d.id}"]) #sec-${d.id}{display:none}`),
+  ...DESIGNS.flatMap((d) => SAMPLES.filter((s) => s.kind === d.kind).map((s) => `html:not([data-key="${key(d.id, s.id)}"]) [data-key="${key(d.id, s.id)}"]{display:none}`)),
+  ...KINDS.map((k) => `html:not([data-kind="${k.kind}"]) .sw-s[data-kind="${k.kind}"]{display:none}`),
+].join("\n");
+const pick = { designKinds, sampleKinds, defaults: DEFAULT_DESIGN, first: firstSample };
 ---
 
 <Base
@@ -30,11 +47,21 @@ const GROUPS = [
   description="Unlisted lab page: designs for the social link-preview image on sergeigarcia.com, shown on each platform."
   noindex
 >
-  <script is:inline>
-    // Runs before the content is parsed, so there is no flash of the full page in raw view.
+  <style is:inline set:html={hide}></style>
+  <script is:inline define:vars={{ pick }}>
+    // Runs before the content is parsed, so there is no flash of the wrong design.
     (function () {
       var q = new URLSearchParams(location.search);
       var root = document.documentElement;
+      var d = q.get("d");
+      if (!pick.designKinds[d]) d = pick.defaults.post;
+      var kind = pick.designKinds[d];
+      var s = q.get("s");
+      if (!s || pick.sampleKinds[s] !== kind) s = pick.first[kind];
+      root.setAttribute("data-d", d);
+      root.setAttribute("data-s", s);
+      root.setAttribute("data-kind", kind);
+      root.setAttribute("data-key", d + "--" + s);
       if (q.has("safe")) root.setAttribute("data-safe", "");
       if (q.has("raw")) root.setAttribute("data-raw", "");
     })();
@@ -44,87 +71,136 @@ const GROUPS = [
     <div class="shell py-lg">
       <h1 class="font-display text-h2 tracking-tight">Social image lab</h1>
       <p class="mt-md max-w-prose text-lg">
-        Round 2. Designs for the image that shows when a page is shared, each 1200x630, shown below as it would look on
-        LinkedIn, X, Facebook, Slack, Discord, iMessage, WhatsApp and Mastodon. Articles, the homepage and generic pages
-        each get their own designs.
+        The image that shows when a page is shared, 1200x630, drawn as it would look on LinkedIn, X, Facebook, Slack,
+        Discord, iMessage, WhatsApp and Mastodon. The three picks are marked <span class="chosen">Chosen</span>; the rest
+        are alternates. Nothing here is live yet.
       </p>
+      <nav class="switch" aria-label="Choose a design and a page">
+        {
+          KINDS.map((k) => (
+            <div class="sw-group">
+              <p class="sw-label">{k.title}</p>
+              <ul role="list" class="sw-row">
+                {DESIGNS.filter((d) => d.kind === k.kind).map((d) => (
+                  <li>
+                    <a class="hit sw-d" data-d={d.id} data-kind={d.kind} href={`?d=${d.id}`}>
+                      {d.name}
+                      {d.chosen && <span class="chosen">Chosen</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        {
+          KINDS.map((k) => (
+            <div class="sw-group sw-s" data-kind={k.kind}>
+              <p class="sw-label">Page to draw</p>
+              <ul role="list" class="sw-row">
+                {SAMPLES.filter((s) => s.kind === k.kind).map((s) => (
+                  <li><a class="hit sw-sample" data-s={s.id} href={`?s=${s.id}`}>{s.label}</a></li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        <div class="sw-group">
+          <p class="sw-label">View</p>
+          <ul role="list" class="sw-row">
+            <li><a class="hit" data-sw="safe" href="?safe">Crop lines</a></li>
+            <li><a class="hit" data-sw="raw" href="?raw">Native size only</a></li>
+          </ul>
+        </div>
+      </nav>
       <p class="mt-sm max-w-prose">
-        Nothing here is live yet. Add <code>?safe</code> to the address to draw the crop lines: pink is the square
-        thumbnail (x {SAFE.x} to {SAFE.x + SAFE.w}), blue is the 2:1 crop (y {SAFE.y} to {SAFE.y + SAFE.h}). Add
-        <code>?raw&amp;d=a1t1&amp;s=ai-raises-the-floor</code> for one image at full size.
+        Crop lines: pink is the square thumbnail (x {SAFE.x} to {SAFE.x + SAFE.w}), blue is the 2:1 crop (y {SAFE.y} to {SAFE.y + SAFE.h}).
+        The rule: text is never cropped, the cover image may be.
       </p>
-      <ul role="list" class="mt-md flex flex-wrap gap-sm">
-        {DESIGNS.map((d) => <li><a class="hit" href={`#${d.id}`}>{d.name}</a></li>)}
-      </ul>
     </div>
   </section>
 
   {
-    GROUPS.map((g) => (
-      <Fragment>
-      <section class="edge-b group-head" aria-labelledby={`g-${g.kind}`}>
-        <div class="shell py-md">
-          <h2 id={`g-${g.kind}`} class="font-display text-h2 tracking-tight">{g.title}</h2>
-          <p class="mt-xs max-w-prose">{g.blurb}</p>
+    DESIGNS.map((d) => (
+      <section id={`sec-${d.id}`} class="edge-b" aria-labelledby={`${d.id}-h`}>
+        <div class="shell py-lg">
+          <h2 id={`${d.id}-h`} class="font-title text-xl">
+            {d.name}
+            {d.chosen && <span class="chosen">Chosen</span>}
+          </h2>
+          <p class="mt-xs max-w-prose">{d.note}</p>
+          <p class="mt-xs max-w-prose">
+            <span class="badge" data-safe-status={d.safe}>{d.safe === "pass" ? "Text inside the square" : "Text inside, art may crop"}</span>{" "}
+            {d.safeNote} Draws: {d.uses}.
+          </p>
+          {SAMPLES.filter((s) => s.kind === d.kind).map((s) => (
+            <div class="sample" data-key={key(d.id, s.id)}>
+              <h3 class="sample-h">{s.label}</h3>
+              <div class="sample-row">
+                <figure class="nat-fig">
+                  <div class="nat" data-native={`${d.id}-${s.id}`}>
+                    <div class="nat-scale">
+                      <OgImage design={d.id} sample={s} />
+                    </div>
+                  </div>
+                  <figcaption class="nat-cap">
+                    <strong>{d.name} full image</strong>
+                    {TITLE_SPECS[d.id] && (() => {
+                      const t = chooseTitle(s, TITLE_SPECS[d.id]);
+                      return <span class="title-info">Title used: {t.variant}, {t.size}px. "{plain(t.text)}"</span>;
+                    })()}
+                    <span>1200x630, shown at 50%.</span>
+                  </figcaption>
+                </figure>
+                {FRAMES.map((f) => (
+                  <PlatformFrame frame={f} design={d.id} sample={s} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
-      {DESIGNS.filter((d) => d.kind === g.kind).map((d) => (
-        <section id={d.id} class="edge-b scroll-mt" aria-labelledby={`${d.id}-h`}>
-          <div class="shell py-lg">
-            <h3 id={`${d.id}-h`} class="font-title text-xl">{d.name}</h3>
-            <p class="mt-xs max-w-prose">{d.note}</p>
-            <p class="mt-xs max-w-prose">
-              <span class="badge" data-safe-status={d.safe}>{d.safe === "pass" ? "Safe box: pass" : "Safe box: degrades"}</span>{" "}
-              {d.safeNote} Draws: {d.uses}.
-            </p>
-            {SAMPLES.filter((s) => s.kind === d.kind).map((s) => (
-              <div class="sample">
-                <h4 class="sample-h">{s.label}</h4>
-                <div class="sample-row">
-                  <figure class="nat-fig">
-                    <div class="nat" data-native={`${d.id}-${s.id}`}>
-                      <div class="nat-scale">
-                        <OgImage design={d.id} sample={s} />
-                      </div>
-                    </div>
-                    <figcaption class="nat-cap">
-                      <strong>{d.name} full image</strong>
-                      {TITLE_SPECS[d.id] && (() => {
-                        const t = chooseTitle(s, TITLE_SPECS[d.id]);
-                        return <span class="title-info">Title used: {t.variant}, {t.size}px. "{plain(t.text)}"</span>;
-                      })()}
-                      <span>
-                        1200x630, shown at 50%. <a href={`?raw&d=${d.id}&s=${s.id}`}>Native size</a>
-                      </span>
-                    </figcaption>
-                  </figure>
-                  {FRAMES.map((f) => (
-                    <PlatformFrame frame={f} design={d.id} sample={s} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-      </Fragment>
     ))
   }
 </Base>
 
 <script>
-  // Raw view: keep only the one image that ?d= and ?s= name, at its native size, and nothing else.
+  const root = document.documentElement;
   const q = new URLSearchParams(location.search);
   if (q.has("raw")) {
-    const d = q.get("d") ?? "s1";
-    const s = q.get("s") ?? "post";
-    const img = document.querySelector<HTMLElement>(`[data-native="${d}-${s}"] .og`);
+    // Raw view: keep only the one image that d and s name, at its native size, and nothing else.
+    const img = document.querySelector<HTMLElement>(`[data-native="${root.dataset.d}-${root.dataset.s}"] .og`);
     if (img) {
       document.body.replaceChildren(img);
-      document.documentElement.setAttribute("data-ready", "");
+      root.setAttribute("data-ready", "");
     } else {
-      document.documentElement.setAttribute("data-raw-missing", "");
+      root.setAttribute("data-raw-missing", "");
     }
+  } else {
+    // Switcher: links keep the other picks (page to draw, crop lines) and mark the current ones.
+    const d = root.dataset.d!;
+    const s = root.dataset.s!;
+    const kind = root.dataset.kind!;
+    const safe = root.hasAttribute("data-safe");
+    const url = (nd: string, ns: string, extra: { safe?: boolean; raw?: boolean }) => {
+      const p = new URLSearchParams({ d: nd, s: ns });
+      if (extra.safe) p.set("safe", "");
+      if (extra.raw) p.set("raw", "");
+      return `?${p.toString().replace(/=(&|$)/g, "$1")}`;
+    };
+    for (const a of document.querySelectorAll<HTMLAnchorElement>("a.sw-d")) {
+      const nd = a.dataset.d!;
+      a.href = url(nd, a.dataset.kind === kind ? s : "", { safe });
+      if (nd === d) a.setAttribute("aria-current", "page");
+    }
+    for (const a of document.querySelectorAll<HTMLAnchorElement>("a.sw-sample")) {
+      a.href = url(d, a.dataset.s!, { safe });
+      if (a.dataset.s === s) a.setAttribute("aria-current", "page");
+    }
+    const safeLink = document.querySelector<HTMLAnchorElement>('a[data-sw="safe"]')!;
+    safeLink.href = url(d, s, { safe: !safe });
+    safeLink.textContent = safe ? "Crop lines: on (turn off)" : "Crop lines";
+    document.querySelector<HTMLAnchorElement>('a[data-sw="raw"]')!.href = url(d, s, { safe, raw: true });
   }
 </script>
 
@@ -138,8 +214,46 @@ const GROUPS = [
   html[data-raw]:not([data-ready]):not([data-raw-missing]) body {
     visibility: hidden;
   }
-  .scroll-mt {
-    scroll-margin-top: calc(var(--hh, 0px) + 1rem);
+  .switch {
+    margin-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  .sw-label {
+    margin: 0 0 var(--spacing-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .sw-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .switch a[aria-current="page"] {
+    background: #0a0a0a;
+    color: #ffd400;
+  }
+  .chosen {
+    display: inline-block;
+    margin-left: var(--spacing-xs);
+    padding: 0 var(--spacing-xs);
+    border: var(--rule-thin) solid #0a0a0a;
+    background: #1f3fd1;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    vertical-align: middle;
   }
   .badge {
     display: inline-block;

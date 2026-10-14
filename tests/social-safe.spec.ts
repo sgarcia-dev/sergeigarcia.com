@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 // The social image lab (/lab/social/) draws each design at 1200x630. Whatever a platform crops
-// (a center square thumbnail, a 2:1 card), the title, the owner's name and the avatar must stay
-// whole. Each case also reports a rough "fill": the share of the center square (x 285 to 915, full
+// (a center square thumbnail, a 2:1 card), the TEXT (title, TL;DR, tagline, name) must stay whole.
+// Pictures are exempt: the cover art (data-t="art") may be cropped freely. The small avatar is
+// still checked, because it is part of the name line. Each case also reports a rough "fill": the share of the center square (x 285 to 915, full
 // height) covered by the boxes of the title, name, summary, avatar and main art. Low fill means dead
 // space in the part of the image that every crop keeps. Safe box: x 285 to 915 (square crop) and y 15 to 615 (2:1 crop). See SAFE in src/lib/social.ts.
 const POSTS = ["ai-raises-the-floor", "agents-workspace-tour"];
