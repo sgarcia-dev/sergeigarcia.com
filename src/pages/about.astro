@@ -7,11 +7,15 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import PullQuote from "../components/PullQuote.astro";
+import YouTubeEmbed from "../components/YouTubeEmbed.astro";
 import { Picture } from "astro:assets";
 import { SITE, ABOUT_BAND } from "../lib/site";
 import { PERSON, breadcrumbs } from "../lib/seo";
 import { PAGE_META } from "../lib/pageMeta";
 import family from "../assets/about/family.jpg";
+import thumbQueen from "../assets/about/music/Ant1VvQXsJ4.jpg";
+import thumbHolst from "../assets/about/music/3aXsQQ-ueBk.jpg";
+import thumbHome from "../assets/about/music/8GW6sLrK40k.jpg";
 
 const jsonLd = [
   {
@@ -35,6 +39,43 @@ const availability: Record<string, string | null> = {
 };
 const availabilityLead = availability[SITE.availability];
 const trainingWhere = TRAINING_CLIENT || "a consulting firm";
+
+// Favorite music: three songs, each with a click-to-load video (thumbnails are local files in src/assets/about/music).
+const songs = [
+  {
+    id: "Ant1VvQXsJ4",
+    thumb: thumbQueen,
+    videoTitle: "Queen, Who Wants to Live Forever (Live in Budapest, 1986)",
+    tag: "Rock ballad · 1986",
+    title: "Who Wants to Live Forever",
+    artist: "Queen",
+    why: "One of the most beautiful songs I know, and I love it and hate it. It's gorgeous, and it makes me want to cry at how helpless it feels.",
+    fact: "Brian May wrote most of it in the car on the way home, right after watching footage from the film Highlander.",
+    extra: true,
+  },
+  {
+    id: "3aXsQQ-ueBk",
+    thumb: thumbHolst,
+    videoTitle: "Holst, Jupiter, the Bringer of Jollity (NDR Radiophilharmonie, Andrew Manze)",
+    tag: "Classical · 1914",
+    title: "Jupiter, the Bringer of Jollity",
+    artist: "Gustav Holst",
+    why: "My favorite classical piece. I play it while I work, when I need a little quiet time, and on long walks.",
+    fact: "Its slow, broad middle tune later became the hymn \"I Vow to Thee, My Country\".",
+    extra: false,
+  },
+  {
+    id: "8GW6sLrK40k",
+    thumb: thumbHome,
+    videoTitle: "HOME, Resonance",
+    tag: "Synthwave · 2014",
+    title: "Resonance",
+    artist: "HOME",
+    why: "Warm, steady synths that feel like a late night drive. It's my go-to when I need to focus and lose track of time.",
+    fact: "It's track nine on HOME's 2014 album Odyssey, released on the small independent label Midwest Collective.",
+    extra: false,
+  },
+];
 ---
 
 <Base title={PAGE_META.about.title} description={PAGE_META.about.description} ogType="profile" jsonLd={jsonLd}>
@@ -208,28 +249,41 @@ const trainingWhere = TRAINING_CLIENT || "a consulting firm";
   </section>
 
   <section class="edge-t" aria-labelledby="about-off">
-    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
-      <div class="lg:col-span-5">
-        <p class="label">Off the clock</p>
-        <h2 id="about-off" class="sec-title font-display tracking-tight mt-xs">On repeat</h2>
-      </div>
-      <div class="prose lg:col-span-7">
-        <p>
-          Queen's "Who Wants to Live Forever" is one of the most beautiful songs I know, and I love it and hate it. It's
-          beautiful, and it makes me want to cry at how helpless it feels.
-        </p>
-        <p>
-          My favorite classical piece is Holst's "Jupiter, the Bringer of Jollity". I play it while I work, when I need
-          a little meditation time, and on walks. I'm a big André Rieu fan, and seeing him live with my mom was a
-          wonderful experience.
-        </p>
-        <p>For decades it has been Michael Jackson, Queen, Journey and Linkin Park.</p>
-        <p>
-          I love a long drive. My favorite in Mexico is Monterrey to Guadalajara, about 10 hours, and in Ireland my
-          favorite spot so far is the Wicklow Mountains. Also on the list: taking gadgets apart to see how they work,
-          and showing my daughter the world.
-        </p>
-      </div>
+    <div class="shell py-lg lg:py-xl">
+      <p class="label">Off the clock</p>
+      <h2 id="about-off" class="sec-title font-display tracking-tight mt-xs">Favorite music</h2>
+      <p class="mt-sm max-w-prose text-lg">Three songs I keep coming back to. Press play if you want to listen along.</p>
+      <ul role="list" class="songs mt-md">
+        {
+          songs.map((song) => (
+            <li class="song">
+              <YouTubeEmbed id={song.id} title={song.videoTitle} thumb={song.thumb} />
+              <div class="song-body">
+                <p class="label song-tag">{song.tag}</p>
+                <h3 class="song-title font-display tracking-tight">{song.title}</h3>
+                <p class="song-artist">by {song.artist}</p>
+                <p class="song-why">{song.why}</p>
+                <p class="song-fact">
+                  <span class="fact-chip label">Fun fact</span> {song.fact}
+                </p>
+                {song.extra && (
+                  <p class="song-extra">
+                    Also worth a listen:{" "}
+                    <a href="https://www.youtube.com/watch?v=oygIWCseYI0" target="_blank" rel="noopener noreferrer">
+                      Andrea Bocelli singing it with Brian May<span class="new-tab"> (opens in a new tab)</span>
+                    </a>{" "}
+                    in 2024.
+                  </p>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-md max-w-prose text-muted">
+        Also on repeat for decades: Michael Jackson, Journey and Linkin Park. And seeing André Rieu live with my mom is
+        still one of my favorite nights.
+      </p>
     </div>
   </section>
 
@@ -356,6 +410,146 @@ const trainingWhere = TRAINING_CLIENT || "a consulting firm";
     padding: 0 0.25em;
     background: var(--color-black);
     color: var(--color-white);
+  }
+
+  /* Favorite music: three song cards. One column on phones, a video-left card on tablets, three columns on wide
+     screens. Same language as the rest of the page: thick ink border, hard shadow, yellow chip. */
+  .songs {
+    display: grid;
+    gap: var(--spacing-md);
+    padding-right: 8px; /* room for the hard shadow so it never causes sideways scroll */
+    padding-bottom: 8px;
+  }
+  .song {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    background: var(--color-bg);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+  }
+  /* The embed brings its own frame; inside a card the card's frame is enough. */
+  .song :global(.yt) {
+    max-width: none;
+    margin: 0;
+    border: 0;
+    border-bottom: var(--rule-thick) solid var(--edge);
+    box-shadow: none;
+  }
+  /* The ring goes around the whole card, so it stays visible on dark thumbnails in both color schemes. */
+  .song :global(.yt:has(.yt-play:focus-visible)) {
+    outline: none;
+  }
+  .song:has(.yt-play:focus-visible),
+  .song:has(.song-extra a:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 4px;
+  }
+  .song-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+  }
+  .song-tag {
+    color: var(--color-muted);
+  }
+  .song-title {
+    font-size: clamp(1.5rem, 1.2rem + 1.1vw, 1.875rem);
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .song-artist {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    margin-top: calc(var(--spacing-2xs) * -1);
+  }
+  .song-why {
+    margin-top: var(--spacing-2xs);
+  }
+  /* The aside: a yellow chip label, then a smaller line of text. */
+  .song-fact {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+    padding-left: var(--spacing-xs);
+    border-left: var(--rule-thick) solid var(--edge);
+  }
+  .fact-chip {
+    display: inline-block;
+    background: var(--color-yellow);
+    color: var(--color-black);
+    padding: 0 var(--spacing-xs);
+    margin-right: var(--spacing-2xs);
+  }
+  .song-extra {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .new-tab {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (min-width: 48rem) {
+    .songs {
+      gap: var(--spacing-lg);
+    }
+    .song {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    /* The video column grows to the height of the text, and the picture covers it. */
+    .song :global(.yt) {
+      aspect-ratio: auto;
+      min-height: 12rem;
+      border-bottom: 0;
+      border-right: var(--rule-thick) solid var(--edge);
+    }
+    .song :global(.yt-link) {
+      position: absolute;
+      inset: 0;
+    }
+  }
+  @media (min-width: 75rem) {
+    .songs {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--spacing-md);
+    }
+    .song {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+    }
+    .song :global(.yt-link) {
+      position: static;
+    }
+    .song :global(.yt) {
+      aspect-ratio: 16 / 9;
+      min-height: 0;
+      border-right: 0;
+      border-bottom: var(--rule-thick) solid var(--edge);
+    }
+    .song-fact {
+      margin-top: auto;
+    }
+    .song-why {
+      margin-bottom: var(--spacing-xs);
+    }
+  }
+  /* Hover and focus: the card lifts and its shadow grows, the opposite of the buttons pressing in. */
+  @media (prefers-reduced-motion: no-preference) {
+    .song {
+      transition:
+        transform var(--duration-page) var(--ease-out),
+        box-shadow var(--duration-page) var(--ease-out);
+    }
+    .song:hover,
+    .song:has(.yt-play:focus-visible) {
+      transform: translate(-2px, -2px);
+      box-shadow: 9px 9px 0 var(--edge);
+    }
   }
   /* Right now: a black box with a thick edge. Black in light mode, and the chalk edge keeps it visible in dark mode. */
   .now {
