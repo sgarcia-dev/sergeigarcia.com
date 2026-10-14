@@ -1,0 +1,162 @@
+---
+/**
+ * Author card, variant C "Note from the author". A short letter on chalk paper with air-mail
+ * stripes (cobalt and tomato, both site colors) along the top and bottom edge, a signature block
+ * with the round photo, and ruled writing lines behind the message. The paper is the same in light
+ * and dark (like the yellow pull quote), so its text and button colors are fixed black, not theme colors.
+ * Renders nothing when the mode is "off".
+ */
+import AuthorPhoto from "./AuthorPhoto.astro";
+import AuthorActions from "./AuthorActions.astro";
+import { SITE, type Availability } from "../lib/site";
+import { AUTHOR, authorLine } from "../lib/authorCard";
+
+interface Props {
+  mode?: Availability;
+}
+const { mode = SITE.availability } = Astro.props;
+const line = authorLine(mode);
+---
+
+{
+  line && (
+    <aside class="author-card ac-c" aria-label="About the author" data-author-card="C" data-availability={mode}>
+      <div class="ac-c-stripe" aria-hidden="true" />
+      <div class="ac-c-paper">
+        <p class="ac-c-tab">A note from the author</p>
+        <div class="ac-c-lines">
+          <p class="ac-c-line">
+            {line.before}
+            <span class="lv-mark lv-mark--band">{line.mark}</span>
+            {line.after}
+          </p>
+        </div>
+        <div class="ac-c-sign">
+          <AuthorPhoto size="4.5rem" class="ac-c-photo" />
+          <div>
+            <p class="ac-c-signature font-title">{AUTHOR.name}</p>
+            <p class="ac-c-intro">
+              {AUTHOR.role}. {AUTHOR.tagline}
+            </p>
+          </div>
+        </div>
+        <AuthorActions class="ac-c-actions" />
+      </div>
+      <div class="ac-c-stripe" aria-hidden="true" />
+    </aside>
+  )
+}
+
+<style>
+  .ac-c {
+    margin-top: var(--spacing-lg);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-chalk);
+    color: var(--color-black);
+    /* Fixed colors for the buttons and focus ring: this paper is light in dark mode too. */
+    --ac-edge: var(--color-black);
+    --rule-color: var(--color-black);
+    --focus: var(--color-black);
+    --hit-bg: var(--color-white);
+    --hit-ink: var(--color-black);
+    --hit-line: var(--color-black);
+    --hit-hover-bg: var(--color-yellow);
+    --hit-hover-ink: var(--color-black);
+    --primary-bg: var(--color-yellow);
+    --primary-ink: var(--color-black);
+    --primary-hover-bg: var(--color-black);
+    --primary-hover-ink: var(--color-white);
+  }
+  /* Air-mail edge. Decorative only. */
+  .ac-c-stripe {
+    height: 0.75rem;
+    background: repeating-linear-gradient(
+      135deg,
+      var(--color-cobalt) 0 14px,
+      var(--color-chalk) 14px 24px,
+      var(--color-tomato) 24px 38px,
+      var(--color-chalk) 38px 48px
+    );
+    border-block: var(--rule-thin) solid var(--color-black);
+  }
+  .ac-c-stripe:first-child {
+    border-top: 0;
+  }
+  .ac-c-stripe:last-child {
+    border-bottom: 0;
+  }
+  .ac-c-paper {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  .ac-c-tab {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  /* The message sits on faint writing lines. The lines follow the line height, so each text line
+     rests on one; they are decoration and far too light to affect reading. */
+  .ac-c-lines {
+    --ac-lh: 2.25rem;
+    margin-top: var(--spacing-xs);
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--ac-lh) - 1px),
+      rgba(31, 63, 209, 0.22) calc(var(--ac-lh) - 1px) var(--ac-lh)
+    );
+  }
+  .ac-c-line {
+    margin: 0;
+    max-width: 34rem;
+    font-family: var(--font-display);
+    font-variation-settings: "opsz" 36;
+    font-weight: 500;
+    font-size: var(--text-lg);
+    line-height: var(--ac-lh);
+  }
+  .ac-c-sign {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+  /* The photo keeps its size when the text beside it wraps. */
+  .ac-c-sign :global(picture) {
+    flex: none;
+  }
+  /* The highlighter pad in lively.css eats most of the space before a phrase in this tighter serif. */
+  .ac-c-line :global(.lv-mark) {
+    margin-inline: -0.06em;
+    padding-inline: 0.12em;
+  }
+  .ac-c-signature {
+    margin: 0;
+    font-size: var(--text-xl);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .ac-c-intro {
+    margin: var(--spacing-2xs) 0 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    font-family: var(--font-mono);
+  }
+  .ac-c :global(.ac-actions) {
+    margin-top: var(--spacing-md);
+  }
+  @media (min-width: 48rem) {
+    .ac-c-paper {
+      padding: var(--spacing-md);
+    }
+    .ac-c-lines {
+      --ac-lh: 2.5rem;
+    }
+    .ac-c-line {
+      font-size: var(--text-xl);
+    }
+  }
+</style>
