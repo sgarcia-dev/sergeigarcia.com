@@ -6,6 +6,7 @@ import PageHead from "../../components/PageHead.astro";
 import Pills from "../../components/Pills.astro";
 import Thumb from "../../components/Thumb.astro";
 import ShareLinks from "../../components/ShareLinks.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
 import { getPosts, formatDate, vtName } from "../../lib/content";
 import { SITE, WRITING_BAND } from "../../lib/site";
 import { readingMinutes } from "../../lib/readingTime";
@@ -20,7 +21,7 @@ export async function getStaticPaths() {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props;
 const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.data;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const minutes = readingMinutes(entry.body);
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -67,6 +68,12 @@ const jsonLd = [
             </div>
           )
         }
+        <div class="side-sticky">
+          <TableOfContents headings={headings} />
+          <div class="side-share">
+            <ShareLinks url={canonical} title={title} class="mt-md" headingId="share-h-side" />
+          </div>
+        </div>
       </div>
       <div class="post-body lg:col-span-8">
         {
@@ -79,7 +86,9 @@ const jsonLd = [
         <div class="prose" data-rt-body>
           <Content />
         </div>
-        <ShareLinks url={canonical} title={title} />
+        <div class="end-share">
+          <ShareLinks url={canonical} title={title} />
+        </div>
         <p class="mt-lg"><a class="hit" href="/writing/">All writing</a></p>
       </div>
     </div>
@@ -87,6 +96,40 @@ const jsonLd = [
 </Base>
 
 <style>
+  /* Desktop: the contents list and the share links ride along in the left column, under the summary
+     and topic pills. --stick-top (motion.css) is the height of the sticky header plus the page head
+     banner, so the block never sits under them. The column is as tall as the post, so the block stops
+     at the bottom of the post and never reaches the footer. If the screen is short, the block scrolls
+     on its own instead of running off the bottom. */
+  .side-sticky {
+    margin-top: var(--spacing-md);
+  }
+  .side-share {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .side-sticky {
+      position: sticky;
+      top: var(--stick-top, var(--spacing-md));
+      max-height: calc(100dvh - var(--stick-top, var(--spacing-md)) - var(--spacing-md));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      /* Room so the focus outline of the first and last items is not clipped by the scroll box. */
+      padding: 4px;
+      margin: var(--spacing-md) -4px 0;
+    }
+    .side-share {
+      display: block;
+    }
+    /* A quieter heading here, so it sits comfortably under the small Contents label. */
+    .side-share :global(h2) {
+      font-size: var(--text-lg);
+    }
+    /* Share links live in the sticky column on desktop, and at the end of the post below that. */
+    .end-share {
+      display: none;
+    }
+  }
   /* Let wide content (code blocks, tables) scroll inside the column instead of
      stretching the grid past the screen on phones. */
   .post-body {
