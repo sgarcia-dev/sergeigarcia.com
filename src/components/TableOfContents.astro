@@ -71,6 +71,21 @@ const items = Astro.props.headings.filter((h) => h.depth === 2);
           heads.forEach(function (h) {
             io.observe(h);
           });
+          // A big jump (End key, restored scroll position, an anchor link) can pass over every heading
+          // without any of them landing in the observed zone, so also re-check on scroll, once per frame.
+          var queued = false;
+          window.addEventListener(
+            "scroll",
+            function () {
+              if (queued) return;
+              queued = true;
+              requestAnimationFrame(function () {
+                queued = false;
+                update();
+              });
+            },
+            { passive: true },
+          );
           update();
         }
         if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tocInit);

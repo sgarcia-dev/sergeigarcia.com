@@ -24,6 +24,8 @@ const { entry } = Astro.props;
 const { title, summary, pubDate, updatedDate, skills, cover, coverAlt } = entry.data;
 const { Content, headings } = await render(entry);
 const minutes = readingMinutes(entry.body);
+// The "Introduction" heading is added by this page (not in the post file), so add it to the contents too.
+const tocHeadings = cover ? [{ depth: 2, slug: "introduction", text: "Introduction" }, ...headings] : headings;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = cover ? await shareImage(cover) : undefined;
@@ -52,7 +54,7 @@ const jsonLd = [
 ---
 
 <Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} ogImage={ogImage} ogImageAlt={coverAlt} readMinutes={minutes} preloadBody>
-  <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size={title.length > 40 ? "xl" : "h2"} progress>
+  <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size="post" progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
@@ -77,7 +79,7 @@ const jsonLd = [
           )
         }
         <div class="side-sticky">
-          <TableOfContents headings={headings} />
+          <TableOfContents headings={tocHeadings} />
           <div class="side-share">
             <ShareLinks url={canonical} title={title} class="mt-md" headingId="share-h-side" />
           </div>

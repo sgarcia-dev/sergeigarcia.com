@@ -4,6 +4,7 @@
  * `vt` sets the view-transition name so a list title morphs into this heading.
  * `progress` adds the thin reading bar at the top of the viewport (posts and case studies).
  * src/scripts/motion.ts makes the band stick under the header and shrink to a thin banner.
+ * size "post" is the larger long-title size used by article pages (set in the style block below).
  * Optional named slot `cover`: a framed image. On wide screens it sits at the right of the band
  * and hangs over the band's bottom edge; on phones it goes under the meta and hangs over by less.
  * Without the slot the markup is exactly what it was, so other pages do not change.
@@ -13,7 +14,7 @@ interface Props {
   band?: "yellow" | "cobalt" | "tomato";
   eyebrow?: string;
   vt?: string;
-  size?: "h2" | "xl";
+  size?: "h2" | "xl" | "post";
   progress?: boolean;
 }
 const { title, band = "yellow", eyebrow, vt, size = "h2", progress = false } = Astro.props;
@@ -37,7 +38,9 @@ const textProps = hasCover ? { class: "ph-text" } : {};
       <h1
         class:list={[
           "page-head-title max-w-title tracking-tight",
-          size === "h2" ? "font-display text-h2" : "font-title text-xl",
+          size === "h2" && "font-display text-h2",
+          size === "xl" && "font-title text-xl",
+          size === "post" && "font-title ph-post-title",
         ]}
         style={vt ? `view-transition-name: ${vt}` : undefined}
       >
@@ -56,6 +59,16 @@ const textProps = hasCover ? { class: "ph-text" } : {};
 </section>
 
 <style>
+  /* Article title: bigger than "xl" so it holds its own next to the cover. Phones stay near the
+     "xl" size (long Fraunces words must not overflow 375px); desktop grows to fill the 7-column
+     text side in two to four lines. The 18ch cap on titles is lifted here; the column limits it. */
+  .ph-post-title {
+    font-size: clamp(1.75rem, 0.5rem + 4.8vw, 4.75rem);
+    line-height: 1.05;
+    max-width: none;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
   /* Band with a cover image. The cover's bottom margin is negative by the band's bottom padding,
      the 3px rule and the overlap, so the band ends --over above the image's bottom edge and the
      image hangs out by exactly --over, whatever the title length. Image size comes from the
