@@ -16,10 +16,10 @@ export const SITE = {
   url: "https://sergeigarcia.com",
   email: "hello@sergeigarcia.com",
   location: "Dublin, Ireland",
-  jobTitle: "Senior Software Engineer",
+  jobTitle: "Software Engineer",
   ogImage: "/og-default.png",
   availability: "looking" as Availability,
-  authorCardVariant: "B" as AuthorCardVariant,
+  authorCardVariant: "C" as AuthorCardVariant,
   resume: "/resume/sergei-garcia-resume.pdf",
   links: {
     linkedin: "https://www.linkedin.com/in/sergeigarcia",

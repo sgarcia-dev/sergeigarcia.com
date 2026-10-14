@@ -23,7 +23,6 @@ const line = authorLine(mode);
     <aside class="author-card ac-c" aria-label="About the author" data-author-card="C" data-availability={mode}>
       <div class="ac-c-stripe" aria-hidden="true" />
       <div class="ac-c-paper">
-        <p class="ac-c-tab">A note from the author</p>
         <div class="ac-c-lines">
           <p class="ac-c-line">
             {line.before}
@@ -88,15 +87,6 @@ const line = authorLine(mode);
   }
   .ac-c-paper {
     padding: var(--spacing-md) var(--spacing-sm);
-  }
-  .ac-c-tab {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    line-height: var(--text-xs--line-height);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
   }
   /* The message sits on faint writing lines. The lines follow the line height, so each text line
      rests on one; they are decoration and far too light to affect reading. */

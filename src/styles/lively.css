@@ -68,6 +68,20 @@
   }
 }
 
+/* The end-of-post author card (all three looks) shows its highlight fully drawn. The draw-in takes
+   about a second after the card scrolls into view, and for most of that time the swipe stops short of
+   the last letters of "let's talk", which reads as a clipped mark. The card is a call to action at the
+   end of the page, so it never animates the phrase. Same specificity as the collapsed rule above plus
+   one more class, so it wins whether or not the script has added .lv-in yet. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-tex] [data-author-card] .lv-mark:not(.lv-in),
+  html[data-tex] [data-author-card] .lv-mark.lv-in {
+    background-size: var(--lv-mark-size);
+    transition: none;
+    animation: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------------------------
    2. Rows: a yellow fill sweeps in from the left behind a hovered or focused list row, and an
    arrow slides in left of the title. Pure CSS (plus a click forwarder in lively.ts). The fill is a

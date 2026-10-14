@@ -8,6 +8,6 @@ export default defineConfig({
   site: "https://sergeigarcia.com",
   trailingSlash: "always",
   build: { format: "directory" },
-  integrations: [mdx(), sitemap({ filter: (page) => !page.includes("/lab/") })],
+  integrations: [mdx(), sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
