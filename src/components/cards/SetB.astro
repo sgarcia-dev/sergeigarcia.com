@@ -31,6 +31,9 @@ const SUMMARY = `AI didn't make you worthless. It made ${hl("your judgment matte
 // B-8 and its square and portrait versions: the longer TL;DR with the know-how line.
 const SUMMARY_B8 = `${SUMMARY} It doesn't replace know-how, ${hl("it multiplies it.")}`;
 
+// B-9 and B-9sq: same text, but "know-how," never splits at its hyphen in the big type.
+const SUMMARY_B9 = SUMMARY_B8.replace("know-how,", '<span style="white-space:nowrap">know-how,</span>');
+
 // 1, 1b, 4: magazine cover (title band, cover art tilted below)
 const covers = [
   { id: "b1", look: "cobalt", img: cover, alt: COVER_ALT },
@@ -111,7 +114,7 @@ const safeCards = ["b8sq", "b8p"] as const;
           <span class="t-a">{TITLE_A}</span>{" "}
           <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
         </CardTitle>
-        <CardTldr html={SUMMARY_B8} />
+        <CardTldr html={SUMMARY_B9} />
       </div>
       <CardCover src={redPen} alt={RED_PEN_ALT} class="cover-frame" />
     </CardEntry>
@@ -306,9 +309,9 @@ const safeCards = ["b8sq", "b8p"] as const;
      as wide as the title column with tighter padding. --off is the top edge of the safe box. */
   .cs-b.b9c {
     --tldr-gap: 8px;
-    --tldr-font: 1.4rem;
-    --tldr-lh: 1.25;
-    --tldr-pad: 0.95rem 0.75rem 0.7rem;
+    --tldr-font: 1.65rem;
+    --tldr-lh: 1.2;
+    --tldr-pad: 0.8rem 0.6rem 0.55rem;
     --tldr-w: 446px; /* x2.1 = 936px */
   }
   .cs-b.b9c .band {
@@ -352,19 +355,19 @@ const safeCards = ["b8sq", "b8p"] as const;
     --st-top: calc(var(--off) + 14px);
     --title-top: calc(var(--off) + 124px);
     --title-size: 72px;
-    --band-h: 650px;
+    --band-h: 770px;
     --cover-left: 220px;
-    --cover-top: 680px;
+    --cover-top: 790px;
     --cover-w: 640px;
   }
   .cs-b.is-b9 {
     --off: 135px;
-    --st-top: calc(var(--off) + 30px);
-    --title-top: calc(var(--off) + 44px);
+    --st-top: calc(var(--off) + 14px);
+    --title-top: calc(var(--off) + 20px);
     --title-size: 100px;
     --band-h: 850px;
     --cover-left: 140px;
-    --cover-top: 890px;
+    --cover-top: 862px;
     --cover-w: 800px;
   }
 
