@@ -16,6 +16,9 @@ function routesFromSitemap(): string[] {
 }
 
 test("every route passes a11y and basic SEO checks", async ({ page }) => {
+  // One page load and one axe run per route. It already took 15-25s alone, so the default 30s
+  // failed whenever other specs ran beside it. More routes will keep making it longer.
+  test.setTimeout(120_000);
   const routes = routesFromSitemap();
   expect(routes.length, "routes found in sitemap").toBeGreaterThan(1);
   const failures: string[] = [];

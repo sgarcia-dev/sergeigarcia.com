@@ -11,11 +11,9 @@ const drafts = posts.length === 0 ? await getAllPosts() : [];
 ---
 
 <Base title={PAGE_META.writing.title} description={PAGE_META.writing.description}>
-  <PageHead title="Writing" band={WRITING_BAND}>
-    <p class="mt-md max-w-prose text-lg">
-      Notes on building software and working with AI coding agents.
-    </p>
-  </PageHead>
+  <PageHead title="Writing" band={WRITING_BAND}
+    lead="Notes on building software and working with AI coding agents, newest first."
+  />
   <section class="edge-b" aria-label="Posts">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="lg:col-span-4">
