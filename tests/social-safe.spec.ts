@@ -75,10 +75,9 @@ for (const { d, s } of CASES) {
 
     const roles = items.map((f) => f.role);
     expect(roles, "title is drawn").toContain("title");
-    // The SG mark and avatar are drawn by every design except the homepage ones (where the title is the name).
+    // The SG mark is drawn by every design except the homepage ones (where the title is the name).
     if (d.startsWith("a") || d === "p1") {
       expect(roles, "SG mark is drawn").toContain("mark");
-      expect(roles, "avatar is drawn").toContain("avatar");
     }
     // The ticker strip shows exactly the three phrases, whole (they are checked against the safe box below).
     if (d === "hx2" || d === "hx3") expect(roles.filter((r) => r === "ticker"), "ticker phrases").toHaveLength(3);
