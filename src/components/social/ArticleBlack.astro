@@ -1,13 +1,13 @@
 ---
 /**
  * A-1 Black poster and its three TL;DR variants. Black with the site's hatch, a yellow bar on the
- * left edge, the full title in the middle square with yellow highlighter blocks, avatar and name,
+ * left edge, the full title in the middle square with yellow highlighter blocks, avatar and SG mark,
  * and the cover with a yellow hard shadow.
  *   base  title on top, avatar column bottom left, big cover bottom right.
  *   t1    long TL;DR box under the title, avatar row under it, cover tucked under the box corner.
  *   t2    short TL;DR box on the left, cover to the right of it, avatar row under the box.
  *   t3    short TL;DR as a tilted card laid over the lower left corner of the cover.
- * Title, TL;DR and name always sit in the middle square (x 285 to 915). The cover runs off the
+ * Title, TL;DR and mark always sit in the middle square (x 285 to 915). The cover runs off the
  * right or bottom edge, so a square crop shows part of it.
  */
 import OgFrame from "./OgFrame.astro";
@@ -40,7 +40,7 @@ const idColors = "--id-ink:#fff;--id-site:#ffd400;--id-ring:#ffd400";
   {
     variant === "base" && (
       <>
-        <div class="who" style={`left:300px;top:350px;width:236px;${idColors}`}><OgIdentity avatar={128} ring={5} name={30} site={18} layout="stack" /></div>
+        <div class="who" style={`left:300px;top:350px;width:236px;${idColors}`}><OgIdentity avatar={128} ring={5} mark={66} layout="stack" /></div>
         {s.cover && <OgCover src={s.cover} w={572} left={548} top={322} rot={-2} border={6} shadow={12} {...cover} />}
       </>
     )
@@ -49,7 +49,7 @@ const idColors = "--id-ink:#fff;--id-site:#ffd400;--id-ring:#ffd400";
     variant === "t1" && (
       <>
         <div class="box" style="left:300px;top:278px;width:596px"><OgTldr text={s.summary} size={t1} /></div>
-        <div class="who" style={`left:300px;top:518px;${idColors}`}><OgIdentity avatar={76} ring={4} name={32} site={20} /></div>
+        <div class="who" style={`left:300px;top:518px;${idColors}`}><OgIdentity avatar={76} ring={4} mark={46} /></div>
         {s.cover && <OgCover src={s.cover} w={580} left={612} top={454} rot={-3} border={6} shadow={12} {...cover} />}
       </>
     )
@@ -58,7 +58,7 @@ const idColors = "--id-ink:#fff;--id-site:#ffd400;--id-ring:#ffd400";
     variant === "t2" && (
       <>
         <div class="box" style="left:300px;top:292px;width:330px"><OgTldr text={s.summaryShort} size={t2} /></div>
-        <div class="who" style={`left:300px;top:528px;${idColors}`}><OgIdentity avatar={64} ring={4} name={30} site={18} /></div>
+        <div class="who" style={`left:300px;top:528px;${idColors}`}><OgIdentity avatar={64} ring={4} mark={42} /></div>
         {s.cover && <OgCover src={s.cover} w={520} left={650} top={300} rot={-2} border={6} shadow={12} {...cover} />}
       </>
     )
@@ -66,7 +66,7 @@ const idColors = "--id-ink:#fff;--id-site:#ffd400;--id-ring:#ffd400";
   {
     variant === "t3" && (
       <>
-        <div class="who" style={`left:300px;top:330px;width:226px;${idColors}`}><OgIdentity avatar={112} ring={5} name={28} site={17} layout="stack" /></div>
+        <div class="who" style={`left:300px;top:330px;width:226px;${idColors}`}><OgIdentity avatar={112} ring={5} mark={58} layout="stack" /></div>
         {s.cover && <OgCover src={s.cover} w={540} left={590} top={296} rot={-2} border={6} shadow={12} {...cover} />}
         <div class="box tilt" style="left:546px;top:438px;width:340px"><OgTldr text={s.summaryShort} size={t3} /></div>
       </>

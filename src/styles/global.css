@@ -394,7 +394,8 @@
      cleaner than a colored fill next to the hero. */
   .hit-logo {
     min-height: 0;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    /* 28px mark + 6px + 6px + 2px borders = the same 44px chip as before. */
+    padding: calc(var(--spacing-xs) - 2px) var(--spacing-sm);
   }
   /* Icon-only chip: a 44px square (the logos carry the meaning; the name is in aria-label). */
   .hit-icon {

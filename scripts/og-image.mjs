@@ -2,7 +2,7 @@
 import { chromium } from "@playwright/test";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { resolve, join } from "node:path";
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
@@ -10,13 +10,18 @@ const fraunces = pathToFileURL(
   resolve(root, "node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2"),
 ).href;
 const mono = pathToFileURL(
-  resolve(root, "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2"),
+  resolve(root, "node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2"),
 ).href;
+
+// The SG mark, inlined so it takes the text color. No URL on the image: platforms show it already.
+const mark = readFileSync(resolve(root, "src/assets/logo/sg-logo.svg"), "utf8")
+  .replace(/\s(role|aria-label)="[^"]*"/g, "")
+  .replace("<svg", '<svg class="mark"');
 
 const html = `<!doctype html>
 <html><head><meta charset="utf-8"><style>
 @font-face { font-family: "Fraunces OG"; src: url("${fraunces}") format("woff2"); font-weight: 100 900; }
-@font-face { font-family: "Mono OG"; src: url("${mono}") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Mono OG"; src: url("${mono}") format("woff2"); font-weight: 100 800; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 1200px; height: 630px; overflow: hidden; background: #0A0A0A; }
 .frame { width: 1200px; height: 630px; border: 6px solid #0A0A0A; display: flex; }
@@ -25,12 +30,13 @@ html, body { width: 1200px; height: 630px; overflow: hidden; background: #0A0A0A
   font-size: 190px; line-height: 0.92; letter-spacing: -0.02em; color: #0A0A0A; }
 .right { flex: 1; background: #1F3FD1; color: #fff; padding: 56px 40px; display: flex; flex-direction: column; justify-content: space-between; }
 .role { font-family: "Fraunces OG", serif; font-weight: 700; font-variation-settings: "opsz" 72; font-size: 44px; line-height: 1.1; }
+.mark { display: block; height: 72px; width: auto; margin-bottom: 18px; }
 .meta { font-family: "Mono OG", monospace; font-weight: 700; font-size: 22px; line-height: 1.6; }
 </style></head><body><div class="frame">
 <div class="left"><div class="name">Sergei<br>Garcia</div></div>
 <div class="right">
 <div class="role">Senior software engineer</div>
-<div class="meta">Dublin, Ireland<br>sergeigarcia.com</div>
+<div>${mark}<div class="meta">Dublin, Ireland</div></div>
 </div></div></body></html>`;
 
 const browser = await chromium.launch();

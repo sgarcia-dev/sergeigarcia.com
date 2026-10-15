@@ -75,9 +75,9 @@ for (const { d, s } of CASES) {
 
     const roles = items.map((f) => f.role);
     expect(roles, "title is drawn").toContain("title");
-    // The name and avatar are drawn by every design except the homepage ones (where the title is the name).
+    // The SG mark and avatar are drawn by every design except the homepage ones (where the title is the name).
     if (d.startsWith("a") || d === "p1") {
-      expect(roles, "name is drawn").toContain("name");
+      expect(roles, "SG mark is drawn").toContain("mark");
       expect(roles, "avatar is drawn").toContain("avatar");
     }
     // The ticker strip shows exactly the three phrases, whole (they are checked against the safe box below).
