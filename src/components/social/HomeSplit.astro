@@ -31,7 +31,7 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
   <span class="seam"></span>
   {sticker && <div class:list={["sticker", ticker && "st-t"]} aria-hidden="true"><b>13+</b><i>years</i></div>}
   <div class:list={["who", ticker && "who-r"]}>
-    <OgIdentity mark={52} />
+    <OgIdentity mark={36} tilt={-6} />
     {HOME.location && <span class="chip tag">{HOME.location}</span>}
   </div>
   <div class:list={["nm", ticker && "nm-t"]}><OgTitle text={s.title} size={size} lh={0.92} marks={false} /></div>
@@ -104,10 +104,10 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
   .who-r {
     --id-ink: #ffffff;
     left: 800px;
-    top: 36px;
+    top: 30px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 24px;
   }
   .who-r .tag {
     margin-left: -8px;
@@ -171,8 +171,8 @@ const tag = ticker ? fitSize(s.summaryShort, { w: 556, h: 116 }, { max: 44, min:
     z-index: 2;
   }
   .st-t {
-    left: 988px;
-    top: 150px;
+    left: 992px;
+    top: 176px;
   }
   .sticker b {
     display: block;

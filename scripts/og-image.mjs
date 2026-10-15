@@ -30,13 +30,16 @@ html, body { width: 1200px; height: 630px; overflow: hidden; background: #0A0A0A
   font-size: 190px; line-height: 0.92; letter-spacing: -0.02em; color: #0A0A0A; }
 .right { flex: 1; background: #1F3FD1; color: #fff; padding: 56px 40px; display: flex; flex-direction: column; justify-content: space-between; }
 .role { font-family: "Fraunces OG", serif; font-weight: 700; font-variation-settings: "opsz" 72; font-size: 44px; line-height: 1.1; }
-.mark { display: block; height: 72px; width: auto; margin-bottom: 18px; }
+/* The mark on the same sticker as the share images (src/components/SgSticker.astro): yellow, black border, offset shadow, tilt. */
+.sticker { display: inline-block; align-self: flex-start; padding: 16px 22px; border: 5px solid #0A0A0A; background: #FFD400; color: #0A0A0A;
+  box-shadow: 8px 8px 0 #0A0A0A; transform: rotate(-6deg); line-height: 0; margin: 0 0 26px 6px; }
+.mark { display: block; height: 58px; width: auto; }
 .meta { font-family: "Mono OG", monospace; font-weight: 700; font-size: 22px; line-height: 1.6; }
 </style></head><body><div class="frame">
 <div class="left"><div class="name">Sergei<br>Garcia</div></div>
 <div class="right">
 <div class="role">Software engineer</div>
-<div>${mark}<div class="meta">Dublin, Ireland</div></div>
+<div style="display:flex;flex-direction:column"><span class="sticker">${mark}</span><div class="meta">Dublin, Ireland</div></div>
 </div></div></body></html>`;
 
 const browser = await chromium.launch();

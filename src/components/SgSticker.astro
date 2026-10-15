@@ -1,0 +1,57 @@
+---
+/**
+ * The SG mark on a sticker: the look of the "13+ years" sticker on the home share image (tilted yellow
+ * box, black border, hard offset shadow) with the black mark inside. Used on the LinkedIn cards and the
+ * share images so the mark never floats loose. Everything scales from `mark`, the mark's height in px.
+ * `tone` is the box color; the mark and border stay black. `tilt` is the rotation in degrees.
+ * `dataT` puts a data-t role on the mark itself, for the social safe-box test.
+ */
+import Logo from "./Logo.astro";
+
+interface Props {
+  mark?: number;
+  tone?: "yellow" | "white";
+  tilt?: number;
+  dataT?: string;
+  class?: string;
+}
+const { mark = 60, tone = "yellow", tilt = 7, dataT, class: cls } = Astro.props;
+const border = Math.max(3, Math.round(mark * 0.085));
+const shadow = Math.round(mark * 0.14);
+const padY = Math.round(mark * 0.27);
+const padX = Math.round(mark * 0.36);
+---
+
+<span
+  class:list={["sg-sticker", `sg-sticker--${tone}`, cls]}
+  style={`--mk:${mark}px;--sb:${border}px;--ss:${shadow}px;--sy:${padY}px;--sx:${padX}px;--sr:${tilt}deg`}
+  aria-hidden="true"
+>
+  <span class="sg-sticker-mark" data-t={dataT}><Logo /></span>
+</span>
+
+<style>
+  .sg-sticker {
+    display: inline-block;
+    flex: none;
+    padding: var(--sy) var(--sx);
+    border: var(--sb) solid #0a0a0a;
+    background: #ffd400;
+    color: #0a0a0a;
+    box-shadow: var(--ss) var(--ss) 0 #0a0a0a;
+    transform: rotate(var(--sr));
+    line-height: 0;
+  }
+  .sg-sticker--white {
+    background: #fff;
+  }
+  .sg-sticker-mark {
+    display: block;
+    height: var(--mk);
+  }
+  .sg-sticker-mark :global(svg) {
+    display: block;
+    height: 100%;
+    width: auto;
+  }
+</style>

@@ -2,7 +2,9 @@
 /**
  * Set B: article-preview cards. They look like the top of the post: a title band with the site's
  * hatch texture, Fraunces title, framed cover art, TL;DR box, yellow pull quote.
- * B-9sq is B-8sq with the red pen cover and the SG mark alone.
+ * B-9sq and B-9 (portrait) use the red pen cover, a much bigger TL;DR (the small one was unreadable in
+ * the feed) and a yellow sticker with the SG mark instead of the photo, name and URL. Everything but the
+ * cover sits inside the centered 1080 wide safe box; the cover may run off the edge and gets cropped.
  * B-8sq and B-8p are B-8 redrawn so everything important sits inside a 1080x900 safe box
  * (LinkedIn can crop a feed image to a square or a wide box). Selectors start with .cs-b.
  */
@@ -13,7 +15,7 @@ import CardHighlight from "./CardHighlight.astro";
 import CardCover from "./CardCover.astro";
 import CardTldr from "./CardTldr.astro";
 import CardPullQuote from "./CardPullQuote.astro";
-import Logo from "../Logo.astro";
+import SgSticker from "../SgSticker.astro";
 import { hl } from "./hl";
 import cover from "../../assets/posts/ai-raises-the-floor/cover.jpg";
 import pickOne from "../../assets/posts/ai-raises-the-floor/cover-pick-one.jpg";
@@ -97,19 +99,24 @@ const safeCards = ["b8sq", "b8p"] as const;
   ))
 }
 
-<!-- B-9sq: B-8sq with the red pen cover (the post's current cover) and the SG mark alone instead of the photo, name and URL. -->
-<CardEntry id="b9sq" class="cs-b mix mix-cobalt b8q is-b9sq">
-  <div class="band bn-cobalt">
-    <span class="hatch" aria-hidden="true"></span>
-    <div class="sg-mark" aria-hidden="true"><Logo /></div>
-    <CardTitle class="title">
-      <span class="t-a">{TITLE_A}</span>{" "}
-      <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
-    </CardTitle>
-    <CardTldr html={SUMMARY_B8} />
-  </div>
-  <CardCover src={redPen} alt={RED_PEN_ALT} class="cover-frame" />
-</CardEntry>
+<!-- B-9sq (1080x1080) and B-9 (1080x1350): the red pen cover, a big TL;DR, and the SG mark on a yellow sticker.
+     Text stays inside the safe box (900 tall on the square, 1080 tall on the portrait). -->
+{
+  (["b9sq", "b9"] as const).map((id) => (
+    <CardEntry id={id} class={`cs-b b9c is-${id}`}>
+      <div class="band bn-cobalt">
+        <span class="hatch" aria-hidden="true" />
+        <SgSticker class="card-sticker" mark={id === "b9" ? 58 : 52} />
+        <CardTitle class="title">
+          <span class="t-a">{TITLE_A}</span>{" "}
+          <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
+        </CardTitle>
+        <CardTldr html={SUMMARY_B8} />
+      </div>
+      <CardCover src={redPen} alt={RED_PEN_ALT} class="cover-frame" />
+    </CardEntry>
+  ))
+}
 
 <!-- 2. Title, TL;DR box, hint of the cover -->
 <CardEntry id="b2" class="cs-b tldr-card">
@@ -295,22 +302,72 @@ const safeCards = ["b8sq", "b8p"] as const;
   .cs-b.is-b8p {
     --off: 150px;
   }
-  /* B-9sq is B-8sq with the SG mark where the photo, name and URL were. The box is as tall as that
-     row was (76px), so nothing below it moves. White on the cobalt band, mark height 60px. */
+  /* B-9sq and B-9. The TL;DR is set at 1.4rem x 2.1 zoom = about 47px (B-8sq was 30px), in a box that is
+     as wide as the title column with tighter padding. --off is the top edge of the safe box. */
+  .cs-b.b9c {
+    --tldr-gap: 8px;
+    --tldr-font: 1.4rem;
+    --tldr-lh: 1.25;
+    --tldr-pad: 0.95rem 0.75rem 0.7rem;
+    --tldr-w: 446px; /* x2.1 = 936px */
+  }
+  .cs-b.b9c .band {
+    padding: var(--title-top) 72px 0;
+    height: var(--band-h);
+  }
+  .cs-b.b9c .title {
+    font-size: var(--title-size);
+    line-height: 1;
+    max-width: 940px;
+    text-wrap: initial;
+  }
+  .cs-b.b9c .t-a {
+    display: block;
+    text-wrap: balance;
+  }
+  .cs-b.b9c .t-b {
+    display: inline-block;
+    white-space: nowrap;
+    margin-top: 10px;
+    margin-left: -0.14em;
+    padding: 0 0.14em 0.04em;
+    font-size: calc(var(--title-size) * 0.94);
+  }
+  .cs-b.b9c .cover-frame {
+    left: var(--cover-left);
+    top: var(--cover-top);
+    width: var(--cover-w);
+    border-width: 5px;
+    --cc-shadow: 10px 10px 0 #0a0a0a;
+  }
+  /* The sticker (src/components/SgSticker.astro) sits in the top-right corner. */
+  .cs-b .card-sticker {
+    position: absolute;
+    z-index: 3;
+    top: var(--st-top);
+    right: var(--st-right, 80px);
+  }
   .cs-b.is-b9sq {
     --off: 90px;
+    --st-top: calc(var(--off) + 14px);
+    --title-top: calc(var(--off) + 124px);
+    --title-size: 72px;
+    --band-h: 650px;
+    --cover-left: 220px;
+    --cover-top: 680px;
+    --cover-w: 640px;
   }
-  .cs-b .sg-mark {
-    height: 76px;
-    display: flex;
-    align-items: center;
-    color: var(--color-white);
+  .cs-b.is-b9 {
+    --off: 135px;
+    --st-top: calc(var(--off) + 30px);
+    --title-top: calc(var(--off) + 44px);
+    --title-size: 100px;
+    --band-h: 850px;
+    --cover-left: 140px;
+    --cover-top: 890px;
+    --cover-w: 800px;
   }
-  .cs-b .sg-mark svg {
-    display: block;
-    height: 60px;
-    width: auto;
-  }
+
   /* B-5, B-6 and B-7 are square too: the same layout, with the top edge --off pulled up to 70px. */
   .cs-b.sq {
     --off: 70px;
