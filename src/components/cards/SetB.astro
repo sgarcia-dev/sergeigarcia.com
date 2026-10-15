@@ -31,7 +31,7 @@ const SUMMARY = `AI didn't make you worthless. It made ${hl("your judgment matte
 // B-8 and its square and portrait versions: the longer TL;DR with the know-how line.
 const SUMMARY_B8 = `${SUMMARY} It doesn't replace know-how, ${hl("it multiplies it.")}`;
 
-// B-9 and B-9sq: same text, but "know-how," never splits at its hyphen in the big type.
+// B-8, B-8sq, B-8p, B-9 and B-9sq: same text, but "know-how," never splits at its hyphen in the big type.
 const SUMMARY_B9 = SUMMARY_B8.replace("know-how,", '<span style="white-space:nowrap">know-how,</span>');
 
 // 1, 1b, 4: magazine cover (title band, cover art tilted below)
@@ -45,7 +45,7 @@ const mix = [
   { id: "b5", look: "cobalt", tldr: SUMMARY, box: false },
   { id: "b6", look: "cobalt", tldr: null, box: true },
   { id: "b7", look: "yellow", tldr: SUMMARY, box: false },
-  { id: "b8", look: "cobalt", tldr: SUMMARY_B8, box: false },
+  { id: "b8", look: "cobalt", tldr: SUMMARY_B9, box: false },
 ] as const;
 // B-8sq (1080x1080) and B-8p (1080x1200): same content, laid out inside a centered 900px-tall safe box.
 const safeCards = ["b8sq", "b8p"] as const;
@@ -95,7 +95,7 @@ const safeCards = ["b8sq", "b8p"] as const;
           <span class="t-a">{TITLE_A}</span>{" "}
           <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
         </CardTitle>
-        <CardTldr html={SUMMARY_B8} />
+        <CardTldr html={SUMMARY_B9} />
       </div>
       <CardCover src={pickOne} alt={PICK_ALT} class="cover-frame" />
     </CardEntry>
@@ -197,30 +197,30 @@ const safeCards = ["b8sq", "b8p"] as const;
 
   /* 2: TL;DR card */
   .cs-b.tldr-card {
-    --tldr-font: 1.2rem;
-    --tldr-lh: 1.35;
-    --tldr-pad: 1.8rem 1.4rem 1.3rem;
+    --tldr-font: 1.65rem;
+    --tldr-lh: 1.2;
+    --tldr-pad: 0.8rem 0.6rem 0.55rem;
   }
   .cs-b.tldr-card .band {
-    height: 500px;
-    padding: 72px 72px 0;
+    height: 460px;
+    padding: 48px 72px 0;
   }
   .cs-b.tldr-card .title {
-    margin-top: 30px;
+    margin-top: 22px;
     font-size: 92px;
     max-width: 940px;
   }
   .cs-b .tldr-pos {
     position: absolute;
     left: 72px;
-    top: 490px;
+    top: 450px;
     width: 936px;
   }
   /* Only a peek of the cover: it is meant to run off the bottom edge. */
   .cs-b.tldr-card .cover-frame {
-    left: 300px;
-    top: 800px;
-    width: 600px;
+    left: 190px;
+    top: 780px;
+    width: 700px;
     --cc-rot: 1.5deg;
     --cc-shadow: 12px 12px 0 #0a0a0a;
   }
@@ -290,11 +290,20 @@ const safeCards = ["b8sq", "b8p"] as const;
      so the TL;DR box's corner no longer touches the cover frame. */
   .cs-b.is-b8 {
     --tldr-gap: 8px;
-    --tldr-font: 0.95rem;
-    --tldr-pad: 1.2rem 1.5rem 1.2rem;
+    --tldr-font: 1.65rem;
+    --tldr-lh: 1.2;
+    --tldr-pad: 0.8rem 0.6rem 0.55rem;
+  }
+  .cs-b.is-b8 .band {
+    height: 965px;
+  }
+  .cs-b.is-b8 .title {
+    margin-top: 22px;
   }
   .cs-b.is-b8 .cover-frame {
-    top: 880px;
+    top: 995px;
+    left: 190px;
+    width: 700px;
   }
   /* B-8sq and B-8p: B-8 redrawn so everything important sits in a 1080x900 safe box centered on
      the card (--off is the box's top edge: 90px on the 1080 square, 150px on the 1200 card). The
@@ -373,35 +382,36 @@ const safeCards = ["b8sq", "b8p"] as const;
 
   /* B-5, B-6 and B-7 are square too: the same layout, with the top edge --off pulled up to 70px. */
   .cs-b.sq {
-    --off: 70px;
+    --off: 44px;
   }
   /* B-5 and B-7 have the short TL;DR, so it can be set a little bigger. */
   .cs-b.sq.is-b5,
   .cs-b.sq.is-b7 {
-    --tldr-font: 1rem;
-    --tldr-pad: 1.2rem 1.2rem 1rem;
+    --tldr-font: 1.65rem;
+    --tldr-lh: 1.2;
+    --tldr-pad: 0.8rem 0.6rem 0.55rem;
   }
   .cs-b.sq.is-b5 .band,
   .cs-b.sq.is-b7 .band {
-    height: calc(var(--off) + 540px);
+    height: calc(var(--off) + 600px);
   }
   .cs-b.sq.is-b5 .cover-frame,
   .cs-b.sq.is-b7 .cover-frame {
-    top: calc(var(--off) + 558px);
-    left: 230px;
-    width: 620px;
+    top: calc(var(--off) + 626px);
+    left: 200px;
+    width: 680px;
   }
   .cs-b.b8q,
   .cs-b.sq {
-    --tldr-gap: 4px;
-    --tldr-font: 0.88rem;
-    --tldr-lh: 1.3;
-    --tldr-pad: 0.9rem 1.1rem 0.8rem;
-    --tldr-w: 430px; /* x2.1 = 903px, so the box and its shadow keep 80px+ from the sides */
+    --tldr-gap: 8px;
+    --tldr-font: 1.65rem;
+    --tldr-lh: 1.2;
+    --tldr-pad: 0.8rem 0.6rem 0.55rem;
+    --tldr-w: 446px; /* x2.1 = 936px */
   }
   .cs-b.b8q .band,
   .cs-b.sq .band {
-    height: calc(var(--off) + 524px);
+    height: calc(var(--off) + 680px);
     padding: calc(var(--off) + 20px) 80px 0;
   }
   .cs-b.b8q .title,
@@ -416,11 +426,17 @@ const safeCards = ["b8sq", "b8p"] as const;
   }
   .cs-b.b8q .cover-frame,
   .cs-b.sq .cover-frame {
-    left: 260px;
-    top: calc(var(--off) + 540px);
-    width: 560px;
+    left: 230px;
+    top: calc(var(--off) + 700px);
+    width: 620px;
     border-width: 5px;
     --cc-shadow: 10px 10px 0 #0a0a0a;
+  }
+  /* The short TL;DR (B-2, B-5, B-7) is balanced so "more." does not sit alone on the last line. */
+  .cs-b.tldr-card .card-tldr-text,
+  .cs-b.sq.is-b5 .card-tldr-text,
+  .cs-b.sq.is-b7 .card-tldr-text {
+    text-wrap: balance;
   }
   /* B-6: the answer in a tilted yellow box instead of a highlight, and a bigger title */
   .cs-b.no-tldr .title {
