@@ -35,7 +35,7 @@ html, body { width: 1200px; height: 630px; overflow: hidden; background: #0A0A0A
 </style></head><body><div class="frame">
 <div class="left"><div class="name">Sergei<br>Garcia</div></div>
 <div class="right">
-<div class="role">Senior software engineer</div>
+<div class="role">Software engineer</div>
 <div>${mark}<div class="meta">Dublin, Ireland</div></div>
 </div></div></body></html>`;
 
