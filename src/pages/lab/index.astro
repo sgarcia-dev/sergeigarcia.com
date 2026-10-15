@@ -1,0 +1,107 @@
+---
+/**
+ * Unlisted lab landing page: one friendly link to share with people who are curious how the site gets built.
+ * Public but not linked from the site navigation, noindex, and left out of the sitemap (astro.config.mjs
+ * skips every address that starts with /lab/, this one included).
+ * Add a card here when a new lab page appears. Keep the notes short and say what the URL switches do.
+ */
+import Base from "../../layouts/Base.astro";
+
+const labs = [
+  {
+    href: "/lab/cards/",
+    title: "LinkedIn cards",
+    note: "The image cards I make for LinkedIn posts, kept here so I can reopen and change them.",
+    switches: [
+      ["?raw", "show the cards at full size, one per row"],
+      ["?safe", "draw the crop-safe box, the area LinkedIn will not cut off"],
+    ],
+  },
+  {
+    href: "/lab/social/",
+    title: "Social image lab",
+    note: "The designs for the picture that shows when a page here is shared, drawn the way each app would show it.",
+    switches: [
+      ["?d=", "pick a design, for example ?d=a1t1"],
+      ["?s=", "pick which page to draw it for, for example ?s=home"],
+      ["?safe", "draw the crop lines"],
+      ["?raw", "show one image at full size and nothing else"],
+    ],
+  },
+] as const;
+---
+
+<Base
+  title="The lab"
+  description="Unlisted lab page: where Sergei Garcia tries things out while building sergeigarcia.com. Things here change or break without notice."
+  noindex
+>
+  <section class="edge-b">
+    <div class="shell py-lg">
+      <h1 class="font-display text-h2 tracking-tight">You found my lab</h1>
+      <p class="mt-md max-w-prose text-lg">
+        This is where I try things out while I build this site: drafts, experiments and the tools I use to make images.
+        You are welcome to poke around if you are curious how I think and build.
+      </p>
+      <p class="mt-sm max-w-prose">Things here change or break without notice. That is part of the deal.</p>
+    </div>
+  </section>
+
+  <section class="edge-b" aria-labelledby="lab-pages">
+    <div class="shell py-lg">
+      <h2 id="lab-pages" class="font-title text-xl">What is in here</h2>
+      <ul role="list" class="list mt-md max-w-prose">
+        {
+          labs.map((lab) => (
+            <li class="row-end lab-item">
+              <div>
+                <h3 class="font-title text-xl">
+                  <a class="row-link" href={lab.href}>{lab.title}</a>
+                </h3>
+                <p class="mt-xs">{lab.note}</p>
+                <p class="label mt-sm">{lab.href}</p>
+                <dl class="lab-switches mt-xs">
+                  {lab.switches.map(([key, what]) => (
+                    <>
+                      <dt><code>{key}</code></dt>
+                      <dd>{what}</dd>
+                    </>
+                  ))}
+                </dl>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-md max-w-prose">
+        Want the polished version of some of these experiments? The <a href="/playground/">playground</a> has the
+        motion and texture effects with the knobs I used to choose them.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Rows here have one column: the text. The two-column grid of .row-end is for a trailing button. */
+  .lab-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lab-switches {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--spacing-2xs) var(--spacing-sm);
+    margin: 0;
+  }
+  .lab-switches dd {
+    margin: 0;
+  }
+  @media (max-width: 30rem) {
+    .lab-switches {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .lab-switches dd {
+      margin-bottom: var(--spacing-2xs);
+    }
+  }
+</style>

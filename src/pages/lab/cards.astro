@@ -6,7 +6,7 @@
  *
  * Query switches (read by the inline script below):
  *   ?raw   cards at native size (1080 wide), one per row. scripts/cards.mjs screenshots this view.
- *   ?safe  draws the crop-safe box on the cards that have one (B-8, B-8sq, B-8p).
+ *   ?safe  draws the crop-safe box on the cards that have one (B-8, B-8sq, B-8p, B-9sq).
  * Combine them: ?raw&safe#b8sq
  */
 import Base from "../../layouts/Base.astro";
@@ -35,7 +35,8 @@ const sets = { a: SetA, b: SetB, c: SetC };
 
   <section class="edge-b">
     <div class="shell py-lg">
-      <h1 class="font-display text-h2 tracking-tight">LinkedIn cards</h1>
+      <p class="label"><a href="/lab/">Back to the lab</a></p>
+      <h1 class="mt-sm font-display text-h2 tracking-tight">LinkedIn cards</h1>
       <p class="mt-md max-w-prose text-lg">
         LinkedIn image cards for posts. Each is 1080 wide and square (1080x1080), apart from the two portrait versions of B-8; the size is on each label.
       </p>

@@ -72,7 +72,7 @@ test("every built page points og:image and twitter:image at its own 1200x630 fil
 });
 
 test("the 404 and lab pages keep the default card", () => {
-  for (const file of ["404.html", "lab/social/index.html", "lab/cards/index.html"]) {
+  for (const file of ["404.html", "lab/index.html", "lab/social/index.html", "lab/cards/index.html"]) {
     const html = readFileSync(join(DIST, file), "utf8");
     expect(metaContent(html, "property", "og:image"), file).toBe(`${SITE}/og-default.png`);
   }

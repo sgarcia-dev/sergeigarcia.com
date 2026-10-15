@@ -2,6 +2,7 @@
 /**
  * Set B: article-preview cards. They look like the top of the post: a title band with the site's
  * hatch texture, Fraunces title, framed cover art, TL;DR box, yellow pull quote.
+ * B-9sq is B-8sq with the red pen cover and the SG mark alone.
  * B-8sq and B-8p are B-8 redrawn so everything important sits inside a 1080x900 safe box
  * (LinkedIn can crop a feed image to a square or a wide box). Selectors start with .cs-b.
  */
@@ -12,15 +13,18 @@ import CardHighlight from "./CardHighlight.astro";
 import CardCover from "./CardCover.astro";
 import CardTldr from "./CardTldr.astro";
 import CardPullQuote from "./CardPullQuote.astro";
+import Logo from "../Logo.astro";
 import { hl } from "./hl";
 import cover from "../../assets/posts/ai-raises-the-floor/cover.jpg";
 import pickOne from "../../assets/posts/ai-raises-the-floor/cover-pick-one.jpg";
+import redPen from "../../assets/posts/ai-raises-the-floor/cover-red-pen.jpg";
 
 const TITLE = "Everyone has the same AI now. The difference is you.";
 const TITLE_A = "Everyone has the same AI now.";
 const TITLE_B = "The difference is you.";
 const COVER_ALT = "A film director in a tall chair points a megaphone at three cheerful robots running a film set.";
 const PICK_ALT = "A friendly yellow robot and a person with a big orange marker cross out a wall of candidate cards, keeping one.";
+const RED_PEN_ALT = "A person at a worktable circles one design with a red pen while a robot hands over another stack of options. Crossed-out pages cover the floor.";
 const SUMMARY = `AI didn't make you worthless. It made ${hl("your judgment matter more.")}`;
 // B-8 and its square and portrait versions: the longer TL;DR with the know-how line.
 const SUMMARY_B8 = `${SUMMARY} It doesn't replace know-how, ${hl("it multiplies it.")}`;
@@ -92,6 +96,20 @@ const safeCards = ["b8sq", "b8p"] as const;
     </CardEntry>
   ))
 }
+
+<!-- B-9sq: B-8sq with the red pen cover (the post's current cover) and the SG mark alone instead of the photo, name and URL. -->
+<CardEntry id="b9sq" class="cs-b mix mix-cobalt b8q is-b9sq">
+  <div class="band bn-cobalt">
+    <span class="hatch" aria-hidden="true"></span>
+    <div class="sg-mark" aria-hidden="true"><Logo /></div>
+    <CardTitle class="title">
+      <span class="t-a">{TITLE_A}</span>{" "}
+      <CardHighlight tone="yellow" shape="block" class="t-b">{TITLE_B}</CardHighlight>
+    </CardTitle>
+    <CardTldr html={SUMMARY_B8} />
+  </div>
+  <CardCover src={redPen} alt={RED_PEN_ALT} class="cover-frame" />
+</CardEntry>
 
 <!-- 2. Title, TL;DR box, hint of the cover -->
 <CardEntry id="b2" class="cs-b tldr-card">
@@ -276,6 +294,22 @@ const safeCards = ["b8sq", "b8p"] as const;
   }
   .cs-b.is-b8p {
     --off: 150px;
+  }
+  /* B-9sq is B-8sq with the SG mark where the photo, name and URL were. The box is as tall as that
+     row was (76px), so nothing below it moves. White on the cobalt band, mark height 60px. */
+  .cs-b.is-b9sq {
+    --off: 90px;
+  }
+  .cs-b .sg-mark {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    color: var(--color-white);
+  }
+  .cs-b .sg-mark svg {
+    display: block;
+    height: 60px;
+    width: auto;
   }
   /* B-5, B-6 and B-7 are square too: the same layout, with the top edge --off pulled up to 70px. */
   .cs-b.sq {
