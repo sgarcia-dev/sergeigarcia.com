@@ -94,7 +94,10 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
 `lab/motion-2026-10-13` tag). Do not add, remove or "tone down" one without asking.
 
 - Cross-document view transitions (`@view-transition { navigation: auto; }`),
-  220ms.
+  220ms. The opt-in rule is an inline `<style>` in `Base.astro`'s head, not in a
+  stylesheet: in the linked CSS, Chrome often revealed the new page before the
+  rule applied and silently dropped the transition. `tests/navigation.spec.ts`
+  guards this.
 - The home page name has `view-transition-name: site-name`; on every other page
   the header mark has it, so the name shrinks into the nav.
 - A list title and its page h1 share `vtName(kind, id)` from `src/lib/content.ts`.

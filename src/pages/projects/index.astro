@@ -9,11 +9,9 @@ const projects = await getProjects();
 ---
 
 <Base title={PAGE_META.projects.title} description={PAGE_META.projects.description}>
-  <PageHead title="Projects" band="cobalt">
-    <p class="mt-md max-w-prose text-lg">
-      Things I designed and built, with the problem, my part and what shipped.
-    </p>
-  </PageHead>
+  <PageHead title="Projects" band="cobalt"
+    lead="Things I designed and built, with the problem, my part and what shipped."
+  />
   <section class="edge-b" aria-label="Project list">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="lg:col-span-4">

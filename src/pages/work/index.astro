@@ -9,11 +9,9 @@ const work = await getWork();
 ---
 
 <Base title={PAGE_META.work.title} description={PAGE_META.work.description}>
-  <PageHead title="Work" band="yellow">
-    <p class="mt-md max-w-prose text-lg">
-      The roles and engagements I have held as a software engineer, newest first.
-    </p>
-  </PageHead>
+  <PageHead title="Work" band="yellow"
+    lead="The roles and engagements I have held as a software engineer, newest first."
+  />
   <section class="edge-b" aria-label="Work history">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="lg:col-span-4">

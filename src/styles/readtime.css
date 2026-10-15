@@ -103,6 +103,18 @@ html.js-motion .rt-chip {
     display: none !important;
   }
 }
+/* Before the script has placed the chip it sits in the header, where it would push the nav left
+   until the script moves it into the strip (the nav then jumps right, on every article load).
+   So while it is unplaced, take it out of the header's layout. Only where the strip will exist
+   (same test as motion.ts: motion welcome and scroll timelines); elsewhere the chip stays in the
+   header and keeps its reserved space, so nothing moves. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .site-header .rt-chip:not([data-pos]) {
+      display: none;
+    }
+  }
+}
 /* From 56rem to 72rem there is room for the short text only, in the header. */
 @media (max-width: 71.99rem) {
   .rt-chip[data-pos="header"] .rt-tail {

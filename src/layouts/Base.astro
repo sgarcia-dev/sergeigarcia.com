@@ -61,6 +61,16 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <link rel="canonical" href={canonical} />
     <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
     {preloadBody && <link rel="preload" href={spaceUrl} as="font" type="font/woff2" crossorigin />}
+    <!-- Cross-document view transition opt-in, inline on purpose. Chrome reads this rule when the new page
+         is first revealed; if it only lived in the linked stylesheet, a fast load (cached page) could reveal
+         before that sheet applied, and Chrome dropped the whole transition ("opt-in disabled"). -->
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+    </style>
     <!-- Hold first paint until <main> is parsed, so a cross-document view transition
          always finds the new page's named elements instead of capturing a half-built page. -->
     <link rel="expect" href="#main" blocking="render" />

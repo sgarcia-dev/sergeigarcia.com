@@ -143,6 +143,9 @@
 @layer base {
   html {
     background: var(--color-bg);
+    /* Always keep room for a classic scrollbar. Without it the page is 15px wider on short pages
+       (no scrollbar) than on long ones, and the right-aligned nav jumps sideways between them. */
+    scrollbar-gutter: stable;
   }
   body {
     background: var(--color-bg);
@@ -585,11 +588,10 @@
   }
 }
 
-/* Cross-document view transitions. Only when motion is welcome. */
+/* Cross-document view transitions. Only when motion is welcome. The opt-in rule itself
+   (@view-transition { navigation: auto }) is inline in Base.astro's <head>, not here: see the
+   comment there. Only the look of the transition lives in this file. */
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation-duration: var(--duration-page);
