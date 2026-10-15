@@ -9,6 +9,12 @@ import Base from "../../layouts/Base.astro";
 
 const labs = [
   {
+    href: "/playground/",
+    title: "Playground",
+    note: "The motion and texture effects from this site, with the knobs I used to choose them. The most polished thing in here.",
+    switches: [],
+  },
+  {
     href: "/lab/cards/",
     title: "LinkedIn cards",
     note: "The image cards I make for LinkedIn posts, kept here so I can reopen and change them.",
@@ -60,23 +66,21 @@ const labs = [
                 </h3>
                 <p class="mt-xs">{lab.note}</p>
                 <p class="label mt-sm">{lab.href}</p>
-                <dl class="lab-switches mt-xs">
-                  {lab.switches.map(([key, what]) => (
-                    <>
-                      <dt><code>{key}</code></dt>
-                      <dd>{what}</dd>
-                    </>
-                  ))}
-                </dl>
+                {lab.switches.length > 0 && (
+                  <dl class="lab-switches mt-xs">
+                    {lab.switches.map(([key, what]) => (
+                      <>
+                        <dt><code>{key}</code></dt>
+                        <dd>{what}</dd>
+                      </>
+                    ))}
+                  </dl>
+                )}
               </div>
             </li>
           ))
         }
       </ul>
-      <p class="mt-md max-w-prose">
-        Want the polished version of some of these experiments? The <a href="/playground/">playground</a> has the
-        motion and texture effects with the knobs I used to choose them.
-      </p>
     </div>
   </section>
 </Base>
