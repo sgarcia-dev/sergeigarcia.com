@@ -87,6 +87,20 @@ Radius is always 0. One exception: the small round headshot in the home hero (`.
 - **Prose** (`.prose`): long-form text at `text-lg`, `prose` width, h2s ruled.
 - **PageHead**: the band block that opens every inner page, with the h1.
 
+## Calm variant (comparison only)
+
+`?calm=on` turns it on for the tab (sessionStorage), `?calm=off` turns it off. Off by default; it is
+there so Sergei can compare a more restrained blog against the current one on real posts (2026-10-28).
+It sets `html[data-calm]` from the inline script in `MotionInit.astro`, before first paint. On posts and
+case studies it changes four things and nothing else:
+
+- Read-time chip: no emoji, quiet copy ("6 min left", "Almost done", "Done"), plain text swap.
+  Explicit `?rt…` params still win.
+- Glyph reveal: home page only.
+- Marker: only the last `.lv-mark` in the article body stays (`.lv-keep`); the others are plain text.
+- Pull quote: Fraunces in the page ink with a double-width rule on its left. No fill, chip, shadow,
+  tilt or pop.
+
 ## Motion
 
 Only inside `prefers-reduced-motion: no-preference`, unless noted. Every effect

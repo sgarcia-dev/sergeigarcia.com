@@ -1,8 +1,22 @@
 ---
 // Inline, render-blocking: marks <html> so motion CSS may pre-hide text only when JS runs.
 // Without JS this never executes, so nothing is hidden and the page reads as plain text.
+//
+// It also reads the "calm" comparison switch: ?calm=on or ?calm=off, remembered in sessionStorage
+// for the tab. On, it sets html[data-calm] before first paint, and posts and case studies drop the
+// playful layer (emoji and cheer copy in the read-time chip, the glyph reveal, all but the last
+// marker, the tilted pull quote card). Off by default. DESIGN.md, "Calm variant", has the list.
 ---
 
 <script is:inline>
   if ("IntersectionObserver" in window) document.documentElement.classList.add("js-motion");
+  (function () {
+    var fromUrl = new URLSearchParams(location.search).get("calm");
+    var calm = fromUrl;
+    try {
+      if (fromUrl === "on" || fromUrl === "off") sessionStorage.setItem("calm", fromUrl);
+      else calm = sessionStorage.getItem("calm");
+    } catch (e) {}
+    if (calm === "on") document.documentElement.dataset.calm = "";
+  })();
 </script>

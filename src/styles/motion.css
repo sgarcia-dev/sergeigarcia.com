@@ -489,8 +489,9 @@ html {
   /* Hide the real text until the script has taken over, so the finished text does not flash
      before the reveal begins. Only when the inline head script set html.js-motion (so never
      without JS). A 1.5s failsafe shows everything even if the module never runs. Same
-     targets as TARGETS in motion.ts; anything the script rules out gets data-dc="skip". */
-  html.js-motion
+     targets as TARGETS in motion.ts; anything the script rules out gets data-dc="skip".
+     With the calm switch on, only the home page reveals, so other pages are never pre-hidden. */
+  html.js-motion:not([data-calm]:not(:has(main.home-mono)))
     :is(main .label, main .hero-aside p:not(.font-title), main .section-head > p):not([data-dc]):not(
       :where(a, button, nav) *,
       :has(a, button, h1, h2, h3, h4, h5, h6)
