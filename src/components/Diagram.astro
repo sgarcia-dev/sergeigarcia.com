@@ -1,0 +1,107 @@
+---
+/**
+ * A drawn diagram for MDX posts: inline SVG in the same frame as <Figure>, with a mono caption.
+ * Hand-built SVG only, never generated art. Each diagram lives in its own .astro file and draws
+ * with the d-* classes below, so it follows light and dark mode without its own colors.
+ *
+ * `label` is the full description read by screen readers (the drawing itself is one image);
+ * `caption` is the short visible line under it.
+ *
+ * Classes for the SVG:
+ *   d-box (paper box), d-yellow / d-cobalt / d-tomato (flat fills), d-line (plain stroke),
+ *   d-t (text in ink), d-t-dark (black text, for yellow and tomato fills), d-t-light (white text,
+ *   for cobalt), d-mono (mono face), d-b (bold), d-sm (small text). Arrows use a marker with
+ *   fill="currentColor"; the SVG color is the ink.
+ */
+interface Props {
+  caption: string;
+  label: string;
+}
+const { caption, label } = Astro.props;
+---
+
+<figure class="dia">
+  <div class="dia-frame" role="img" aria-label={label}>
+    <slot />
+  </div>
+  <figcaption class="label dia-caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .dia {
+    max-width: var(--container-prose);
+    margin: var(--spacing-md) 0 var(--spacing-lg);
+  }
+  .dia-frame {
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 6px 6px 0 var(--edge);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    padding: var(--spacing-xs);
+  }
+  @media (min-width: 48rem) {
+    .dia-frame {
+      padding: var(--spacing-sm);
+    }
+  }
+  .dia-frame :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--color-ink);
+    overflow: visible;
+  }
+  .dia-caption {
+    margin-top: var(--spacing-sm);
+    color: var(--color-muted);
+  }
+  .dia :global(.d-box) {
+    fill: var(--color-bg);
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .dia :global(.d-yellow) {
+    fill: var(--color-yellow);
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .dia :global(.d-cobalt) {
+    fill: var(--color-cobalt);
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .dia :global(.d-tomato) {
+    fill: var(--color-tomato);
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .dia :global(.d-line) {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 2;
+  }
+  .dia :global(.d-dash) {
+    stroke-dasharray: 6 5;
+  }
+  .dia :global(.d-t) {
+    fill: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 19px;
+  }
+  .dia :global(.d-t-dark) {
+    fill: var(--color-black);
+  }
+  .dia :global(.d-t-light) {
+    fill: var(--color-white);
+  }
+  .dia :global(.d-mono) {
+    font-family: var(--font-mono);
+    font-size: 16px;
+  }
+  .dia :global(.d-b) {
+    font-weight: var(--font-weight-bold);
+  }
+  .dia :global(.d-sm) {
+    font-size: 16px;
+  }
+</style>

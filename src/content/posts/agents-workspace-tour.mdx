@@ -1,0 +1,211 @@
+---
+title: "The system behind all my AI work"
+summary: "How I run AI agents day to day: plain-text memory in git, a local search engine, one work loop, cheap workers with strong checks, and code that enforces the rules."
+ogTitle: "How I run AI agents: the ==system behind== all my work"
+ogTitleShort: "The ==system behind== my AI work"
+ogSummary: "Memory in git, ==cheap workers with strong checks== and rules enforced by code."
+ogSummaryShort: "==Cheap workers, strong checks== and rules as code."
+pubDate: 2026-10-12
+updatedDate: 2026-10-28
+skills: ["AI agents", "Agent orchestration", "LLM evals", "Observability", "Claude Code", "Codex", "OpenCode", "Git"]
+cover: "../../assets/posts/agents-workspace/cover-system-map.png"
+coverAlt: "A diagram of the system: me, then a root AI session in any tool, then one folder of rules, skills, roles, models and specs, with search, checks, reports and traces underneath."
+draft: false
+---
+
+import Diagram from "../../components/Diagram.astro";
+import PullQuote from "../../components/PullQuote.astro";
+import SystemMap from "../../components/diagrams/agent-system/SystemMap.astro";
+import Search from "../../components/diagrams/agent-system/Search.astro";
+import Loop from "../../components/diagrams/agent-system/Loop.astro";
+import Roles from "../../components/diagrams/agent-system/Roles.astro";
+import Checks from "../../components/diagrams/agent-system/Checks.astro";
+import SearchScores from "../../components/diagrams/agent-system/SearchScores.astro";
+
+Every AI session forgets what the last one learned. Every AI tool keeps its rules in its own format. So I keep one folder of plain text and small tools that every agent reads first, whatever tool it runs in. It runs most of my work: code, research, planning and writing.
+
+On 19 October I rebuilt it from scratch. This post is the new version. It replaces a much longer tour of the old one.
+
+<Diagram
+  caption="The whole system on one page."
+  label="Diagram. I talk to one root session, which can run in Claude Code, Codex, OpenCode or Gemini. The session reads one folder in git. AGENTS.md is the one file every session loads. Rules, skills, roles and models load on demand. Specs hold memory, and specs-private holds gated private memory. Underneath sit four tools written as code, not models: search, checks, reports and traces."
+>
+  <SystemMap />
+</Diagram>
+
+## One rulebook, every tool
+
+Every session loads exactly one file: `AGENTS.md`. It is about 4 KB. It holds a map of the folders, a short list of rules that are always true, and a table that says which rule to read before which kind of task. Nothing else loads until the task needs it.
+
+The same file serves every tool. Claude Code's `CLAUDE.md` and Codex's `AGENTS.md` are symbolic links to it. Skills work the same way: each tool sees a one-line loader that points to the real procedure. I edit one file and every tool sees the change.
+
+The rule behind it: **tools adapt to the system, never the other way round.** If I switch tools tomorrow, nothing is lost.
+
+## How everything is stored
+
+Everything is plain text, mostly Markdown, in three git repositories:
+
+- **`~/agents`**: the system itself. Rules, skills, roles, model choices and tools.
+- **`specs/`**: the memory of the work, one folder per topic. There are 28 right now.
+- **`specs-private/`**: anything personal. A hook blocks any model that is not cleared to read it.
+
+A spec is the current truth about one thing. The main file says what it is for, where it stands and what comes next. Around it:
+
+```text
+specs/agents-system/
+├── agents-system.md   what is true now; read first
+├── decisions.md       each choice, when and why
+├── research/          dated reports with sources
+└── tasks/
+    └── 2026-10-19--audit-and-structure/
+        ├── audit-and-structure.md   the plan
+        ├── packets/   one job per worker
+        └── results/   what each worker found
+```
+
+Three rules keep it useful:
+
+- **One home per fact.** Other files link to it. Copies drift, so there are none.
+- **Research lands in the spec.** A report goes in `research/`, and the main file must say what changed. A check fails the task if it does not.
+- **Memory is part of the work.** A job is not done until the spec says what is now true and git says why.
+
+## Finding context: a local search engine
+
+Agents are only as good as the context they find. So the system has its own search tool, built for agents. It indexes every spec and system file, about 3,000 files and 38,000 passages, and runs entirely on my Mac.
+
+<Diagram
+  caption="Two kinds of search, one merged answer, with the exact lines and a fingerprint."
+  label="Diagram. A query goes to two searches at once: a SQLite full-text index for exact words, and a local embedding model for meaning. Their rankings are merged into one result per file, with worker scratch files ranked lower. Each result shows the file, the exact line range, a short hash of the file and which search found it."
+>
+  <Search />
+</Diagram>
+
+Each result carries the exact lines and a short hash of the file. An agent can cite a line range, and later tell if the file changed since it read it. If the local model is down, search falls back to words only and says so in its output. A silent fallback would look like a bad answer.
+
+## The work loop
+
+Small questions get a direct answer. Anything with more than one step runs the same loop, and every step reads from files and writes to files. If a session crashes, the next one picks up from the task folder, not from chat history.
+
+<Diagram
+  caption="Workers report. The root accepts. Nothing counts until it is checked."
+  label="Diagram of the work loop. I ask for something. One: the root plans, with a task folder and a status board. Two: it writes a packet with the goal, the files to read, the checks and when to stop. Three: a worker runs on the cheapest model that fits. Four: the result is checked against evidence, not claims. Five: if it passes, the root accepts it and updates the spec. Six: the change is committed and pushed, with the reason in git. If the check fails, the root finds out why and sends a smaller packet."
+>
+  <Loop />
+</Diagram>
+
+A packet is the whole brief: one goal, the files to read with line ranges, the few rules that apply, how to check the result and when to stop. The worker never sees my conversation, so the packet must hold everything.
+
+The check is where quality comes from. Evidence is a command with its output, or a path and the lines read.
+
+<PullQuote>A worker's word is not evidence.</PullQuote>
+
+After three failed fixes, the job goes to a fresh, stronger worker. If the cause is unclear, an investigator looks for it before anyone tries again.
+
+The same loop scales up. Research runs it in rounds: after each round, the root names the weakest claim and the missing piece, and plans the next round around them. Long jobs run it unattended overnight from a queue, with a lock, a spending limit, a hard end time and a morning report.
+
+## Who does what
+
+One root session talks to me. It plans, sends work out and accepts results. It never does work a worker could do.
+
+<Diagram
+  caption="Strong models for judgment, cheap models for work that can be checked."
+  label="Diagram of the roles. I talk to the root session. The root can start an orchestrator, which runs one phase on Opus at medium effort, and, only when I ask, other AI tools such as Codex, OpenCode and Gemini. The orchestrator sends four kinds of terminal workers: a reader that reads and reports on Haiku, a worker that makes one change on Sonnet, a checker that checks but never fixes, and an investigator that finds why something failed. Workers never start workers. One layer deep."
+>
+  <Roles />
+</Diagram>
+
+One file, `models/pools.toml`, picks the model and effort for every role in every tool. A few real rows:
+
+```toml
+[claude]
+reader      = { model = "claude-haiku-5-5", effort = "high" }
+worker-opus = { role = "worker", model = "claude-opus-5-5", effort = "medium" }
+
+[codex]
+worker = { model = "gpt-6.1-sol", effort = "medium" }
+
+[opencode]
+reader = { model = "deepseek-v4.1-flash" }
+```
+
+When a better model ships, I change one line. No agent picks a model from memory, and none may switch silently. If a model hits a rate limit, a worker may retry once on the fallback row and must say so.
+
+A few limits matter more than they look:
+
+- **Small packets.** A cheap model never gets more than 100K tokens, and I aim for 60K. A model that runs out of room still answers with full confidence, just worse.
+- **Short replies.** A worker returns about 10 lines and writes the full report to a file. The root's own context stays clean for judgment.
+- **Time boxes.** A session aims for 15 to 20 minutes and stops at 25 with a checkpoint.
+- **Other tools only on request.** The root can hand a job to Codex, OpenCode or Gemini on the command line, but only when I name the tool. Exit code 0 is not acceptance there either.
+
+## Rules that code enforces
+
+A written rule is a request. Models follow most requests most of the time. The rules that must always hold are code: plain scripts, no model in the loop.
+
+<Diagram
+  caption="When each check runs, and what it stops."
+  label="Diagram of the checks and when they run. Before every tool call: a gate on the private folder, a block that stops workers from starting agents or other AI tools, and a guard that stops unattended runs from waiting on a prompt. Before every AI call in a run: a spend gate that refuses the call when the run is over budget, so no model decides when to stop. When a session ends: every changed file is validated, and any new research must be linked from its spec."
+>
+  <Checks />
+</Diagram>
+
+The checks are small and boring on purpose. Two examples:
+
+- **No nested workers.** If a reader tries to start another Claude session from the shell, the hook stops it and tells it to return its result to the caller instead.
+- **The spend gate is plain code.** Before each AI call in a run, it checks the spend so far against the budget and refuses the call when the run is over. A model never gets to decide that it is fine to keep going.
+
+The same checker also runs on demand. Today `kit validate` reads 2,909 spec files and finds 0 errors, and the checks have their own test suite.
+
+Not everything is code yet. "Check before you say done" and my commit rules are still written rules. Those are next.
+
+## Seeing what agents do
+
+I can't improve what I can't see, so every run leaves a trail I can read later:
+
+- **Traces.** Arize's open-source tracing hooks record each prompt, tool call and model reply as OpenInference spans and send them to Phoenix, a trace viewer that runs on my Mac. Off by default, on per session when I am debugging.
+- **Cost report.** A script reads the local logs of Claude Code, Codex and OpenCode and shows tokens in, cached and out, list price and duration for each run.
+- **Context report.** Another shows what each tool loads before I type a word. That is how I keep `AGENTS.md` small.
+- **Live status.** [claude-agent-watch](https://github.com/sgarcia-dev/claude-agent-watch), a Claude Code plugin I wrote, shows what every agent Claude has launched is doing right now, across tools, without spending a token.
+
+## Measuring instead of guessing
+
+I used to compare model outputs by reading a few and picking the one I liked. That is a terrible way to decide anything. So every eval now follows one short recipe:
+
+1. **Name the default first.** What do I keep if nothing is proven? How big a gain would change my mind? Both are set before the run.
+2. **Score with code when I can.** A model judges only when code can't decide, and only after it matches my own labels on at least 80% of the passes and 80% of the fails.
+3. **Keep the test fair.** Freeze the answer key, use the same items for every option, tune on one half and confirm once on the other.
+4. **Report the gap with a range.** "Better" means the low end of the range still clears the gain I set in step 1. Otherwise the result is "no proven difference".
+
+Here is a real one: the search tool from earlier, tested on 180 questions with known answers.
+
+<Diagram
+  caption="Search benchmark, 26 October. Combining both kinds of search is ahead in this single run."
+  label="Bar chart. Share of 180 questions where the right file was in the top five results. Words and meaning combined: 0.617. Words only: 0.494. Meaning only: 0.483."
+>
+  <SearchScores />
+</Diagram>
+
+Combining both kinds of search finds the right file in the top five for 62% of questions, against about 49% for either one alone. On the harder held-out half every mode scored lower, but the combined search still led (54%). The local embedding model was picked with a smaller test: on a separate 442-document set it ranked the right document first 90% of the time against 75% for the next candidate, and ran three times faster. With only 20 queries, that is a rough signal, not proof.
+
+The benchmark also caught a bug in itself. Its own reports were saved as Markdown inside the indexed folder, so later runs found them as top hits. Now they are saved in a format the index skips.
+
+These search numbers are still single runs without ranges. The next round adds them, because the recipe says so.
+
+## What the rebuild taught me
+
+The rebuild itself ran on this system. Parallel workers built the new version beside the old one. A migration script moved every spec and rewrote the links: zero files lost, zero new broken links. Then five Opus overseers audited it in about 22 minutes and found nothing missing.
+
+It also failed in useful ways, and each failure became a rule:
+
+- **Exit code 0 is not success.** A child agent that crashed, or ran with zero tokens, can still exit cleanly. Every result gets checked.
+- **Test before you announce.** A hook fix was reported as done before anyone ran it. Now nothing is done until its check has run and the output is quoted.
+- **Watch the watchers.** A progress watcher found its own command line in the process list, so it waited forever for a job that had already ended.
+
+## Start small
+
+You don't need any of this on day one. Mine grew from writing down the thing I had just explained for the third time.
+
+1. **Make one folder in git** with a short `AGENTS.md` of the rules you keep repeating. Point your tool at it.
+2. **Keep a `decisions.md`** for one project: what you picked, what you rejected and why. Have the agent read it first.
+3. **Turn one check into code.** Pick the rule your agents break most and write a script that fails when they do.
+
+The third step is the one I wish I had taken first. Agents read rules. They obey checks.
