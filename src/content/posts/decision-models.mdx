@@ -1,0 +1,91 @@
+---
+title: "Don't send a whole agent to answer a yes or no question"
+summary: "I moved the small yes or no and scoring calls in my job pipeline from an AI agent to a decision model. In testing, each posting cost a fraction of a cent and took under a second."
+ogTitle: "Don't send a ==whole agent== to answer a yes or no question"
+ogTitleShort: "Don't send an ==agent== to say yes"
+ogSummary: "Decision models answer typed questions in under a second. Where they ==replace whole agent calls==, they win. Where they don't, they don't."
+ogSummaryShort: "Decision models win where they ==replace agent calls==."
+pubDate: 2026-10-28
+skills: ["AI agents", "Decision models", "LLM evals", "Cost optimization"]
+draft: false
+---
+
+import Diagram from "../../components/Diagram.astro";
+import Pipeline from "../../components/diagrams/decision-models/Pipeline.astro";
+import OneRun from "../../components/diagrams/decision-models/OneRun.astro";
+
+I built a pipeline that finds and ranks job postings for me. Every posting needs the same small answers. Is it remote? What seniority? How well do my skills match? It used to send one AI agent call to rank each posting. Now a decision model answers those questions. In testing, one call per posting answered all of them in about 0.7 seconds, for about $0.00016.
+
+The quality held. On held-out postings, its answers to the six location facts scored 96.7%. A blind re-label of 20 of the postings, which I use as the ceiling, also scored 96.7%. Every answer was valid, because the model can only answer in the shape I ask for.
+
+## What a decision model is
+
+A decision model takes some state and a list of typed questions. It returns typed answers with probabilities. Three shapes: yes or no, pick one from a list, or a score on a fixed scale. It does not write text, call tools or explain itself.
+
+The one I use is [Jev](https://docs.typesafe.ai/concepts/system-one), from TypeSafe. They call it a "System One" model, after Daniel Kahneman's [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow): System 1 is fast and automatic, System 2 is slow and effortful. A coding agent is System 2. It plans, reads files, runs tools and writes. That is what you want for building something. It is a lot of machine for "is this job remote?"
+
+Jev charges [$0.042 per million input tokens](https://docs.typesafe.ai/models), and output is free. You pay to show it the posting, not for the answer.
+
+<Diagram
+  caption="Where the decision model sits in the pipeline."
+  label="Diagram. Scripts and agents collect and fetch job postings. Each posting goes to the decision model. It returns typed answers only: ten facts as fixed options or not stated, a skills match score and a fit score, each 0 to 100. A script turns those answers into a label. I make every final decision myself. The model writes no free text, uses no tools and gives no reasoning."
+>
+  <Pipeline />
+</Diagram>
+
+## What it answers in my pipeline
+
+One call per posting, with three parts:
+
+- **Ten facts.** Location, remote rules, work mode, seniority, role family, whether it is still open. Each answer is a fixed option or "not stated".
+- **Skills match.** A score from 0 to 100 in steps of 25, against a short card of my skills, each with a rating.
+- **Fit.** How strong a match I would be compared with a typical applicant, on the same scale. This ranks the list.
+
+A plain script turns those answers into a label. I still make every final call myself. The model only sorts my reading order.
+
+## The numbers
+
+I tested it before trusting it. 100 public job postings, split 60 for tuning and 40 held out. Four Sonnet labellers built the answer key, with quotes for each answer. I printed an "always say skip" baseline every round, ran each variant three times, and changed one thing per round. I wrote more about this way of measuring in [What measuring my AI pipeline changed](/writing/llm-evals-what-measuring-changed/).
+
+On the held-out 40:
+
+- **Location facts (six of the ten):** 96.7%, against a ceiling of 96.7%. Two of them, sponsorship and relocation, are barely tested, because almost no posting mentions them.
+- **Ranking:** a rank correlation of 0.875 to 0.88 with the key, against a ceiling of 0.87. The tuning set was harder: 0.67 to 0.73.
+- **Valid answers:** 100%.
+
+The first rounds of tuning, about 2,800 calls over five runs, cost about $0.35. When tuning is that cheap, you stop guessing and just re-run.
+
+That paid off later. I rewrote one question about role type and re-ran it on all 606 rated jobs for $0.055. The share of real fits in my top group went from about 72% (53 of 74) to about 92% (150 of 163). The cost: 6 of 66 good fits in a reference set now fall out of that group. 17 small worker agents, blind to the model's answers, audited the new additions.
+
+Here is one full run from 26 October. It rated 441 jobs. The live pipeline now asks more questions than the benchmark did, so the decision model made 1,264 calls, about three per rated job, for $0.23. The agent tier, which still reads pages and does the open-ended web work, made 226 calls for $0.73. That works out to about 17 times more per agent call. The whole run cost $1.22 including paid web fetches, or $0.0034 per new job.
+
+<Diagram
+  caption="One run on 26 October. The decision model does most of the calls for a small share of the cost."
+  label="Bar chart for one run on 26 October 2026 that rated 441 jobs, at list prices, leaving out paid web fetches and scripts. Calls: the decision model made 1,264 and the agent tier made 226, about 85% and 15%. Cost: the decision model cost $0.23 and the agent tier $0.73, about 24% and 76%."
+>
+  <OneRun />
+</Diagram>
+
+Speed matters more than dollars to me. I pay flat fees for most of my AI tools, so the real cost of an agent call is weekly quota and wall-clock time. In three runs on 20 October, the facts step took 0.1 to 0.2 minutes per run. In benchmark runs on 19 October, with 8 calls at once, 100 jobs took 5 to 25 seconds.
+
+## What I tried that did not pay
+
+- **A general model as the answerer.** DeepSeek V4.1 Flash scored 97.9% on held-out facts, a near tie. But it took about 9 seconds per posting, and 2 to 5% of its answers were invalid. Its labels were no better.
+- **A vote across three models.** No gain beyond run-to-run noise, at three times the calls.
+- **A model on my laptop.** I tested three on an M1 Pro. The best, Kev 4B, scored 90.0% on average but missed my 90% floor on two facts (82.5% and 80%) and was about 17 times slower. Qwen3 4B scored 71% and Phi-4-mini 61%. None met the bar.
+
+## Where it does not fit
+
+**The three-way label is weak.** It agreed with the key 78% to 83% of the time. On the tuning set, that only ties "always say skip". It is fine here because I make the final call and the label only sorts. I would not let it decide alone.
+
+**Most decisions are already free.** In my agent system, most small choices happen inside the main session, which already has the context. Moving those to a separate model saves almost nothing and adds a moving part. The savings come only where one cheap call replaces a whole worker call, or many small ones.
+
+**A script still beats a model.** Picking which AI model to use sounds like a decision model job. It is not. It is a usage file and a few rules. Wherever a script can do it, a script wins.
+
+**It is hosted.** No weights, no local copy. So I send it public text only, like job postings, and never my private notes.
+
+**I have no same-jobs comparison.** I never ran the old agent ranker and the decision model on the same postings. The quality claim rests on the held-out benchmark and the human ceiling, not a head-to-head.
+
+## The rule I use now
+
+Before I send an agent, I ask: is the answer a yes, a choice or a score? Does it repeat across many items? Can I build a labelled set to check it? If all three are yes, I try a decision model first, and a script before that.
