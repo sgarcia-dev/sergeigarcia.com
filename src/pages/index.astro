@@ -124,6 +124,24 @@ const jsonLd = [
     </div>
   </section>
 
+  <section id="kind-words" class="band-yellow edge-b" aria-labelledby="kind-words-h">
+    <div class="shell py-lg lg:py-xl">
+      <div class="flex flex-wrap items-end justify-between gap-md">
+        <div>
+          <h2 id="kind-words-h" class="font-display text-h2 tracking-tight">Kind words</h2>
+          <p class="mt-sm max-w-prose">From managers, teammates and people I mentored.</p>
+        </div>
+        <p class="flex flex-wrap gap-sm">
+          <a class="hit" href="/about/#kind-words">More kind words</a>
+          <a class="hit" href={RECOMMENDATIONS_URL} rel="noopener"><Icon name="linkedin" />All on LinkedIn</a>
+        </p>
+      </div>
+      <div class="mt-md">
+        <Testimonials variant="short" band columns />
+      </div>
+    </div>
+  </section>
+
   <section id="projects" class="edge-b" aria-labelledby="projects-h">
     <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
       <div class="section-head lg:col-span-4 xl:col-span-5">
@@ -135,22 +153,6 @@ const jsonLd = [
           {featuredProjects.map((entry) => <ProjectRow entry={entry} level="h3" compact />)}
         </ul>
         <p class="mt-md"><a class="hit" href="/projects/">All projects</a></p>
-      </div>
-    </div>
-  </section>
-
-  <section id="kind-words" class="edge-b" aria-labelledby="kind-words-h">
-    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
-      <div class="section-head lg:col-span-4 xl:col-span-5">
-        <h2 id="kind-words-h" class="font-display text-h2 tracking-tight">Kind words</h2>
-        <p class="mt-sm max-w-prose text-muted">From managers, teammates and people I <span class="lv-mark">mentored</span>, on LinkedIn.</p>
-      </div>
-      <div class="lg:col-span-8 xl:col-span-7">
-        <Testimonials variant="short" />
-        <p class="mt-md flex flex-wrap gap-sm">
-          <a class="hit" href="/about/#kind-words">More kind words</a>
-          <a class="hit" href={RECOMMENDATIONS_URL} rel="noopener"><Icon name="linkedin" />All recommendations on LinkedIn</a>
-        </p>
       </div>
     </div>
   </section>

@@ -1,8 +1,8 @@
 /**
  * Quotes from Sergei's LinkedIn recommendations (picked by Sergei, 2026-10-28).
  *
- * The words are the recommenders' own. Allowed edits only: "…" where text was cut, one typo fix
- * ("when in comes" to "when it comes"), and "[machine translation]" to explain "MT". Raul's is
+ * The words are the recommenders' own. Allowed edits only: "…" where text was cut, two typo fixes
+ * ("when in comes" to "when it comes", "Sergie" to "Sergei"). Raul's is
  * translated from Spanish. Titles are their current ones, as Sergei gave them. No photos.
  *
  * `short` is the line used on the home page; `full` is the longer quote on the About page.
@@ -42,7 +42,7 @@ export const TESTIMONIALS: Testimonial[] = [
     short:
       "…he proved to be ==one of the best FE engineers I've ever worked with==, and a very proactive and knowledge hungry person.",
     full:
-      "He started as a contractor that I personally interviewed and then recommended to my EMs. During that contractor time he proved to be ==one of the best FE engineers I've ever worked with==, and a very proactive and knowledge hungry person. … As a consequence we generated millions of DAU and the entire codebase for [machine translation] in Web. … An AI wizard (really, he built an entire curriculum to teach it here).",
+      "He started as a contractor that I personally interviewed and then recommended to my EMs. During that contractor time he proved to be ==one of the best FE engineers I've ever worked with==, and a very proactive and knowledge hungry person. … Sergei is an amazing human being, a great developer and engineer, ==an AI wizard== (really, he built an entire curriculum to teach it here), and someone I will genuinely miss working with.",
   },
   {
     name: "Bryan Spearman",
@@ -52,13 +52,6 @@ export const TESTIMONIALS: Testimonial[] = [
     short: "This man is ==THE best mentor I've ever had== and I'm probably 20 years his senior.",
     full:
       "This man is ==THE best mentor I've ever had== and I'm probably 20 years his senior. He is extremely well organized, insightful, thoughtful, kind, polite, punctual and above all, an unbelievably talented web developer.",
-  },
-  {
-    name: "Jesús Moisés Lira García",
-    title: "Application Development Analyst, Accenture",
-    relation: "Worked with Sergei on the same team",
-    year: 2021,
-    full: "==All around the best hire you can get.==",
   },
   {
     name: "Raul Salazar",
@@ -75,12 +68,5 @@ export const TESTIMONIALS: Testimonial[] = [
     year: 2019,
     full:
       "A Javascript ninja whose personality lights up the room! … He mentored me off and on the past year in my quest to switch careers to software development and is ==hands down one of the best teachers== I've ever had.",
-  },
-  {
-    name: "Hrushikesh Apte",
-    title: "Head of Enterprise Systems Platform Engineering",
-    relation: "Managed Sergei through Luxoft",
-    year: 2019,
-    full: "His work particularly in unit and automation testing using jest and puppeteer ==greatly benefitted the team==.",
   },
 ];

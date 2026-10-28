@@ -7,31 +7,36 @@
  * Props:
  *   variant: "short" uses each entry's home-page line and skips entries without one;
  *            "full" uses the longer About quote for every entry.
+ *   band: set when the list sits on a colored band. The title then uses the band's own text color
+ *         (no gray on color) and the highlights use the band marker.
+ *   columns: from lg, the quotes sit side by side, split by thick rules (the home band). Stacked below.
  */
 import { TESTIMONIALS } from "../lib/testimonials";
 import { markHtml } from "../lib/mark";
 
 interface Props {
   variant: "short" | "full";
+  band?: boolean;
+  columns?: boolean;
 }
-const { variant } = Astro.props;
+const { variant, band = false, columns = false } = Astro.props;
 const items = TESTIMONIALS.flatMap((t) => {
   const text = variant === "short" ? t.short : t.full;
   return text ? [{ ...t, text }] : [];
 });
 ---
 
-<ul role="list" class:list={["quotes", `quotes--${variant}`]}>
+<ul role="list" class:list={["quotes", `quotes--${variant}`, { "quotes--columns": columns }]}>
   {
     items.map((t) => (
       <li class="quote-row">
         <figure>
           <blockquote class="quote-text font-title">
-            <p set:html={markHtml(t.text)} />
+            <p set:html={markHtml(t.text, { band })} />
           </blockquote>
           <figcaption class="quote-who">
             <span class="quote-name">{t.name}</span>
-            <span class="quote-title text-muted">{t.title}</span>
+            <span class:list={["quote-title", { "text-muted": !band }]}>{t.title}</span>
             <span class="label">{t.relation}, {t.year}</span>
             {t.translatedFrom && <span class="label">Translated from {t.translatedFrom}</span>}
           </figcaption>
@@ -75,5 +80,29 @@ const items = TESTIMONIALS.flatMap((t) => {
   }
   .quote-name {
     font-weight: 700;
+  }
+  /* Home band: three quotes across, each column split from the next by a thick rule in the band's
+     rule color. The caption sits at the bottom so the names line up. */
+  @media (min-width: 64rem) {
+    .quotes--columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-block: var(--rule-thick) solid var(--rule-color);
+    }
+    .quotes--columns .quote-row,
+    .quotes--columns .quote-row:last-child {
+      border: 0;
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 0;
+    }
+    .quotes--columns .quote-row + .quote-row {
+      border-left: var(--rule-thick) solid var(--rule-color);
+      padding-left: var(--spacing-md);
+    }
+    .quotes--columns figure {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
   }
 </style>
