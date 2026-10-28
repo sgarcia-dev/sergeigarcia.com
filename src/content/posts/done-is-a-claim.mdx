@@ -1,0 +1,108 @@
+---
+title: "Done is a claim. A passing check is a fact."
+summary: "Why I never ask an AI agent if it is done. Three real cases where a quiet failure looked like success, and the simple scripted checks that now catch them."
+ogTitle: "Done is a claim. ==A passing check is a fact.=="
+ogTitleShort: "Done is a claim. ==Checks are facts.=="
+ogSummary: "Quiet failures that looked like success, and the ==scripted checks== that now catch them."
+ogSummaryShort: "Agents say done. ==Checks prove it.=="
+pubDate: 2026-10-28
+skills: ["AI agents", "Verification", "Testing", "Playwright", "Agent orchestration", "Claude Code"]
+draft: false
+---
+
+import Diagram from "../../components/Diagram.astro";
+import ClaimVsCheck from "../../components/diagrams/done-is-a-claim/ClaimVsCheck.astro";
+import LinkMove from "../../components/diagrams/done-is-a-claim/LinkMove.astro";
+import ExitZero from "../../components/diagrams/done-is-a-claim/ExitZero.astro";
+
+When an AI agent tells me it is done, I treat that as a claim, not a fact. I don't ask it "are you sure?" A model asked if it finished will almost always say yes. So I run a check instead: a script that gives the same answer every time, whoever runs it. If it passes, the work is done. If it fails, the work goes back.
+
+This sounds obvious. But the failures that hurt me were never loud. They were quiet ones that looked exactly like success. Here are three from my own systems, and the checks that catch them now.
+
+## The rule
+
+In [my agents system](/writing/agents-workspace-tour/), one line does most of the work: **workers report, the root accepts. A worker never marks its own task done.** The skill the root uses to accept work sums it up: "Evidence or it did not happen." Before anyone says done, they run the check and quote its output.
+
+<Diagram
+  caption="The worker's word starts the check. It never ends it."
+  label="Diagram. A worker says done. The root runs a check. If the check passes, the work is accepted. If it fails, it goes back to the worker. Below, three examples of what a check looks for: a build that prints Complete!, a validator that reports 0 errors, and a run report that starts with Status: OK."
+>
+  <ClaimVsCheck />
+</Diagram>
+
+The hooks that enforce my other rules are in [the tour post](/writing/agents-workspace-tour/#rules-that-code-enforces). This post is about why checks beat questions.
+
+## The deploy that shipped nothing
+
+This site is built by agents. In October a change had a type error, so the build failed. But the deploy command piped the build output through `tail -1`, which shows only the last line. The error scrolled away. The deploy went ahead and shipped the previous build folder.
+
+Nothing broke. The live site just did not change. Everything looked fine, which is what made it dangerous.
+
+The next day it happened again in a new way. The build ran in one folder, and the deploy ran from another folder that still held the old build.
+
+Neither fix was "be more careful". Both were checks:
+
+- The build must exit cleanly and print `Complete!` before any deploy.
+- After a deploy, a string I changed must show up in the live HTML.
+- Every UI change runs end-to-end tests in a real browser, with accessibility checks on every page, in light and dark mode. On the last release that was 75 test runs, all passed.
+
+A model can't tell you the live page is stale. A `curl` and a `grep` can.
+
+## Moving 10,000 links without breaking one
+
+When I rebuilt my agents system, I moved my notes into a new folder layout. Every move can break links. You can't ask a model "did any links break?" It can't hold ten thousand links in its head, and it will still answer.
+
+So the move tool proves it instead. Every file's fingerprint must match before and after. Every link gets checked. The result: 10,656 links checked and 0 new broken links. The tool made 1,950 rewrites, and each one was proven to point at the same file. Without them, 1,832 links would have broken.
+
+<Diagram
+  caption="The move tool checked every link, not a sample."
+  label="Bar chart. 10,656 links were checked after the move. 1,832 of them would have broken without the tool's rewrites. 0 new links broke."
+>
+  <LinkMove />
+</Diagram>
+
+To be honest about it: 1,960 links were already broken before the move. The check did not hide them. It reported them and left them as they were, so the move made nothing worse.
+
+Two things the checker caught while that tool was being built:
+
+- **A fix reported as passed was not safe.** A separate checker tested the empty-folder cleanup with the real config instead of the test config. With the real config, a rename removed an empty top-level folder. Git kept the real folders from being empty, so no harm was done. But the promise "never removes the root" was false, and the tests had said it was true.
+- **A test that guarded nothing.** The checker deleted a branch of the code in a copy and ran the tests. All 18 still passed. So no test covered that branch. Breaking the code on purpose is the fastest way I know to test the tests.
+
+The same lesson came earlier, from an older prototype of this system. It had 279 tests, and all of them ran against a fake version of the AI tool. In its real pilot runs, 2 of 3 were partial and 1 failed. Tests against a fake prove the fake works.
+
+## Exit code 0 is not success
+
+I also built a pipeline that finds and ranks job postings for me. It runs unattended, so nobody is watching when something goes wrong.
+
+The first version reported success too easily. Its run command saw every phase exit with code 0, because a watchdog process reaped each phase, so the exit code said nothing about the work. Its time and spending limits were printed at the start and then read by nothing.
+
+<Diagram
+  caption="Three quiet failures that a run reported as fine."
+  label="Diagram. Left column, what the run said; right column, what happened. Every phase exited 0, but the 0 came from a watchdog. The run finished with no error, but 0 of 8 page reads worked. There was no error text, but 0 of 7 cleanup calls worked. Below: now the report's first line is Status: OK or Status: PROBLEM."
+>
+  <ExitZero />
+</Diagram>
+
+In one run, 0 of 8 page reads worked. Both requests timed out with no error text, and the run still finished. In another case, a cheap model used for cleanup failed 7 of 7 calls over two runs. Each call returned 0 tokens and no error. Nothing crashed, so nothing looked wrong.
+
+The run command now enforces this in code:
+
+- A failed phase is retried once, then reported.
+- The time and spending limits are enforced, with spend checked between phases.
+- The report's first line is `Status: OK` or `Status: PROBLEM:` followed by the reasons. A script writes it, not the model.
+
+The agents that run these AI calls also follow a new written rule: a call that returns 0 tokens and no error counts as a failure.
+
+## What I check now
+
+Every one of these failures had the same shape: no error, so it looked like success. A model asked "are you done?" would have said yes each time, and it would have believed it.
+
+So these are my rules now:
+
+- **The one who did the work never grades it.** A separate checker gets the evidence, not the story.
+- **Check against the real thing.** Real config, real tool, live page. Not a fake.
+- **Test the tests.** Break the code on purpose. If the tests still pass, they guard nothing.
+- **Silence is not success.** Zero output, zero tokens or zero results get treated as a failure until proven otherwise.
+- **Status is a line a script writes.** Not a sentence a model writes.
+
+Asking an agent if it is done gets you a yes. Running a check gets you the truth.
