@@ -189,7 +189,10 @@ function setupGlyph() {
   });
 }
 
-if (!reduced && root.classList.contains("js-motion")) setupGlyph();
+// The calm switch (html[data-calm]) keeps the reveal on the home page only. motion.css leaves
+// these targets visible there, so nothing needs un-hiding.
+const calmInner = "calm" in root.dataset && !document.querySelector("main.home-mono");
+if (!reduced && !calmInner && root.classList.contains("js-motion")) setupGlyph();
 
 // Playground hook: a "glyph-replay" event on a finished block plays its reveal once more. Nothing on
 // the site dispatches it except /playground, so it changes nothing elsewhere.

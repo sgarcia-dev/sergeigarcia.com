@@ -33,6 +33,10 @@
  * within 1.5s, CSS shows the card; a card already scrolled past is shown at once; any error in
  * the script shows every card. It plays once and stays.
  *
+ * Calm switch (html[data-calm], see MotionInit.astro): the card becomes a plain pull quote: large
+ * Fraunces in the page ink with a thick rule on its left, no fill, chip, shadow, tilt or pop. The
+ * left rule keeps it apart from section headings, which have their rule above.
+ *
  * Usage in MDX, as plain text on one line: <PullQuote>The line from the post.</PullQuote>
  */
 interface Props {
@@ -54,7 +58,9 @@ const { decorative = false } = Astro.props;
   };
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (cards.length && !reduced && root.classList.contains("js-motion") && "IntersectionObserver" in window) {
+  const calm = "calm" in root.dataset;
+
+  if (cards.length && !reduced && !calm && root.classList.contains("js-motion") && "IntersectionObserver" in window) {
     try {
       // Wait for an arriving page transition to end, like the glyph reveal does (but never long).
       let transitionDone: Promise<unknown> = Promise.resolve();
@@ -161,6 +167,26 @@ const { decorative = false } = Astro.props;
       margin-inline-end: calc(var(--spacing-lg) * -1);
     }
   }
+  /* Calm switch: a plain pull quote on the page color. Theme colors, so it follows dark mode. */
+  :global(html[data-calm]) .pq {
+    margin-block: var(--spacing-lg);
+    margin-inline-end: 0;
+    padding: 0 0 0 var(--spacing-md);
+    background: none;
+    color: var(--color-ink);
+    border: 0;
+    border-inline-start: calc(var(--rule-thick) * 2) solid var(--edge);
+    box-shadow: none;
+    transform: none;
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+    letter-spacing: normal;
+  }
+  :global(html[data-calm]) .pq::before {
+    content: none;
+  }
   /* A tilted card is only for people who are fine with it; flat is calmer. */
   @media (prefers-reduced-motion: reduce) {
     .pq {
@@ -225,19 +251,19 @@ const { decorative = false } = Astro.props;
     /* Waiting: lower, smaller, untilted and invisible. Before the script has looked at the card
        (no data-pq yet) it is hidden too, so there is no flash; the failsafe shows it if the script
        never comes. Once the script has marked it pending, the failsafe no longer applies. */
-    :global(html.js-motion) .pq:not([data-pq]),
+    :global(html.js-motion:not([data-calm])) .pq:not([data-pq]),
     .pq[data-pq="pending"] {
       opacity: 0;
       transform: translateY(14px) scale(0.94) rotate(0deg);
     }
-    :global(html.js-motion) .pq:not([data-pq]) {
+    :global(html.js-motion:not([data-calm])) .pq:not([data-pq]) {
       animation: pq-show 1ms linear 1.5s forwards;
     }
-    :global(html.js-motion) .pq:not([data-pq])::before,
+    :global(html.js-motion:not([data-calm])) .pq:not([data-pq])::before,
     .pq[data-pq="pending"]::before {
       opacity: 0;
     }
-    :global(html.js-motion) .pq:not([data-pq])::before {
+    :global(html.js-motion:not([data-calm])) .pq:not([data-pq])::before {
       animation: pq-show-chip 1ms linear 1.5s forwards;
     }
     .pq[data-pq="in"] {

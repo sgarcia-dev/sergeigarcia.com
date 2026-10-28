@@ -64,6 +64,13 @@
   --lv-mark-pos: 0 50%;
   color: var(--color-black);
 }
+/* Calm switch (html[data-calm], MotionInit.astro): in an article body only the last marker stays
+   (lively.ts tags it .lv-keep). The others are plain text from first paint, with no box space. */
+html[data-calm] [data-rt-body] .lv-mark:not(.lv-keep) {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
 @keyframes lv-mark-show {
   to {
     background-size: var(--lv-mark-size);

@@ -13,6 +13,11 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 function initMarker() {
   // Tells the CSS that this script is running, so the timed no-script failsafe on the highlights stays off.
   document.documentElement.classList.add("lv-js");
+  // The calm switch keeps only the article's last marker (lively.css hides the others).
+  if ("calm" in document.documentElement.dataset) {
+    const inBody = document.querySelectorAll<HTMLElement>("[data-rt-body] .lv-mark");
+    inBody[inBody.length - 1]?.classList.add("lv-keep");
+  }
   const marks = Array.from(document.querySelectorAll<HTMLElement>(".lv-mark"));
   if (!marks.length) return;
   if (reduceMotion || !("IntersectionObserver" in window)) {

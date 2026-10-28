@@ -13,6 +13,8 @@
 //   ?rtemoji=grow|trip|moon|none        emoji set (default grow)
 //   ?rtcopy=cheer|coach|quiet           wording (default cheer)
 //   ?rtswap=glyph|plain                 how changed text swaps in: the site's block-glyph reveal, or instantly
+// With the calm switch on (html[data-calm], see MotionInit.astro) the defaults become none, quiet
+// and plain. An explicit rt param still wins.
 
 const EMOJI = {
   grow: ["🌱", "🌿", "🪴", "🌳", "🎉"],
@@ -92,9 +94,10 @@ function init() {
   const total = Math.max(1, Number(chip.dataset.total) || 1);
   const pos = pick("rtpos", POS, "strip");
   const phoneMode = pick("rtm", PHONE, "compact");
-  const emojiSet = pick("rtemoji", Object.keys(EMOJI) as (keyof typeof EMOJI)[], "grow");
-  const copySet = pick("rtcopy", Object.keys(COPY) as (keyof typeof COPY)[], "cheer");
-  const swapMode = pick("rtswap", SWAP, "glyph");
+  const calm = "calm" in document.documentElement.dataset;
+  const emojiSet = pick("rtemoji", Object.keys(EMOJI) as (keyof typeof EMOJI)[], calm ? "none" : "grow");
+  const copySet = pick("rtcopy", Object.keys(COPY) as (keyof typeof COPY)[], calm ? "quiet" : "cheer");
+  const swapMode = pick("rtswap", SWAP, calm ? "plain" : "glyph");
   const glyphSwap = swapMode === "glyph" && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   const emojis = EMOJI[emojiSet];
   const copy = COPY[copySet];
