@@ -1,108 +1,134 @@
 ---
 title: "Done is a claim. A passing check is a fact."
-summary: "Why I never ask an AI agent if it is done. Three real cases where a quiet failure looked like success, and the simple scripted checks that now catch them."
+summary: "What a check is, what makes a good one, and two real cases: moving 10,656 links without breaking one, and tailoring a resume without inventing a fact."
 ogTitle: "Done is a claim. ==A passing check is a fact.=="
 ogTitleShort: "Done is a claim. ==Checks are facts.=="
-ogSummary: "Quiet failures that looked like success, and the ==scripted checks== that now catch them."
-ogSummaryShort: "Agents say done. ==Checks prove it.=="
+ogSummary: "A check is a calculator. An agent is a sample. ==Two real cases== where scripts beat agents."
+ogSummaryShort: "A check is a calculator. ==An agent is a sample.=="
 pubDate: 2026-10-28
-skills: ["AI agents", "Verification", "Testing", "Playwright", "Agent orchestration", "Claude Code"]
+updatedDate: 2026-10-28
+skills: ["AI agents", "Verification", "Testing", "Python", "Agent orchestration", "Claude Code"]
 draft: false
 ---
 
 import Diagram from "../../components/Diagram.astro";
-import ClaimVsCheck from "../../components/diagrams/done-is-a-claim/ClaimVsCheck.astro";
+import CheckVsSample from "../../components/diagrams/done-is-a-claim/CheckVsSample.astro";
+import GoodCheck from "../../components/diagrams/done-is-a-claim/GoodCheck.astro";
+import MovePipeline from "../../components/diagrams/done-is-a-claim/MovePipeline.astro";
 import LinkMove from "../../components/diagrams/done-is-a-claim/LinkMove.astro";
-import ExitZero from "../../components/diagrams/done-is-a-claim/ExitZero.astro";
+import ResumeFlow from "../../components/diagrams/done-is-a-claim/ResumeFlow.astro";
+import ResumeCaught from "../../components/diagrams/done-is-a-claim/ResumeCaught.astro";
 
-When an AI agent tells me it is done, I treat that as a claim, not a fact. I don't ask it "are you sure?" A model asked if it finished will almost always say yes. So I run a check instead: a script that gives the same answer every time, whoever runs it. If it passes, the work is done. If it fails, the work goes back.
+When an AI agent tells me it is done, I treat that as a claim. Then I run a check. This post explains what I mean by a check, what makes a good one, and two places where a check did a job no agent could do reliably.
 
-This sounds obvious. But the failures that hurt me were never loud. They were quiet ones that looked exactly like success. Here are three from my own systems, and the checks that catch them now.
+## A check is a calculator. An agent is a sample.
 
-## The rule
+Ask a calculator for 2 + 2 and it says 4. Ask it a million times and it says 4 a million times. That is a check: a program that gives the same answer for the same input, every time.
 
-In [my agents system](/writing/agents-workspace-tour/), one line does most of the work: **workers report, the root accepts. A worker never marks its own task done.** The skill the root uses to accept work sums it up: "Evidence or it did not happen." Before anyone says done, they run the check and quote its output.
+Ask an agent the same question and you get its judgment. Its judgment is usually right. But each answer is a sample. Some share of the time it is wrong, or it skims past a typo, or it says "all good" because that is the likely thing to say. And you can't tell which answers those are without checking them.
 
 <Diagram
-  caption="The worker's word starts the check. It never ends it."
-  label="Diagram. A worker says done. The root runs a check. If the check passes, the work is accepted. If it fails, it goes back to the worker. Below, three examples of what a check looks for: a build that prints Complete!, a validator that reports 0 errors, and a run report that starts with Status: OK."
+  caption="Same input, same answer, versus a sample that is usually right."
+  label="Asking a check 2 + 2 a million times gives 1,000,000 answers, all 4. Asking an agent the same question a million times gives mostly 4, but some share are wrong and you don't know which."
 >
-  <ClaimVsCheck />
+  <CheckVsSample />
 </Diagram>
 
-The hooks that enforce my other rules are in [the tour post](/writing/agents-workspace-tour/#rules-that-code-enforces). This post is about why checks beat questions.
+Asking a second agent to review the first doesn't fix this. It just draws another sample. So wherever I can write down what "correct" means, I write it as code.
 
-## The deploy that shipped nothing
+## What makes a good check
 
-This site is built by agents. In October a change had a type error, so the build failed. But the deploy command piped the build output through `tail -1`, which shows only the last line. The error scrolled away. The deploy went ahead and shipped the previous build folder.
+Not every script is a good check. The ones that earn their keep share six traits:
 
-Nothing broke. The live site just did not change. Everything looked fine, which is what made it dangerous.
-
-The next day it happened again in a new way. The build ran in one folder, and the deploy ran from another folder that still held the old build.
-
-Neither fix was "be more careful". Both were checks:
-
-- The build must exit cleanly and print `Complete!` before any deploy.
-- After a deploy, a string I changed must show up in the live HTML.
-- Every UI change runs end-to-end tests in a real browser, with accessibility checks on every page, in light and dark mode. On the last release that was 75 test runs, all passed.
-
-A model can't tell you the live page is stale. A `curl` and a `grep` can.
-
-## Moving 10,000 links without breaking one
-
-When I rebuilt my agents system, I moved my notes into a new folder layout. Every move can break links. You can't ask a model "did any links break?" It can't hold ten thousand links in its head, and it will still answer.
-
-So the move tool proves it instead. Every file's fingerprint must match before and after. Every link gets checked. The result: 10,656 links checked and 0 new broken links. The tool made 1,950 rewrites, and each one was proven to point at the same file. Without them, 1,832 links would have broken.
+- **Deterministic.** Same input, same answer. No model inside.
+- **Fast and cheap.** Cheap enough to run every single time, not once a week.
+- **Pass or fail, with a reason.** Not a score. "Line 12: 40 not in approved facts" beats "looks mostly fine".
+- **Reads the real output.** The actual files, the actual page, the actual resume. Not a test copy or a summary of it.
+- **Fails loudly.** A failure stops the work and says so. Silence never counts as a pass.
+- **Written once, run forever.** I pay for it one time. Every later run is free.
 
 <Diagram
-  caption="The move tool checked every link, not a sample."
-  label="Bar chart. 10,656 links were checked after the move. 1,832 of them would have broken without the tool's rewrites. 0 new links broke."
+  caption="A good check reads the real output and returns pass or fail with a reason."
+  label="A good check reads the real output (the actual file, page or resume), runs as code rather than a model, and returns PASS or FAIL with a reason. It is deterministic, fast and cheap, precise, reads the real output, fails loudly, and is written once to run forever."
+>
+  <GoodCheck />
+</Diagram>
+
+Here are two cases from my own systems.
+
+## Example 1: a move that broke none of 10,656 links
+
+When I rebuilt [my agents system](/writing/agents-workspace-tour/), I moved all my notes into a new folder layout: 1,100 live files plus a larger archive. My notes link to each other a lot. Move a file and every link to it breaks.
+
+I could have asked agents to fix the links. That would mean thousands of small hand edits. Each one is a chance to miss a link, or to "fix" it to a path that does not exist. Then I would need another agent to check the work, which is just another sample. I needed every link right, not most of them.
+
+So the move was a script, with no model in it. It works in four steps:
+
+1. **Plan.** List every move as old path to new path.
+2. **Rewrite.** Change every link that points at a moved file, by rule, and log each edit.
+3. **Check.** Re-scan every link and confirm it resolves. Every file the tool did not edit must match its fingerprint (a hash of its contents) exactly. Every file it did edit must equal the old file plus its logged edits, nothing more.
+4. **Cut over,** meaning swap the new folder in for the old one, only if step 3 says PASS. Any mismatch prints FAIL, and my working folder is never touched.
+
+<Diagram
+  caption="The move only happens if every check passes."
+  label="A four-step link move: plan every move for 1,100 live files, rewrite links by rule with 1,950 logged edits, check everything (every link resolves, unchanged files match their fingerprint, each edited file equals the old file plus its logged edits), then cut over. Any mismatch fails and leaves the live folder untouched."
+>
+  <MovePipeline />
+</Diagram>
+
+Before the real move, the tool rehearsed the whole thing into a scratch copy and checked it. It checked 10,656 links between my files. It made 1,950 link rewrites in 410 files, and proved each one still pointed at the same file. Without those rewrites, 1,832 links would have broken. After the rehearsal, 0 new links were broken, and every unchanged file matched its fingerprint. The real move had to pass the same check before the swap.
+
+<Diagram
+  caption="Every link between my files was checked, not a sample of them."
+  label="Bar chart: 10,656 links checked; 1,950 rewritten by the tool; 1,832 would have broken without the rewrites; 0 new broken links."
 >
   <LinkMove />
 </Diagram>
 
-To be honest about it: 1,960 links were already broken before the move. The check did not hide them. It reported them and left them as they were, so the move made nothing worse.
+One honest note: 1,960 links were already broken before the move. The check reported them and left them alone, so the move made nothing worse.
 
-Two things the checker caught while that tool was being built:
+Later, agents built a smaller move tool for single files. Their work showed why checks matter. Two cases:
 
-- **A fix reported as passed was not safe.** A separate checker tested the empty-folder cleanup with the real config instead of the test config. With the real config, a rename removed an empty top-level folder. Git kept the real folders from being empty, so no harm was done. But the promise "never removes the root" was false, and the tests had said it was true.
-- **A test that guarded nothing.** The checker deleted a branch of the code in a copy and ran the tests. All 18 still passed. So no test covered that branch. Breaking the code on purpose is the fastest way I know to test the tests.
+- **A guard that "passed" but was not safe.** A worker reported that the tool never deletes a top-level notes folder when it cleans up empty ones. A separate checker re-ran it with my real config instead of the test config. With the real config, the guard failed. It was minor and nothing was lost, but the claim was false, and the tests had said it was true.
+- **Tests that guarded nothing.** A checker deleted one branch of the code in a copy and ran the tests. All 18 tests for that part still passed. No test covered that branch. Breaking code on purpose is the fastest way I know to test the tests.
 
-The same lesson came earlier, from an older prototype of this system. It had 279 tests, and all of them ran against a fake version of the AI tool. In its real pilot runs, 2 of 3 were partial and 1 failed. Tests against a fake prove the fake works.
+In both cases an agent said done. The catch came from running the real code, not from anyone's opinion of it.
 
-## Exit code 0 is not success
+## Example 2: tailoring a resume without inventing a fact
 
-I also built a pipeline that finds and ranks job postings for me. It runs unattended, so nobody is watching when something goes wrong.
+I use a model to tailor my resume to a job posting. It reorders bullets, trims, and rewrites the summary. That is useful work for a model. But a model writing about me will sometimes improve on the truth: a number that sounds good, a skill I don't have, a more senior title.
 
-The first version reported success too easily. Its run command saw every phase exit with code 0, because a watchdog process reaped each phase, so the exit code said nothing about the work. Its time and spending limits were printed at the start and then read by nothing.
+So I don't ask the model to be careful. A script checks every fact in a tailored resume against a list of facts I approved: my master resume, plus a few achievement lines I vetted from source records. The script checks:
+
+- **Numbers.** Every number in the draft must appear in the approved facts.
+- **Job headings.** Each title, employer and date range must match word for word, in the same order.
+- **Bullets.** Each bullet must match an approved line, or be a shortened version of one: words can be cut, never added.
+- **Skills.** Each skill must already appear in my approved facts.
+
+Anything not found is blocked, and the reasons go back to the model for another try. After two failed tries, it ships a base resume I already checked, instead of the draft. A draft that fails the check never ships.
 
 <Diagram
-  caption="Three quiet failures that a run reported as fine."
-  label="Diagram. Left column, what the run said; right column, what happened. Every phase exited 0, but the 0 came from a watchdog. The run finished with no error, but 0 of 8 page reads worked. There was no error text, but 0 of 7 cleanup calls worked. Below: now the report's first line is Status: OK or Status: PROBLEM."
+  caption="The model writes. A script decides what ships."
+  label="Flow: the approved facts from my master resume feed a model that writes a tailored draft. A script checks every number, job heading, bullet and skill against the approved facts. Anything not found is blocked and the reasons go back to the model, with two tries. After two fails the approved base resume ships instead. If it passes, a second model reviews the summary wording and the resume ships."
 >
-  <ExitZero />
+  <ResumeFlow />
 </Diagram>
 
-In one run, 0 of 8 page reads worked. Both requests timed out with no error text, and the run still finished. In another case, a cheap model used for cleanup failed 7 of 7 calls over two runs. Each call returned 0 tokens and no error. Nothing crashed, so nothing looked wrong.
+Here is what a catch looks like. This is an illustration, built from a line on my public work history:
 
-The run command now enforces this in code:
+<Diagram
+  caption="Illustration. The added claim sounds plausible. The script blocks it anyway."
+  label="Illustration: the approved fact says 'Led full-stack development of the checkout flow with Vue, Nuxt and GraphQL.' The model's draft adds 'cutting load time by 40%.' The check blocks it: 40 is not in the approved facts, and the bullet adds words not in any approved line."
+>
+  <ResumeCaught />
+</Diagram>
 
-- A failed phase is retried once, then reported.
-- The time and spending limits are enforced, with spend checked between phases.
-- The report's first line is `Status: OK` or `Status: PROBLEM:` followed by the reasons. A script writes it, not the model.
+How often does this happen? In one test run, I tried seven setups (different prompts and starting resumes), 30 drafts each: 210 drafts. The script blocked 20 of them, for 24 bullets that matched no approved line. The setup I use had 0 blocked. The more open setups had up to 8 out of 30. As my own design notes put it, prompt rules alone are the weakest guard.
 
-The agents that run these AI calls also follow a new written rule: a call that returns 0 tokens and no error counts as a failure.
+One part is not a script. The summary is new prose, so there is no approved line to match it against. A second model reviews it, and in that same run it flagged 12 more drafts. One earlier catch was a made-up "staff engineer" summary. Its objections also go back to the model. That reviewer is a sample too. So I keep its job small: everything that can be checked by code is checked by code first.
 
-## What I check now
+## The rule I follow now
 
-Every one of these failures had the same shape: no error, so it looked like success. A model asked "are you done?" would have said yes each time, and it would have believed it.
+When the answer must be right every time, I write a check, and the agent's "done" is only the start. Agents are great at doing the work. Checks are how I know it was done right.
 
-So these are my rules now:
-
-- **The one who did the work never grades it.** A separate checker gets the evidence, not the story.
-- **Check against the real thing.** Real config, real tool, live page. Not a fake.
-- **Test the tests.** Break the code on purpose. If the tests still pass, they guard nothing.
-- **Silence is not success.** Zero output, zero tokens or zero results get treated as a failure until proven otherwise.
-- **Status is a line a script writes.** Not a sentence a model writes.
-
-Asking an agent if it is done gets you a yes. Running a check gets you the truth.
+If you want to see how I measure the agents themselves, [I wrote about that here](/writing/llm-evals-what-measuring-changed/).

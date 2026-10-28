@@ -1,0 +1,33 @@
+<svg viewBox="0 0 560 404" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="arr-move-pipeline" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+
+  <rect class="d-box" x="10" y="10" width="540" height="64" />
+  <text class="d-t d-b" x="26" y="38">Plan every move</text>
+  <text class="d-t d-sm" x="26" y="60">old path -&gt; new path, for 1,100 live files</text>
+  <path class="d-line" d="M280,74 L280,98" marker-end="url(#arr-move-pipeline)" />
+
+  <rect class="d-box" x="10" y="100" width="540" height="64" />
+  <text class="d-t d-b" x="26" y="128">Rewrite links by rule</text>
+  <text class="d-t d-sm" x="26" y="150">1,950 edits, each one logged</text>
+  <path class="d-line" d="M280,164 L280,188" marker-end="url(#arr-move-pipeline)" />
+
+  <rect class="d-cobalt" x="10" y="190" width="540" height="108" />
+  <text class="d-t d-t-light d-b" x="26" y="218">Check everything</text>
+  <text class="d-t d-t-light d-sm" x="26" y="242">every link resolves;</text>
+  <text class="d-t d-t-light d-sm" x="26" y="262">unchanged files match their fingerprint;</text>
+  <text class="d-t d-t-light d-sm" x="26" y="282">each edited file = old file + its logged edits</text>
+
+  <path class="d-line" d="M140,298 L140,316 M420,298 L420,316 M140,316 L420,316" />
+  <path class="d-line" d="M140,316 L140,332" marker-end="url(#arr-move-pipeline)" />
+  <path class="d-line" d="M420,316 L420,332" marker-end="url(#arr-move-pipeline)" />
+
+  <rect class="d-yellow" x="10" y="334" width="260" height="60" />
+  <text class="d-t d-t-dark d-b" x="140" y="370" text-anchor="middle">Cut over</text>
+  <rect class="d-tomato" x="290" y="334" width="260" height="60" />
+  <text class="d-t d-t-dark d-sm" x="306" y="360">Any mismatch: FAIL.</text>
+  <text class="d-t d-t-dark d-sm" x="306" y="380">Live folder untouched.</text>
+</svg>

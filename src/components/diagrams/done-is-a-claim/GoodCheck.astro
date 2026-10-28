@@ -1,0 +1,38 @@
+<svg viewBox="0 0 560 480" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="arr-good-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+
+  <rect class="d-box" x="130" y="10" width="300" height="56" />
+  <text class="d-t d-b" x="280" y="36" text-anchor="middle">Real output</text>
+  <text class="d-t d-sm" x="280" y="56" text-anchor="middle">the actual file, page or resume</text>
+  <path class="d-line" d="M280,66 L280,90" marker-end="url(#arr-good-check)" />
+
+  <rect class="d-cobalt" x="130" y="92" width="300" height="44" />
+  <text class="d-t d-t-light d-b" x="280" y="121" text-anchor="middle">Check (code, not a model)</text>
+  <path class="d-line" d="M280,136 L280,154 M142,154 L418,154" />
+  <path class="d-line" d="M142,154 L142,170" marker-end="url(#arr-good-check)" />
+  <path class="d-line" d="M418,154 L418,170" marker-end="url(#arr-good-check)" />
+
+  <rect class="d-yellow" x="10" y="172" width="265" height="48" />
+  <text class="d-t d-t-dark d-b" x="142" y="202" text-anchor="middle">PASS</text>
+  <rect class="d-tomato" x="285" y="172" width="265" height="48" />
+  <text class="d-t d-t-dark d-b" x="418" y="202" text-anchor="middle">FAIL: reason</text>
+
+  <text class="d-t d-sm d-b" x="10" y="258">What makes it a good check</text>
+
+  <rect class="d-yellow" x="10" y="279" width="14" height="14" />
+  <text class="d-t" x="36" y="292">Same input, same answer</text>
+  <rect class="d-yellow" x="10" y="313" width="14" height="14" />
+  <text class="d-t" x="36" y="326">Fast and cheap: runs every time</text>
+  <rect class="d-yellow" x="10" y="347" width="14" height="14" />
+  <text class="d-t" x="36" y="360">Pass or fail, with a precise reason</text>
+  <rect class="d-yellow" x="10" y="381" width="14" height="14" />
+  <text class="d-t" x="36" y="394">Reads the real output, not a proxy</text>
+  <rect class="d-yellow" x="10" y="415" width="14" height="14" />
+  <text class="d-t" x="36" y="428">Fails loudly, never silently</text>
+  <rect class="d-yellow" x="10" y="449" width="14" height="14" />
+  <text class="d-t" x="36" y="462">Written once, run forever</text>
+</svg>
