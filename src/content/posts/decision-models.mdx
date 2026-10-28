@@ -1,91 +1,158 @@
 ---
 title: "Don't send a whole agent to answer a yes or no question"
-summary: "I moved the small yes or no and scoring calls in my job pipeline from an AI agent to a decision model. In testing, each posting cost a fraction of a cent and took under a second."
+summary: "I asked a decision model and two AI agents the same ten questions about 40 job postings. Quality was a near tie. The decision model was 10 to 41 times cheaper and about 16 to 22 times faster."
 ogTitle: "Don't send a ==whole agent== to answer a yes or no question"
 ogTitleShort: "Don't send an ==agent== to say yes"
-ogSummary: "Decision models answer typed questions in under a second. Where they ==replace whole agent calls==, they win. Where they don't, they don't."
-ogSummaryShort: "Decision models win where they ==replace agent calls==."
+ogSummary: "Same questions, same postings: a decision model matched two agents on quality at ==a tenth of the cost or less==."
+ogSummaryShort: "Same quality, ==a tenth of the cost==."
 pubDate: 2026-10-28
+updatedDate: 2026-10-28
 skills: ["AI agents", "Decision models", "LLM evals", "Cost optimization"]
 draft: false
 ---
 
 import Diagram from "../../components/Diagram.astro";
+import HeadToHead from "../../components/diagrams/decision-models/HeadToHead.astro";
+import CallSize from "../../components/diagrams/decision-models/CallSize.astro";
+import PerQuestion from "../../components/diagrams/decision-models/PerQuestion.astro";
 import Pipeline from "../../components/diagrams/decision-models/Pipeline.astro";
+import QuestionFix from "../../components/diagrams/decision-models/QuestionFix.astro";
 import OneRun from "../../components/diagrams/decision-models/OneRun.astro";
 
-I built a pipeline that finds and ranks job postings for me. Every posting needs the same small answers. Is it remote? What seniority? How well do my skills match? It used to send one AI agent call to rank each posting. Now a decision model answers those questions. In testing, one call per posting answered all of them in about 0.7 seconds, for about $0.00016.
+I built a pipeline that finds and ranks job postings for me. For every posting it needs the same small answers. Is it remote? Where is the office? What seniority? I used to send an AI agent to answer them. Now a decision model does.
 
-The quality held. On held-out postings, its answers to the six location facts scored 96.7%. A blind re-label of 20 of the postings, which I use as the ceiling, also scored 96.7%. Every answer was valid, because the model can only answer in the shape I ask for.
+To check that choice, I gave the decision model, Jev, and two AI agents, Luna and Haiku, the same ten questions about the same 40 postings. These postings were held out: I never tuned anything on them. I scored every answer against labelled answers. One Jev call per posting got 95.3% right, in 0.6 seconds, for $0.00011. One agent call got 94.0%, in 10 to 14 seconds, for 10 to 41 times the cost.
+
+<Diagram
+  caption="Same ten questions, same 40 postings. Quality is a near tie. Cost, time and tokens are not."
+  label="Bar chart, four panels, per posting, one call each, 40 held-out postings. Cost: Jev $0.00011, Luna $0.0011 (10 times), Haiku $0.0046 (41 times). Seconds: Jev 0.6, Luna 9.9, Haiku 13.5. Tokens in: Jev 2,669, Luna 13,951, Haiku 43,592. Accuracy against labelled answers: Jev 95.3%, Luna 94.0%, Haiku 94.0%. Luna at low effort, list prices."
+>
+  <HeadToHead />
+</Diagram>
 
 ## What a decision model is
 
-A decision model takes some state and a list of typed questions. It returns typed answers with probabilities. Three shapes: yes or no, pick one from a list, or a score on a fixed scale. It does not write text, call tools or explain itself.
+A decision model takes some text and a list of typed questions. It returns typed answers with probabilities. A typed question has a fixed answer shape: yes or no, one choice from a short list, or a score on a fixed scale. The model does not write text, call tools or explain itself.
 
-The one I use is [Jev](https://docs.typesafe.ai/concepts/system-one), from TypeSafe. They call it a "System One" model, after Daniel Kahneman's [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow): System 1 is fast and automatic, System 2 is slow and effortful. A coding agent is System 2. It plans, reads files, runs tools and writes. That is what you want for building something. It is a lot of machine for "is this job remote?"
+The one I use is [Jev](https://docs.typesafe.ai/concepts/system-one), from TypeSafe. They call it a "System One" model, after the fast, automatic thinking in Daniel Kahneman's [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow). Jev charges [$0.042 per million input tokens, and output is free](https://docs.typesafe.ai/models). A token is a chunk of text, about three quarters of a word.
 
-Jev charges [$0.042 per million input tokens](https://docs.typesafe.ai/models), and output is free. You pay to show it the posting, not for the answer.
+An agent is the opposite end. It is a general language model inside a harness, the program that gives it a system prompt and tools so it can plan, read files and act. That is what you want to build something. It is a lot of machine for "is this job remote?"
+
+## The test
+
+I already had a labelled set: 100 public job postings, split 60 for tuning and 40 held out. Four Sonnet labellers wrote the answer key, with a quote for each answer. A blind re-label of 20 postings, which I use as the ceiling, scored 96.7% on the location questions. The ten questions cover location facts, work mode, seniority, role type and whether the job is still open.
+
+I ran each system once on the 40 held-out postings:
+
+- **Jev**, one call per posting, all ten questions at once, the way my pipeline asks its fact questions.
+- **Luna** (GPT-5.6 Luna), one call per posting, through Codex, OpenAI's agent harness, using the same code my pipeline uses for its agent work. Effort is how long the model may think before it answers. Low effort was its cheapest and best result here.
+- **Haiku** (Claude Haiku 5.5), one call per posting, run as a Claude Code agent.
+
+The agents got the same rules as Jev, in my pipeline's own prompt, and gave valid JSON every time. I also ran Jev and Haiku with one question per call. Costs are list prices. Each call's tokens, time, cost and answers are logged.
+
+| Per posting | Tokens in | Seconds | Cost | Right |
+|---|---|---|---|---|
+| Jev, 1 call | 2,669 | 0.6 | $0.00011 | 95.3% |
+| Jev, 10 calls | 11,759 | 5.2 | $0.00049 | 95.3% |
+| Luna, low | 13,951 | 9.9 | $0.0011 | 94.0% |
+| Luna, high | 13,951 | 11.1 | $0.0013 | 93.5% |
+| Haiku, Claude Code | 43,592 | 13.5 | $0.0046 | 94.0% |
+| Haiku, bare | 8,712 | 9.9 | $0.0020 | 92.0% |
+
+"10 calls" means one call per question. Luna and Haiku make one call per posting. "Bare" means a short system prompt and no tools. "Right" is the share of answers that match the key. Seconds are summed per posting, as if the calls ran one after another.
+
+**Quality is a near tie.** I expected the agents to do worse. They did not, on these questions. 95.3% against 94.0% is 5 answers out of 400. One run of 40 postings cannot separate that from noise.
+
+**Cost and time are not a tie.** The cheapest agent cost 10 times more and took 16 times longer. Haiku through Claude Code cost 41 times more.
+
+## Where the agent's tokens go
+
+The posting is the same in every call. The difference is what comes with it. Jev reads the posting and ten short questions. An agent call also carries its harness: a system prompt, tool descriptions and my longer rules prompt. Haiku through Claude Code read 43,592 tokens to answer ten multiple-choice questions. Stripped to a bare prompt with no tools, it still read 8,712, and scored 2 points lower, within noise.
 
 <Diagram
-  caption="Where the decision model sits in the pipeline."
-  label="Diagram. Scripts and agents collect and fetch job postings. Each posting goes to the decision model. It returns typed answers only: ten facts as fixed options or not stated, a skills match score and a fit score, each 0 to 100. A script turns those answers into a label. I make every final decision myself. The model writes no free text, uses no tools and gives no reasoning."
+  caption="Tokens read by one call, to scale. Most of what an agent reads is not the posting."
+  label="Bar chart of tokens read by one call. Jev, one question: 1,176. Jev, all ten questions: 2,669. Haiku with a bare prompt: 8,712. Luna through Codex: 13,951. Haiku through Claude Code: 43,592. Agent calls also carry their harness: system prompt and tool list."
+>
+  <CallSize />
+</Diagram>
+
+## One question at a time
+
+What if each call answers just one question? I ran that on 10 of the postings: 100 calls per system.
+
+<Diagram
+  caption="One question per call. Accuracy ties. The agent costs 84 times more per call and takes 20 times longer."
+  label="Bar chart, one question per call, mean per call, 10 postings and 100 calls each. Cost: Jev $0.000048, Haiku $0.0041, 84 times more. Seconds: Jev 0.5, Haiku 10.5, 20 times more. Tokens in: Jev 1,147, Haiku 42,309, 37 times more. Right answers of 100: Jev 97, Haiku 98. Haiku runs as a Claude Code agent, list prices."
+>
+  <PerQuestion />
+</Diagram>
+
+An agent call has a fixed floor. Asking it one small question costs almost as much as asking it ten: 42,309 tokens against 43,592. A decision model has almost no floor, so its cost follows the size of the question.
+
+Splitting also cost Jev something. Ten single calls scored the same as one combined call, but read 4.4 times the tokens, because each call resends the posting. TypeSafe's [own docs](https://docs.typesafe.ai/primitives) report the same effect for 13 questions. So the rule is: small questions, asked together, over one shared posting.
+
+## Where it sits in the pipeline
+
+<Diagram
+  caption="The decision model answers typed questions. A script turns the answers into a label. I make the final call."
+  label="Diagram. Scripts and agents collect and fetch job postings. Each posting goes to the decision model. It returns typed answers only: facts as fixed options or not stated, a skills match score and a fit score, each 0 to 100. A script turns those answers into a label. I make every final decision myself. The model writes no free text, uses no tools and gives no reasoning."
 >
   <Pipeline />
 </Diagram>
 
-## What it answers in my pipeline
+Agents still do the open-ended work: searching the web, reading pages and scoring companies. I call that part the agent tier. The decision model does the repeated sorting. Today it makes about three calls per posting and answers 28 questions in all.
 
-One call per posting, with three parts:
+## Question engineering
 
-- **Ten facts.** Location, remote rules, work mode, seniority, role family, whether it is still open. Each answer is a fixed option or "not stated".
-- **Skills match.** A score from 0 to 100 in steps of 25, against a short card of my skills, each with a rating.
-- **Fit.** How strong a match I would be compared with a typical applicant, on the same scale. This ranks the list.
+A decision model is only as good as its questions. These are the rules I ended up with:
 
-A plain script turns those answers into a label. I still make every final call myself. The model only sorts my reading order.
+- **One fact per question.** "Is the office in country X?" and "Is it remote?" are two questions, not one.
+- **A short, fixed list of answers, plus "not stated".** The model can say the posting is silent instead of guessing.
+- **Say what "no" means.** Silence is not a no. A vague region is not a no.
+- **Say what to ignore.** For example, the title or the nice-to-have skills.
+- **Change one question per round,** and re-run the same 100 postings before keeping it.
 
-## The numbers
-
-I tested it before trusting it. 100 public job postings, split 60 for tuning and 40 held out. Four Sonnet labellers built the answer key, with quotes for each answer. I printed an "always say skip" baseline every round, ran each variant three times, and changed one thing per round. I wrote more about this way of measuring in [What measuring my AI pipeline changed](/writing/llm-evals-what-measuring-changed/).
-
-On the held-out 40:
-
-- **Location facts (six of the ten):** 96.7%, against a ceiling of 96.7%. Two of them, sponsorship and relocation, are barely tested, because almost no posting mentions them.
-- **Ranking:** a rank correlation of 0.875 to 0.88 with the key, against a ceiling of 0.87. The tuning set was harder: 0.67 to 0.73.
-- **Valid answers:** 100%.
-
-The first rounds of tuning, about 2,800 calls over five runs, cost about $0.35. When tuning is that cheap, you stop guessing and just re-run.
-
-That paid off later. I rewrote one question about role type and re-ran it on all 606 rated jobs for $0.055. The share of real fits in my top group went from about 72% (53 of 74) to about 92% (150 of 163). The cost: 6 of 66 good fits in a reference set now fall out of that group. 17 small worker agents, blind to the model's answers, audited the new additions.
-
-Here is one full run from 26 October. It rated 441 jobs. The live pipeline now asks more questions than the benchmark did, so the decision model made 1,264 calls, about three per rated job, for $0.23. The agent tier, which still reads pages and does the open-ended web work, made 226 calls for $0.73. That works out to about 17 times more per agent call. The whole run cost $1.22 including paid web fetches, or $0.0034 per new job.
+Two rewrites show why.
 
 <Diagram
-  caption="One run on 26 October. The decision model does most of the calls for a small share of the cost."
-  label="Bar chart for one run on 26 October 2026 that rated 441 jobs, at list prices, leaving out paid web fetches and scripts. Calls: the decision model made 1,264 and the agent tier made 226, about 85% and 15%. Cost: the decision model cost $0.23 and the agent tier $0.73, about 24% and 76%."
+  caption="Two rewrites. Saying exactly what counts as yes, no or out of scope changed the answers."
+  label="Before and after diagram. Location question for a country X: a version that counted remote work open to many countries as yes scored 78% on held-out postings; rewriting it so that case is a no scored 98%. Role type question: before, 'What kind of work is this job mainly?'; after, 'Where is the core of the work? Judge from duties and must-have skills, not the title.' Wrong-type jobs filtered out went from 22 to 33 of 38. Good fits kept went from 66 to 60 of 66."
+>
+  <QuestionFix />
+</Diagram>
+
+**Location.** The question "Is the job based in country X?" started at 92.5% on held-out postings. I loosened it so that remote work open to several countries, X among them, counted as yes. It fell to 78.3%. Then I wrote the opposite rule down: remote work open to many countries is a no. It rose to 97.5%, 2 more postings right out of 40 than at the start. Across all six location questions, wording fixes like this moved the held-out mean from 92.6% to 96.4%.
+
+**Role type.** The old question asked "What kind of work is this job mainly?" and gave bare names. The model leaned on job titles. The new one asks where the core of the work is, judged from duties and must-have skills, not the title. On a reference set of 104 postings, labelled by AI reviewers and not a random sample, it filtered out 33 of 38 wrong-type jobs instead of 22. The price was 6 good fits wrongly dropped out of 66. Testing it took 104 calls and $0.01. Re-running it on all 606 rated jobs cost $0.055.
+
+**Longer is not better.** I once replaced a short five-step score with a longer one that described each step. Ranking quality on held-out postings dropped. Rank correlation with the answer key, where 1.0 means the same order, fell from 0.88 to between 0.80 and 0.83. I kept the short one.
+
+Cheap calls are what make this loop possible. My first tuning rounds took 2,817 calls and cost $0.35.
+
+## One real run
+
+<Diagram
+  caption="One run on 26 October. The decision model makes most of the calls, for about a quarter of the model cost."
+  label="Bar chart for one run on 26 October 2026 that rated 441 postings. Calls: decision model 1,264, agent tier 226. Cost at list price: decision model $0.23, agent tier $0.73. Rating step: the decision model answered 441 calls in about 23 seconds; the agent tier made 150 calls in about 411 seconds. Paid web fetches and scripts left out."
 >
   <OneRun />
 </Diagram>
 
-Speed matters more than dollars to me. I pay flat fees for most of my AI tools, so the real cost of an agent call is weekly quota and wall-clock time. In three runs on 20 October, the facts step took 0.1 to 0.2 minutes per run. In benchmark runs on 19 October, with 8 calls at once, 100 jobs took 5 to 25 seconds.
-
-## What I tried that did not pay
-
-- **A general model as the answerer.** DeepSeek V4.1 Flash scored 97.9% on held-out facts, a near tie. But it took about 9 seconds per posting, and 2 to 5% of its answers were invalid. Its labels were no better.
-- **A vote across three models.** No gain beyond run-to-run noise, at three times the calls.
-- **A model on my laptop.** I tested three on an M1 Pro. The best, Kev 4B, scored 90.0% on average but missed my 90% floor on two facts (82.5% and 80%) and was about 17 times slower. Qwen3 4B scored 71% and Phi-4-mini 61%. None met the bar.
+On 26 October the pipeline rated 441 postings. Jev made 1,264 calls for $0.23. The agent tier made 226 calls for $0.73. In the rating step, Jev's 441 calls took about 23 seconds. The 150 agent calls in that step, which do a different job, scoring companies, took about 411 seconds. Speed matters more to me than dollars, because I pay flat fees for most AI tools. An agent call costs me quota and waiting time.
 
 ## Where it does not fit
 
-**The three-way label is weak.** It agreed with the key 78% to 83% of the time. On the tuning set, that only ties "always say skip". It is fine here because I make the final call and the label only sorts. I would not let it decide alone.
+- **The three-way label is weak.** A script turns Jev's answers into apply, stretch or skip. That label agreed with the key 78% to 83% of the time. On the tuning set, answering "skip" for every posting does as well. It sorts my reading list. It does not decide.
+- **Most small decisions are already free.** Inside a working agent session, the context is already loaded. A separate model saves nothing there. The savings come where one cheap call replaces a whole agent call, many times over.
+- **A script still beats a model.** If a rule can decide, write the rule.
+- **It is hosted.** I send it public text only, like job postings, and never my private notes.
 
-**Most decisions are already free.** In my agent system, most small choices happen inside the main session, which already has the context. Moving those to a separate model saves almost nothing and adds a moving part. The savings come only where one cheap call replaces a whole worker call, or many small ones.
+## Limits of this test
 
-**A script still beats a model.** Picking which AI model to use sounds like a decision model job. It is not. It is a usage file and a few rules. Wherever a script can do it, a script wins.
-
-**It is hosted.** No weights, no local copy. So I send it public text only, like job postings, and never my private notes.
-
-**I have no same-jobs comparison.** I never ran the old agent ranker and the decision model on the same postings. The quality claim rests on the held-out benchmark and the human ceiling, not a head-to-head.
+One run of 40 postings, ten questions, and an answer key written by AI labellers, checked by a blind re-label of 20 postings. Jev's questions and the agents' prompt were both tuned on this same set of 100 postings, so neither side is a stranger to it. The role question in the test is the older version. All runs made 8 calls at once, and the agent runs also shared the machine with each other, so their times include some waiting. The one-question test used only 10 postings. Prices are list prices. A harder question, one that needs reasoning across a whole page, could favor the agent.
 
 ## The rule I use now
 
-Before I send an agent, I ask: is the answer a yes, a choice or a score? Does it repeat across many items? Can I build a labelled set to check it? If all three are yes, I try a decision model first, and a script before that.
+Before I send an agent, I ask three things. Is the answer a yes, a choice or a score? Does it repeat across many items? Can I build a labelled set to check it? If all three are yes, I write small typed questions, ask them together, and try a decision model first. A script comes before that.
+
+I wrote more about measuring this way in [What measuring my AI pipeline changed](/writing/llm-evals-what-measuring-changed/).

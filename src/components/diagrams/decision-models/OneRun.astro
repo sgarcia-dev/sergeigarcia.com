@@ -1,19 +1,41 @@
-<svg viewBox="0 0 560 270" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-  <!-- One run, 26 Oct 2026, 441 jobs rated. Bar length = share of the two model tiers, 400px = 100%.
-       Calls: decision model 1,264, agent 226 (85% / 15%). Cost: decision model $0.23, agent $0.73 (24% / 76%). -->
-  <text class="d-t d-sm" x="20" y="22">One run, 441 jobs rated: share of model calls and cost</text>
+<svg viewBox="0 0 420 570" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <!-- One real run, 441 postings rated. Three panels, each to scale on its own. Bars start at x=16, longest bar = 260px.
+       Calls: decision model 1,264, agent tier 226. Bar length = calls x 0.2057 px.
+       Cost at list price: decision model $0.23, agent tier $0.73. Bar length = dollars x 356.2 px.
+       Rating step, seconds: decision model 441 calls in about 23 s, agent tier 150 calls in about 411 s. Bar length = seconds x 0.6326 px. -->
+  <text class="d-t d-b" x="16" y="28">One real run: 441 postings rated</text>
+  <text class="d-t d-sm" x="16" y="55">Decision model vs agent tier.</text>
+  <text class="d-t d-sm" x="16" y="74">Bars to scale within each panel.</text>
 
-  <text class="d-t d-b" x="20" y="64">Calls</text>
-  <rect class="d-yellow" x="20" y="74" width="340" height="28" />
-  <rect class="d-box" x="360" y="74" width="60" height="28" />
-  <text class="d-t d-mono d-sm" x="20" y="122">Decision model 1,264</text>
-  <text class="d-t d-mono d-sm" x="360" y="122">Agent 226</text>
+  <!-- Panel 1: calls -->
+  <text class="d-t d-b" x="16" y="116">Calls</text>
+  <text class="d-t d-sm" x="16" y="145">Decision model</text>
+  <rect class="d-yellow" x="16" y="150" width="260" height="24" />
+  <text class="d-t d-mono d-b" x="284" y="168">1,264</text>
+  <text class="d-t d-sm" x="16" y="201">Agent tier</text>
+  <rect class="d-box" x="16" y="206" width="46.49" height="24" />
+  <text class="d-t d-mono" x="70.5" y="224">226</text>
+  <path class="d-line" d="M16,146 L16,234" />
 
-  <text class="d-t d-b" x="20" y="170">Cost</text>
-  <rect class="d-yellow" x="20" y="180" width="96" height="28" />
-  <rect class="d-box" x="116" y="180" width="304" height="28" />
-  <text class="d-t d-mono d-sm" x="20" y="228">$0.23</text>
-  <text class="d-t d-mono d-sm" x="116" y="228">Agent $0.73</text>
+  <!-- Panel 2: cost at list price -->
+  <text class="d-t d-b" x="16" y="266">Cost at list price</text>
+  <text class="d-t d-sm" x="16" y="295">Decision model</text>
+  <rect class="d-yellow" x="16" y="300" width="81.92" height="24" />
+  <text class="d-t d-mono d-b" x="106" y="318">$0.23</text>
+  <text class="d-t d-sm" x="16" y="351">Agent tier</text>
+  <rect class="d-box" x="16" y="356" width="260" height="24" />
+  <text class="d-t d-mono" x="284" y="374">$0.73</text>
+  <path class="d-line" d="M16,296 L16,384" />
 
-  <text class="d-t d-sm" x="20" y="258">List prices. Paid web fetches and scripts left out.</text>
+  <!-- Panel 3: rating step, seconds -->
+  <text class="d-t d-b" x="16" y="416">Rating step, seconds</text>
+  <text class="d-t d-sm" x="16" y="445">Decision model, 441 calls</text>
+  <rect class="d-yellow" x="16" y="450" width="14.55" height="24" />
+  <text class="d-t d-mono d-b" x="38.5" y="468">about 23 s</text>
+  <text class="d-t d-sm" x="16" y="501">Agent tier, 150 calls</text>
+  <rect class="d-box" x="16" y="506" width="260" height="24" />
+  <text class="d-t d-mono" x="284" y="524">about 411 s</text>
+  <path class="d-line" d="M16,446 L16,534" />
+
+  <text class="d-t d-sm" x="16" y="558">Paid web fetches and scripts left out.</text>
 </svg>

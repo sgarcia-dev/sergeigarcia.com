@@ -1,0 +1,46 @@
+<svg viewBox="0 0 420 664" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <!-- Question engineering: two rewrites. No bars, so no scale. Boxes are x=20, width 380.
+       Block A, location question: accuracy on held-out postings 78% to 98%.
+       Block B, role type question: wrong-type jobs filtered out 22 to 33 of 38; good fits kept 66 to 60 of 66. -->
+  <defs>
+    <marker id="arr-qfix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+
+  <!-- Block A -->
+  <text class="d-t d-b" x="20" y="28">A. Location question (country X)</text>
+  <rect class="d-box" x="20" y="40" width="380" height="80" />
+  <text class="d-t d-sm d-b" x="388" y="62" text-anchor="end">Before</text>
+  <text class="d-t" x="34" y="66">Based in country X?</text>
+  <text class="d-t d-sm" x="34" y="88">remote open to many countries</text>
+  <text class="d-t d-sm" x="34" y="108">counted as yes</text>
+  <path class="d-line" d="M210,124 L210,150" marker-end="url(#arr-qfix)" />
+  <rect class="d-yellow" x="20" y="154" width="380" height="64" />
+  <text class="d-t d-t-dark d-sm d-b" x="388" y="176" text-anchor="end">After</text>
+  <text class="d-t d-t-dark" x="34" y="180">Remote open to many countries</text>
+  <text class="d-t d-t-dark" x="34" y="204">is a no</text>
+  <rect class="d-cobalt" x="20" y="228" width="380" height="58" />
+  <text class="d-t d-t-light d-sm" x="34" y="252">Accuracy on held-out postings:</text>
+  <text class="d-t d-t-light d-mono d-b" x="34" y="276">78% to 98%</text>
+
+  <path class="d-line d-dash" d="M20,306 L400,306" />
+
+  <!-- Block B -->
+  <text class="d-t d-b" x="20" y="334">B. Role type question</text>
+  <rect class="d-box" x="20" y="346" width="380" height="64" />
+  <text class="d-t d-sm d-b" x="388" y="368" text-anchor="end">Before</text>
+  <text class="d-t" x="34" y="372">What kind of work is</text>
+  <text class="d-t" x="34" y="396">this job mainly?</text>
+  <path class="d-line" d="M210,414 L210,440" marker-end="url(#arr-qfix)" />
+  <rect class="d-yellow" x="20" y="444" width="380" height="88" />
+  <text class="d-t d-t-dark d-sm d-b" x="388" y="466" text-anchor="end">After</text>
+  <text class="d-t d-t-dark" x="34" y="470">Where is the core of the work?</text>
+  <text class="d-t d-t-dark" x="34" y="494">Judge from duties and must-have</text>
+  <text class="d-t d-t-dark" x="34" y="518">skills, not the title.</text>
+  <rect class="d-cobalt" x="20" y="542" width="380" height="114" />
+  <text class="d-t d-t-light d-sm" x="34" y="566">Wrong-type jobs filtered out:</text>
+  <text class="d-t d-t-light d-mono d-b" x="34" y="590">22 to 33 of 38</text>
+  <text class="d-t d-t-light d-sm" x="34" y="618">Good fits kept:</text>
+  <text class="d-t d-t-light d-mono d-b" x="34" y="642">66 to 60 of 66</text>
+</svg>
