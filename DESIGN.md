@@ -87,6 +87,31 @@ Radius is always 0. One exception: the small round headshot in the home hero (`.
 - **Prose** (`.prose`): long-form text at `text-lg`, `prose` width, h2s ruled.
 - **PageHead**: the band block that opens every inner page, with the h1.
 
+## Hack this site (visitor themes)
+
+`/hack/` lets any visitor restyle the whole site, keep it while they browse, and share it by link.
+Built 2026-10-28 for live demos (Sergei let the agent make every call). No backend.
+
+- **Options** live in one list, `src/lib/themes.ts`: five palettes, five type sets, three corner
+  shapes, three shadows, three effect levels (full, calm, still), plus five ready-made looks (skins).
+  Swiss and Editorial are the directions rejected in the design round.
+- **Looks** live in `src/styles/theme.css`, the only file besides `@theme` allowed to hold color, font,
+  radius and shadow values. Every rule is keyed on `html[data-theme]`, which only exists while a
+  visitor has a theme on, so the default site never changes.
+- **Head script** `src/components/ThemeInit.astro` (inline, after MotionInit): reads
+  `?theme=<base64url JSON>` or localStorage `sg-theme`, checks every value against the lists,
+  sets the attributes before first paint. `?theme=off` clears it. It exposes `window.sgTheme`, which
+  `/hack/` uses, so there is one implementation.
+- **Colors:** inside each band `--color-black` and `--color-white` are remapped to that band's ink
+  and its opposite. A visitor's own colors get black or white ink by WCAG luminance. Other colors
+  turn the band textures off (they are drawn in the original fills) and the marker becomes a bar.
+- **Visitor CSS** (localStorage `sg-theme-css`) runs only in that visitor's browser. Share links carry
+  checked values only, never CSS: CSS from strangers can leak page data or fake the page.
+- **"Hacked" bar:** fixed bottom left on every page while a theme is on, with Edit and Reset
+  (`?theme=off`, plain links, no JS).
+- **Tests:** `tests/theme.spec.ts` runs axe on home, a post and `/hack/` for every skin, light and
+  dark, and checks links, reset and that CSS never enters a link. A new palette must pass it.
+
 ## Calm variant (comparison only)
 
 `?calm=on` turns it on for the tab (sessionStorage), `?calm=off` turns it off. Off by default; it is

@@ -8,10 +8,12 @@ import { SITE } from "../lib/site";
 import { findOgTarget, ogImagePath, ogImageExists } from "../lib/ogTargets";
 import TexturePick from "../components/TexturePick.astro";
 import MotionInit from "../components/MotionInit.astro";
+import ThemeInit from "../components/ThemeInit.astro";
 import "../styles/texture.css";
 import "../styles/lively.css";
 import "../styles/motion.css";
 import "../styles/readtime.css";
+import "../styles/theme.css";
 
 interface Props {
   /** Page title. "| Sergei Garcia" is appended unless `fullTitle` is set. */
@@ -33,9 +35,11 @@ interface Props {
   preloadBody?: boolean;
   /** Keep the page out of search engines (unlisted lab pages). Pair it with a sitemap filter in astro.config.mjs. */
   noindex?: boolean;
+  /** True only on /hack/, which has its own controls, so the "Hacked" bar is left out. */
+  hack?: boolean;
 }
 
-const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes, preloadBody = false, noindex = false } = Astro.props;
+const { title, description, fullTitle = false, ogType = "website", jsonLd, home = false, ogImage: ogPath, ogImageAlt, readMinutes, preloadBody = false, noindex = false, hack = false } = Astro.props;
 const pageTitle = fullTitle ? title : `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // Share image: an explicit prop wins, then the page's own image from public/og/, then the default card.
@@ -93,6 +97,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="twitter:image" content={ogImage} />
     <TexturePick />
     <MotionInit />
+    <ThemeInit />
     <meta name="generator" content={Astro.generator} />
     {ld.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
   </head>
@@ -103,6 +108,15 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <slot />
     </main>
     <Footer />
+    {
+      !hack && (
+        <aside class="th-bar" aria-label="Your theme">
+          <span class="label th-bar-label">Hacked</span>
+          <a class="hit" href="/hack/">Edit</a>
+          <a class="hit" href="?theme=off">Reset</a>
+        </aside>
+      )
+    }
     <script>
       import "../scripts/motion.ts";
       import "../scripts/lively.ts";

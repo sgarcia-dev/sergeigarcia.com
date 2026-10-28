@@ -1,0 +1,175 @@
+---
+// "Hack this site": applies the visitor's theme before first paint, on every page. It runs after
+// TexturePick and MotionInit, so it can undo what they set (textures, js-motion) when a theme asks.
+//
+//   ?theme=<base64url JSON>   a shared theme: checked, saved, applied
+//   ?theme=off                back to the real site: clears the saved theme and the visitor's CSS
+//   localStorage "sg-theme"   the saved theme; "sg-theme-css" the visitor's own CSS (never shared)
+//
+// Every value is checked against ALLOW from src/lib/themes.ts, colors against #rrggbb. Anything else
+// is dropped, so a bad link can only ever pick from the same options as the /hack/ page.
+// With no saved theme nothing is set and the site is exactly the default. /hack/ drives the same
+// functions through window.sgTheme, so there is one implementation.
+import { ALLOW, DEFAULT_THEME } from "../lib/themes";
+---
+
+<script is:inline define:vars={{ ALLOW, DEFAULT_THEME }}>
+  (function () {
+    var root = document.documentElement;
+    var KEY = "sg-theme";
+    var CSS_KEY = "sg-theme-css";
+    var texPick = root.dataset.tex;
+    var hex = /^#[0-9a-f]{6}$/i;
+
+    function clean(t) {
+      if (!t || typeof t !== "object") return null;
+      var out = {};
+      for (var k in DEFAULT_THEME) out[k] = ALLOW[k].indexOf(t[k]) >= 0 ? t[k] : DEFAULT_THEME[k];
+      if (Array.isArray(t.colors) && t.colors.length === 3 && t.colors.every(function (c) { return hex.test(c); })) {
+        out.colors = t.colors.map(function (c) { return c.toLowerCase(); });
+      }
+      return out;
+    }
+    function isDefault(t) {
+      for (var k in DEFAULT_THEME) if (t[k] !== DEFAULT_THEME[k]) return false;
+      return !t.colors;
+    }
+    // WCAG relative luminance, then the text color (near-black or white) with more contrast on a fill.
+    function lum(c) {
+      var v = [1, 3, 5].map(function (i) {
+        var x = parseInt(c.substr(i, 2), 16) / 255;
+        return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+    }
+    function inkFor(c) {
+      var l = lum(c);
+      return (l + 0.05) / 0.0533 >= 1.05 / (l + 0.05) ? "#0a0a0a" : "#ffffff";
+    }
+    function encode(t) {
+      return btoa(JSON.stringify(t)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+    function decode(s) {
+      try {
+        return JSON.parse(atob(s.replace(/-/g, "+").replace(/_/g, "/")));
+      } catch (e) {
+        return null;
+      }
+    }
+    function store(key, value) {
+      try {
+        if (value == null) localStorage.removeItem(key);
+        else localStorage.setItem(key, value);
+      } catch (e) {}
+    }
+    function load(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function apply(t, css) {
+      t = clean(t) || DEFAULT_THEME;
+      var on = !isDefault(t) || !!css;
+      var slots = ["yellow", "cobalt", "tomato"];
+      ["theme", "palette", "type", "shape", "shadow", "fx", "recolor"].forEach(function (k) {
+        delete root.dataset[k];
+      });
+      slots.forEach(function (s) {
+        root.style.removeProperty("--color-" + s);
+        root.style.removeProperty("--th-" + s[0] + "-ink");
+        root.style.removeProperty("--th-" + s[0] + "-anti");
+      });
+      if (texPick) root.dataset.tex = texPick;
+      if (!root.dataset.calmSwitch) delete root.dataset.calm;
+      // js-motion is never added back here: a page that loaded "still" stays still until the next page.
+      if (on) {
+        root.dataset.theme = "";
+        root.dataset.palette = t.palette;
+        root.dataset.type = t.type;
+        root.dataset.shape = t.shape;
+        root.dataset.shadow = t.shadow;
+        root.dataset.fx = t.fx;
+        if (t.colors) {
+          t.colors.forEach(function (c, i) {
+            var ink = inkFor(c);
+            root.style.setProperty("--color-" + slots[i], c);
+            root.style.setProperty("--th-" + slots[i][0] + "-ink", ink);
+            root.style.setProperty("--th-" + slots[i][0] + "-anti", ink === "#ffffff" ? "#0a0a0a" : "#ffffff");
+          });
+        }
+        // The textures are drawn in the original fills, so any other colors turn them off.
+        if (t.palette !== "original" || t.colors) {
+          root.dataset.recolor = "";
+          delete root.dataset.tex;
+        }
+        if (t.fx !== "full") root.dataset.calm = "";
+        if (t.fx === "still") {
+          delete root.dataset.tex;
+          root.classList.remove("js-motion");
+        }
+      }
+      var el = document.getElementById("sg-theme-css");
+      if (css) {
+        if (!el) {
+          el = document.createElement("style");
+          el.id = "sg-theme-css";
+          (document.head || root).appendChild(el);
+        }
+        el.textContent = css;
+      } else if (el) el.remove();
+      return t;
+    }
+
+    // The ?calm=on switch from MotionInit stays on even when a theme is reset.
+    if ("calm" in root.dataset) root.dataset.calmSwitch = "";
+
+    var param = new URLSearchParams(location.search).get("theme");
+    var saved = null;
+    if (param === "off") {
+      store(KEY, null);
+      store(CSS_KEY, null);
+    } else if (param) {
+      saved = clean(decode(param));
+      if (saved) store(KEY, JSON.stringify(saved));
+    }
+    if (!saved && param !== "off") {
+      try {
+        saved = clean(JSON.parse(load(KEY)));
+      } catch (e) {}
+    }
+    var css = param === "off" ? null : load(CSS_KEY);
+    if (saved || css) apply(saved, css);
+
+    window.sgTheme = {
+      current: function () {
+        var raw = load(KEY);
+        try {
+          return clean(raw ? JSON.parse(raw) : null) || Object.assign({}, DEFAULT_THEME);
+        } catch (e) {
+          return Object.assign({}, DEFAULT_THEME);
+        }
+      },
+      css: function () {
+        return load(CSS_KEY) || "";
+      },
+      save: function (t, css) {
+        t = clean(t) || DEFAULT_THEME;
+        store(KEY, isDefault(t) ? null : JSON.stringify(t));
+        store(CSS_KEY, css ? css : null);
+        return apply(t, css);
+      },
+      reset: function () {
+        store(KEY, null);
+        store(CSS_KEY, null);
+        return apply(DEFAULT_THEME, null);
+      },
+      link: function (t) {
+        t = clean(t) || DEFAULT_THEME;
+        return location.origin + "/?theme=" + encode(t);
+      },
+    };
+  })();
+</script>

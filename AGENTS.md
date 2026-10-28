@@ -9,7 +9,8 @@ dark) before any UI change is done.
 - Content lives in `src/content/` (`work`, `projects`, `posts`), schemas in `src/content.config.ts`.
   Query it through `src/lib/content.ts` (drafts are filtered there).
 - Site constants (name, email, links, nav) live in `src/lib/site.ts`.
-- Design tokens live only in `src/styles/global.css` under `@theme`.
+- Design tokens live only in `src/styles/global.css` under `@theme`. The one exception is
+  `src/styles/theme.css` (visitor themes, keyed on `html[data-theme]`); see DESIGN.md.
 - Read `DESIGN.md` before any UI work. It lists the tokens, components,
   motion rules and the banned patterns with what to do instead.
 - Facts Sergei still has to confirm are in `CONTENT-TODO.md`. Deferred work is in `TODO.md`.

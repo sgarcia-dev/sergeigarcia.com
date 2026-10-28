@@ -12,6 +12,10 @@ export const PAGE_META = {
       "About Sergei Garcia, a software engineer from Mexico living in Dublin, Ireland. 13+ years building web products, a designer's eye, and a love of teaching.",
   },
   work: { title: "Work", description: "Roles and engagements from Sergei Garcia: what he built, who for, and the tools he used." },
+  hack: {
+    title: "Hack this site",
+    description: "Restyle sergeigarcia.com live: pick a look, mix colors, type and shapes, write your own CSS or ask an AI for some, and share it by link.",
+  },
   playground: {
     title: "Playground",
     description: "Play with the real motion and texture effects from sergeigarcia.com: band textures, glyph reveal, marker, row sweep and more.",

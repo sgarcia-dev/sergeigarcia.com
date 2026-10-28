@@ -1,0 +1,288 @@
+/*
+  "Hack this site": visitor themes. src/lib/themes.ts lists the options, src/components/ThemeInit.astro
+  sets the attributes, /hack/ is the editor. DESIGN.md, "Hack this site", has the rules.
+
+  Every rule here is keyed on html[data-theme], which only exists while a visitor has a theme on.
+  So the default site never changes. This file is the one place, besides the @theme block, allowed to
+  hold color, font, radius and shadow values (AGENTS.md).
+
+  How the colors work: each band reads --color-black and --color-white for its text and controls.
+  Inside a band those two are remapped to the band's own ink and its opposite ("anti"), so a light or
+  dark fill always gets readable text. Palettes and the head script (for a visitor's own colors) set
+  the fills and the inks.
+*/
+
+html[data-theme] {
+  --th-y-ink: #0a0a0a;
+  --th-y-anti: #ffffff;
+  --th-c-ink: #ffffff;
+  --th-c-anti: #0a0a0a;
+  --th-t-ink: #0a0a0a;
+  --th-t-anti: #ffffff;
+  --th-radius: 0;
+  --th-shadow: 4px;
+  /* Paper-level buttons follow the yellow slot (the default site uses literal yellow here). */
+  --hit-hover-bg: var(--color-yellow);
+  --hit-hover-ink: var(--th-y-ink);
+  --primary-bg: var(--color-yellow);
+  --primary-ink: var(--th-y-ink);
+}
+html[data-theme] .band-yellow {
+  --color-black: var(--th-y-ink);
+  --color-white: var(--th-y-anti);
+}
+html[data-theme] .band-cobalt {
+  --color-white: var(--th-c-ink);
+  --color-black: var(--th-c-anti);
+}
+html[data-theme] .band-tomato {
+  --color-black: var(--th-t-ink);
+  --color-white: var(--th-t-anti);
+}
+/* Buttons filled with the yellow slot always take that slot's ink, inside any band. */
+html[data-theme] :is(.band-cobalt, .band-black) {
+  --primary-ink: var(--th-y-ink);
+  --hit-hover-ink: var(--th-y-ink);
+}
+html[data-recolor] .hit[aria-current="page"] {
+  background: var(--color-yellow);
+  color: var(--th-y-ink);
+}
+html[data-theme] ::selection {
+  color: var(--th-y-ink);
+}
+
+/* ---- Palettes ---------------------------------------------------------------------------- */
+
+html[data-palette="swiss"] {
+  --c-bg: #ffffff;
+  --c-ink: #111111;
+  --c-muted: #4a4a4a;
+  --color-yellow: #e30613;
+  --th-y-ink: #ffffff;
+  --th-y-anti: #111111;
+  --color-cobalt: #111111;
+  --color-tomato: #f2f2f2;
+  --th-t-ink: #111111;
+  --th-t-anti: #ffffff;
+  --color-black: #111111;
+}
+html[data-palette="editorial"] {
+  --c-bg: #f6f1e7;
+  --c-ink: #2b2620;
+  --c-muted: #5e554a;
+  --color-yellow: #e8d8b8;
+  --th-y-ink: #2b2620;
+  --th-y-anti: #f6f1e7;
+  --color-cobalt: #2f4a3a;
+  --th-c-ink: #f6f1e7;
+  --th-c-anti: #2b2620;
+  --color-tomato: #a8492a;
+  --th-t-ink: #ffffff;
+  --th-t-anti: #2b2620;
+  --color-black: #2b2620;
+  --color-chalk: #f6f1e7;
+}
+/* Terminal is dark in both schemes. */
+html[data-palette="terminal"] {
+  color-scheme: dark;
+  --c-bg: #050a06;
+  --c-ink: #33ff66;
+  --c-muted: #2bd957;
+  --color-yellow: #33ff66;
+  --th-y-ink: #031a08;
+  --th-y-anti: #33ff66;
+  --color-cobalt: #0f2a14;
+  --th-c-ink: #33ff66;
+  --th-c-anti: #031a08;
+  --color-tomato: #ffb000;
+  --th-t-ink: #1a1000;
+  --th-t-anti: #ffb000;
+  --color-black: #000000;
+  --color-chalk: #33ff66;
+}
+html[data-palette="y2k"] {
+  --c-bg: #fff4fb;
+  --c-ink: #2a0b3d;
+  --c-muted: #5a3a6e;
+  --color-yellow: #ff5ec4;
+  --th-y-ink: #1a0b24;
+  --th-y-anti: #fff4fb;
+  --color-cobalt: #6b2bff;
+  --th-c-ink: #ffffff;
+  --th-c-anti: #1a0b24;
+  --color-tomato: #c6ff3d;
+  --th-t-ink: #1a0b24;
+  --th-t-anti: #fff4fb;
+  --color-black: #2a0b3d;
+  --color-chalk: #fff4fb;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-palette="swiss"] {
+    --c-bg: #111111;
+    --c-ink: #f5f5f5;
+    --c-muted: #c2c2c2;
+    --color-cobalt: #2a2a2a;
+  }
+  html[data-palette="editorial"] {
+    --c-bg: #1d1a16;
+    --c-ink: #efe8da;
+    --c-muted: #bdb3a3;
+  }
+  html[data-palette="y2k"] {
+    --c-bg: #1a0b24;
+    --c-ink: #ffe6f6;
+    --c-muted: #d9b8e6;
+  }
+}
+
+/* With other colors the marker becomes a bar under the words, so the text keeps its own color. */
+html[data-recolor] .lv-mark:not(.lv-mark--band) {
+  --lv-mark-color: var(--color-yellow);
+  --lv-mark-h: 0.2em;
+  --lv-mark-pos: 0 96%;
+}
+html[data-recolor] .pq {
+  color: var(--th-y-ink);
+}
+
+/* Things filled with the yellow slot outside a band. Each sets color: var(--color-black), so
+   remapping that one variable on the element gives it the slot's ink. Keep this list in sync when a
+   new yellow sticker appears (tests/theme.spec.ts catches the ones on key pages). */
+html[data-recolor] :is(
+    .tldr-label,
+    .toc a[aria-current="true"],
+    .fact-chip,
+    .tag-now,
+    .shot-card,
+    .prose a:hover,
+    .yt-badge,
+    .row:hover,
+    .row:has(a.row-link:focus-visible)
+  ) {
+  --color-black: var(--th-y-ink);
+}
+html[data-recolor] .ac-c {
+  --primary-ink: var(--th-y-ink);
+  --hit-hover-ink: var(--th-y-ink);
+}
+/* The home ticker is yellow on black; other palettes use the footer's light text instead. */
+html[data-recolor] .ticker {
+  color: var(--color-chalk);
+}
+
+/* ---- Type -------------------------------------------------------------------------------- */
+
+html[data-type="grotesk"] {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+}
+html[data-type="mono"] {
+  --font-display: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "JetBrains Mono", ui-monospace, monospace;
+}
+html[data-type="editorial"] {
+  --font-sans: Georgia, "Times New Roman", serif;
+}
+html[data-type="system"] {
+  --font-display: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+/* Fraunces is tuned to 900 at its display optical size. Other faces get their own heaviest weight. */
+html[data-type="grotesk"] .font-display,
+html[data-type="system"] .font-display {
+  font-weight: 700;
+  font-variation-settings: normal;
+  letter-spacing: -0.04em;
+}
+html[data-type="mono"] .font-display {
+  font-weight: 800;
+  font-variation-settings: normal;
+  letter-spacing: -0.06em;
+}
+html[data-type="editorial"] .font-display {
+  font-weight: 500;
+}
+html:is([data-type="grotesk"], [data-type="mono"], [data-type="system"]) .font-title {
+  font-variation-settings: normal;
+}
+
+/* ---- Corners and shadows ----------------------------------------------------------------- */
+
+html[data-shape="soft"] {
+  --th-radius: 0.5rem;
+}
+html[data-shape="round"] {
+  --th-radius: 1.25rem;
+}
+html[data-shadow="huge"] {
+  --th-shadow: 8px;
+}
+html[data-shadow="none"] {
+  --th-shadow: 0px;
+}
+html[data-theme] :is(.hit, .pill, .tag, .frame, .type-card, .pq, input, textarea, select, .th-card) {
+  border-radius: var(--th-radius);
+}
+html[data-shape="round"] :is(.pill, .tag, .hit-icon) {
+  border-radius: 999px;
+}
+html[data-theme] .frame {
+  overflow: hidden;
+}
+html[data-theme] .hit {
+  box-shadow: var(--th-shadow) var(--th-shadow) 0 var(--hit-line);
+}
+html[data-theme] .th-card {
+  box-shadow: var(--th-shadow) var(--th-shadow) 0 var(--edge);
+}
+html[data-theme] :is(.frame, .type-card) {
+  box-shadow: calc(var(--th-shadow) * 2) calc(var(--th-shadow) * 2) 0 var(--edge);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme] .hit:hover {
+    transform: translate(calc(var(--th-shadow) / 2), calc(var(--th-shadow) / 2));
+    box-shadow: calc(var(--th-shadow) / 2) calc(var(--th-shadow) / 2) 0 var(--hit-line);
+  }
+  html[data-theme] .hit:active {
+    transform: translate(var(--th-shadow), var(--th-shadow));
+    box-shadow: 0 0 0 var(--hit-line);
+  }
+}
+
+/* ---- The "you are hacking" bar ----------------------------------------------------------- */
+/* Fixed bottom left on every page while a theme is on, so a visitor can always get back. */
+.th-bar {
+  display: none;
+}
+html[data-theme] .th-bar {
+  position: fixed;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-2xs);
+  background: var(--color-bg);
+  border: var(--rule-thin) solid var(--edge);
+  border-radius: var(--th-radius);
+}
+html[data-theme] .th-bar .hit {
+  min-height: 2.25rem;
+  box-shadow: none;
+  transform: none;
+}
+.th-bar-label {
+  padding-inline: var(--spacing-xs);
+}
+/* Phones: just the two buttons, small, so the bar covers as little text as it can. */
+@media (max-width: 47.99rem) {
+  .th-bar-label {
+    display: none;
+  }
+  html[data-theme] .th-bar .hit {
+    min-height: 2rem;
+    padding-inline: var(--spacing-xs);
+  }
+}

@@ -1,0 +1,531 @@
+---
+// "Hack this site": the theme editor. Every control here calls window.sgTheme (set up by the head
+// script in src/components/ThemeInit.astro), which saves the theme and applies it to this page at
+// once. Every other page applies the saved theme before first paint. The options come from
+// src/lib/themes.ts and the looks from src/styles/theme.css. DESIGN.md, "Hack this site", has the rules.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import Pills from "../components/Pills.astro";
+import { breadcrumbs } from "../lib/seo";
+import { PAGE_META } from "../lib/pageMeta";
+import { PALETTES, TYPES, SHAPES, SHADOWS, EFFECTS, SKINS, HOOKS } from "../lib/themes";
+
+const groups = [
+  { key: "palette", legend: "Colors", options: PALETTES },
+  { key: "type", legend: "Type", options: TYPES },
+  { key: "shape", legend: "Corners", options: SHAPES },
+  { key: "shadow", legend: "Shadows", options: SHADOWS },
+  { key: "fx", legend: "Effects", options: EFFECTS },
+] as const;
+const slots = [
+  { name: "Hero and page heads", value: "#ffd400" },
+  { name: "Project and writing bands", value: "#1a34b0" },
+  { name: "Accent", value: "#ff6a44" },
+];
+const swatchFor = (palette: string) => PALETTES.find((p) => p.id === palette)?.swatch ?? PALETTES[0].swatch;
+const browse = [
+  { href: "/", label: "Home" },
+  { href: "/writing/", label: "Writing" },
+  { href: "/writing/ai-raises-the-floor/", label: "A post" },
+  { href: "/work/", label: "Work" },
+];
+const jsonLd = [breadcrumbs([{ name: "Hack this site", path: "/hack/" }])];
+---
+
+<Base title={PAGE_META.hack.title} description={PAGE_META.hack.description} jsonLd={jsonLd} hack>
+  <PageHead title="Hack this site" band="yellow">
+    <p class="mt-md max-w-prose text-lg">
+      Restyle the whole site. Pick a look, mix its parts, or write your own CSS. It follows you to every page,
+      and you can share it with a link.
+    </p>
+    <p class="mt-sm max-w-prose">Nothing leaves your browser. Reset any time to get the real site back.</p>
+  </PageHead>
+
+  <noscript>
+    <section class="edge-b">
+      <p class="shell py-lg th-strong">The editor needs JavaScript. Without it you see the real site, which is a fine look too.</p>
+    </section>
+  </noscript>
+
+  <div data-th-editor hidden>
+    <section class="edge-b" aria-labelledby="th-looks-title">
+      <div class="shell py-lg lg:py-xl">
+        <h2 id="th-looks-title" class="font-title text-xl">Pick a look</h2>
+        <p class="mt-xs max-w-prose">Five whole looks. Two of them are designs I rejected while building this site.</p>
+        <ul role="list" class="th-looks mt-md">
+          {
+            SKINS.map((s) => (
+              <li>
+                <button type="button" class="th-card" data-skin={s.id} aria-pressed="false">
+                  <span class="th-swatch" aria-hidden="true">
+                    {swatchFor(s.theme.palette).map((c) => (
+                      <i style={`background:${c}`} />
+                    ))}
+                  </span>
+                  <span class="font-title text-xl">{s.label}</span>
+                  <span class="th-line">{s.line}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="edge-b" aria-labelledby="th-mix-title">
+      <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+        <div class="lg:col-span-4">
+          <h2 id="th-mix-title" class="font-title text-xl">Mix the parts</h2>
+          <p class="mt-xs max-w-prose">Colors from one look, type from another. Every change shows at once, here and on every page.</p>
+          <div class="th-actions mt-md">
+            <button type="button" class="hit hit-primary" data-th-random>Randomize</button>
+            <button type="button" class="hit" data-th-reset>Reset to the real site</button>
+          </div>
+          <p class="th-status label mt-sm" role="status" data-th-status></p>
+        </div>
+        <div class="th-panel lg:col-span-8">
+          {
+            groups.map((g) => (
+              <fieldset class="th-group">
+                <legend class="th-legend label">{g.legend}</legend>
+                <div class="th-chips">
+                  {g.options.map((o) => (
+                    <label class="th-chip">
+                      <input type="radio" name={`th-${g.key}`} value={o.id} class="sr-only" data-th-key={g.key} />
+                      <span class="hit">{o.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ))
+          }
+          <fieldset class="th-group">
+            <legend class="th-legend label">Your own colors</legend>
+            <label class="th-check">
+              <input type="checkbox" data-th-own />
+              Use my colors instead
+            </label>
+            <div class="th-colors mt-sm">
+              {
+                slots.map((s, i) => (
+                  <label class="th-color">
+                    <input type="color" value={s.value} data-th-color={i} />
+                    <span>{s.name}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="th-hint mt-xs">Text on each color turns black or white, whichever reads better.</p>
+          </fieldset>
+        </div>
+      </div>
+    </section>
+
+    <section class="edge-b band-cobalt" aria-labelledby="th-preview-title">
+      <div class="shell py-lg lg:py-xl">
+        <h2 id="th-preview-title" class="font-display text-h2">Preview</h2>
+        <p class="mt-sm max-w-prose">A band, a button and some pills, as they look right now. Then go and browse the real pages.</p>
+        <div class="mt-md flex flex-wrap items-center gap-sm">
+          <a class="hit hit-primary" href="/">Go to the home page</a>
+          <Pills skills={["Astro", "CSS variables", "No backend"]} label="Built with" />
+        </div>
+        <ul role="list" class="mt-md flex flex-wrap gap-sm">
+          {
+            browse.map((b) => (
+              <li>
+                <a class="hit" href={b.href}>
+                  {b.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="edge-b" aria-labelledby="th-share-title">
+      <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+        <div class="lg:col-span-4">
+          <h2 id="th-share-title" class="font-title text-xl">Share it</h2>
+          <p class="mt-xs max-w-prose">
+            The link carries the whole theme, so anyone who opens it sees the site your way. Your own CSS is never in it.
+          </p>
+        </div>
+        <div class="lg:col-span-8">
+          <label class="th-legend label" for="th-link">Your link</label>
+          <div class="th-linkrow mt-xs">
+            <input id="th-link" class="th-input" type="text" readonly data-th-link />
+            <button type="button" class="hit hit-primary" data-th-copy-link>Copy link</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="edge-b" aria-labelledby="th-css-title">
+      <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+        <div class="lg:col-span-4">
+          <h2 id="th-css-title" class="font-title text-xl">Write your own CSS</h2>
+          <p class="mt-xs max-w-prose">
+            Anything goes. It runs on your screen only and stays in this browser. No CSS ideas? Copy the prompt, paste it
+            into ChatGPT or Claude with what you want, and paste the answer back here.
+          </p>
+          <div class="th-actions mt-md">
+            <button type="button" class="hit hit-primary" data-th-copy-prompt>Copy a prompt for your AI</button>
+          </div>
+        </div>
+        <div class="lg:col-span-8">
+          <label class="th-legend label" for="th-css">Your CSS</label>
+          <textarea
+            id="th-css"
+            class="th-input th-textarea mt-xs"
+            spellcheck="false"
+            autocomplete="off"
+            data-th-css
+            placeholder=".font-display { text-transform: uppercase; }"></textarea>
+          <div class="th-actions mt-sm">
+            <button type="button" class="hit hit-primary" data-th-apply-css>Apply CSS</button>
+            <button type="button" class="hit" data-th-clear-css>Clear CSS</button>
+          </div>
+          <details class="th-hooks mt-md">
+            <summary class="label">Hooks you can style</summary>
+            <dl class="mt-sm">
+              {
+                [...HOOKS.variables, ...HOOKS.classes].map(([name, what]) => (
+                  <div class="th-hook">
+                    <dt>
+                      <code>{name}</code>
+                    </dt>
+                    <dd>{what}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="th-how-title">
+      <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+        <h2 id="th-how-title" class="font-title text-xl lg:col-span-4">How it works</h2>
+        <div class="prose lg:col-span-8">
+          <p>
+            The site was already built on CSS variables, so a theme is just a few values. A tiny script in the page head
+            reads your saved theme, checks every value against a fixed list, and sets them before the page paints. No
+            backend, no build step, no framework.
+          </p>
+          <p>
+            Share links carry only those checked values, never raw CSS. CSS from strangers could leak what is on the page
+            or fake it, so your own CSS only ever runs for you.
+          </p>
+          <p>
+            <a href="https://github.com/sgarcia-dev/sergeigarcia.com/blob/main/src/components/ThemeInit.astro">Read the head script</a>
+            or the <a href="https://github.com/sgarcia-dev/sergeigarcia.com/blob/main/src/styles/theme.css">theme CSS</a>.
+            Want the other experiments? Try the <a href="/playground/">playground</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { SKINS, PALETTES, TYPES, SHAPES, SHADOWS, EFFECTS, HOOKS, DEFAULT_THEME, type Theme } from "../lib/themes";
+
+  interface SgTheme {
+    current(): Theme;
+    css(): string;
+    save(t: Theme, css: string | null): Theme;
+    reset(): Theme;
+    link(t: Theme): string;
+  }
+  const api = (window as unknown as { sgTheme?: SgTheme }).sgTheme;
+  const editor = document.querySelector<HTMLElement>("[data-th-editor]");
+
+  if (api && editor) {
+    editor.hidden = false;
+    const $ = <T extends Element>(sel: string) => editor.querySelector<T>(sel)!;
+    const status = $<HTMLElement>("[data-th-status]");
+    const linkEl = $<HTMLInputElement>("[data-th-link]");
+    const cssEl = $<HTMLTextAreaElement>("[data-th-css]");
+    const ownEl = $<HTMLInputElement>("[data-th-own]");
+    const colorEls = Array.from(editor.querySelectorAll<HTMLInputElement>("[data-th-color]"));
+    const keys = ["palette", "type", "shape", "shadow", "fx"] as const;
+
+    let theme: Theme = api.current();
+    cssEl.value = api.css();
+    if (theme.colors) colorEls.forEach((el, i) => (el.value = theme.colors![i]));
+
+    const say = (text: string) => (status.textContent = text);
+    const sameLook = (a: Theme, b: Theme) => keys.every((k) => a[k] === b[k]) && !a.colors;
+
+    /** Put the controls in line with the theme. */
+    function sync() {
+      for (const k of keys) {
+        const input = editor!.querySelector<HTMLInputElement>(`input[data-th-key="${k}"][value="${theme[k]}"]`);
+        if (input) input.checked = true;
+      }
+      ownEl.checked = !!theme.colors;
+      for (const card of editor!.querySelectorAll<HTMLButtonElement>("[data-skin]")) {
+        const skin = SKINS.find((s) => s.id === card.dataset.skin)!;
+        card.setAttribute("aria-pressed", String(sameLook(theme, skin.theme)));
+      }
+      linkEl.value = api!.link(theme);
+    }
+
+    function commit(next: Theme, message: string) {
+      theme = api!.save(next, cssEl.value.trim() || null);
+      sync();
+      say(message);
+    }
+
+    const ownColors = (): [string, string, string] => colorEls.map((el) => el.value) as [string, string, string];
+
+    for (const card of editor.querySelectorAll<HTMLButtonElement>("[data-skin]")) {
+      card.addEventListener("click", () => {
+        const skin = SKINS.find((s) => s.id === card.dataset.skin)!;
+        commit({ ...skin.theme }, `${skin.label} look on.`);
+      });
+    }
+
+    editor.addEventListener("change", (e) => {
+      const el = e.target as HTMLInputElement;
+      const key = el.dataset.thKey as (typeof keys)[number] | undefined;
+      if (key) {
+        const label = el.closest("label")?.textContent?.trim() ?? el.value;
+        commit({ ...theme, [key]: el.value }, `${label} on.`);
+      } else if (el === ownEl) {
+        const { colors: _drop, ...rest } = theme;
+        commit(el.checked ? { ...rest, colors: ownColors() } : rest, el.checked ? "Your colors on." : "Your colors off.");
+      }
+    });
+    // Color pickers update live while dragging, which also turns "use my colors" on.
+    for (const el of colorEls) {
+      el.addEventListener("input", () => commit({ ...theme, colors: ownColors() }, "Your colors on."));
+    }
+
+    const pick = <T extends { id: string }>(list: readonly T[]) => list[Math.floor(Math.random() * list.length)].id;
+    $("[data-th-random]").addEventListener("click", () => {
+      commit(
+        {
+          palette: pick(PALETTES),
+          type: pick(TYPES),
+          shape: pick(SHAPES),
+          shadow: pick(SHADOWS),
+          fx: pick(EFFECTS.filter((x) => x.id !== "still")),
+        },
+        "Random look on. Press again for another.",
+      );
+    });
+    $("[data-th-reset]").addEventListener("click", () => {
+      cssEl.value = "";
+      theme = api.reset();
+      sync();
+      say("Back to the real site.");
+    });
+
+    async function copy(text: string, done: string) {
+      try {
+        await navigator.clipboard.writeText(text);
+        say(done);
+      } catch {
+        say("Could not copy. Select the text and copy it yourself.");
+      }
+    }
+    $("[data-th-copy-link]").addEventListener("click", () => {
+      void copy(linkEl.value, "Link copied.");
+    });
+    linkEl.addEventListener("focus", () => linkEl.select());
+
+    $("[data-th-apply-css]").addEventListener("click", () => {
+      commit(theme, cssEl.value.trim() ? "Your CSS is on." : "No CSS to apply.");
+    });
+    $("[data-th-clear-css]").addEventListener("click", () => {
+      cssEl.value = "";
+      commit(theme, "Your CSS is off.");
+    });
+
+    $("[data-th-copy-prompt]").addEventListener("click", () => {
+      const hooks = [...HOOKS.variables, ...HOOKS.classes].map(([n, w]) => `- ${n}: ${w}`).join("\n");
+      const prompt = [
+        "I am restyling the website sergeigarcia.com with its \"Hack this site\" CSS box.",
+        "Write plain CSS only, in one code block, that I can paste into that box.",
+        "",
+        "The site is a static page. Its look comes from CSS variables on :root and a few classes:",
+        hooks,
+        "",
+        "Rules:",
+        "- Only use the variables and classes above, plus normal element selectors (h1, a, img, body).",
+        "- No @import and no url(): the box is for colors, fonts that every computer has, borders, spacing, transforms and animations.",
+        "- Keep text readable: at least 4.5:1 contrast between text and its background.",
+        "- Prefix rules with html[data-theme] if a rule does not win, for example html[data-theme] .hit { ... }.",
+        `- The current theme is ${JSON.stringify({ ...DEFAULT_THEME, ...theme })}.`,
+        "",
+        "Here is what I want:",
+        "",
+      ].join("\n");
+      void copy(prompt, "Prompt copied. Paste it into your AI and add what you want.");
+    });
+
+    sync();
+    say(sameLook(theme, DEFAULT_THEME) && !cssEl.value ? "You are on the real site." : "Your saved theme is on.");
+  }
+</script>
+
+<style>
+  .th-strong {
+    font-weight: var(--font-weight-bold);
+  }
+  .th-looks {
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+  @media (min-width: 48rem) {
+    .th-looks {
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    }
+  }
+  .th-card {
+    display: grid;
+    gap: var(--spacing-xs);
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-sm);
+    text-align: left;
+    color: var(--color-ink);
+    background: var(--color-bg);
+    border: var(--rule-thick) solid var(--edge);
+    box-shadow: 4px 4px 0 var(--edge);
+    cursor: pointer;
+  }
+  .th-card:hover {
+    background: var(--hit-hover-bg);
+    color: var(--hit-hover-ink);
+  }
+  .th-card[aria-pressed="true"] {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  .th-swatch {
+    display: flex;
+    height: 2rem;
+    border: var(--rule-thin) solid var(--edge);
+  }
+  .th-swatch i {
+    flex: 1;
+  }
+  .th-line {
+    font-size: var(--text-base);
+  }
+  .th-panel {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+  .th-group {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .th-legend {
+    display: block;
+    padding: 0;
+    margin-bottom: var(--spacing-xs);
+  }
+  .th-chips,
+  .th-actions,
+  .th-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  .th-chip {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  .th-chip .hit {
+    pointer-events: none;
+  }
+  .th-chip input:focus-visible + .hit {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .th-chip input:checked + .hit {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  .th-check,
+  .th-color {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .th-check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--c-ink);
+  }
+  .th-color input {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: var(--rule-thin) solid var(--edge);
+    background: none;
+    cursor: pointer;
+  }
+  .th-hint,
+  .th-status {
+    color: var(--color-muted);
+  }
+  .th-status {
+    min-height: 2.8em;
+  }
+  .th-linkrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  .th-input {
+    flex: 1 1 16rem;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    color: var(--color-ink);
+    background: var(--color-bg);
+    border: var(--rule-thin) solid var(--edge);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .th-textarea {
+    display: block;
+    width: 100%;
+    min-height: 14rem;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .th-hooks summary {
+    cursor: pointer;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+  .th-hook {
+    display: grid;
+    gap: var(--spacing-2xs);
+    padding-block: var(--spacing-xs);
+    border-top: var(--rule-thin) solid var(--rule-color);
+  }
+  @media (min-width: 48rem) {
+    .th-hook {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--spacing-sm);
+    }
+  }
+  .th-hook code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    overflow-wrap: anywhere;
+  }
+</style>
