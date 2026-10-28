@@ -40,9 +40,10 @@ export const NAV = [
 
 /**
  * Band colors for Writing and About (picked by Sergei, 2026-10-13). Writing (its index page, every
- * post head and the home Writing section) is cobalt; About takes the other color, yellow. Work stays
- * yellow and Projects stay cobalt. To swap them, change WRITING_BAND; About follows.
+ * post head and the home Writing section) is black since 2026-10-28 (Sergei: "a cooler aesthetic"),
+ * cobalt before that; About is yellow. Work stays yellow and Projects stay cobalt. To swap them,
+ * change WRITING_BAND; About follows.
  */
-export type SectionBand = "yellow" | "cobalt";
-export const WRITING_BAND = "cobalt" as SectionBand;
+export type SectionBand = "yellow" | "cobalt" | "black";
+export const WRITING_BAND = "black" as SectionBand;
 export const ABOUT_BAND: SectionBand = WRITING_BAND === "yellow" ? "cobalt" : "yellow";

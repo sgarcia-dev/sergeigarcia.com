@@ -10,13 +10,13 @@
 
 <script is:inline>
   if ("IntersectionObserver" in window) document.documentElement.classList.add("js-motion");
-  (function () {
-    var fromUrl = new URLSearchParams(location.search).get("calm");
-    var calm = fromUrl;
+  ["calm"].forEach(function (name) {
+    var fromUrl = new URLSearchParams(location.search).get(name);
+    var value = fromUrl;
     try {
-      if (fromUrl === "on" || fromUrl === "off") sessionStorage.setItem("calm", fromUrl);
-      else calm = sessionStorage.getItem("calm");
+      if (fromUrl === "on" || fromUrl === "off") sessionStorage.setItem(name, fromUrl);
+      else value = sessionStorage.getItem(name);
     } catch (e) {}
-    if (calm === "on") document.documentElement.dataset.calm = "";
-  })();
+    if (value === "on") document.documentElement.dataset[name] = "";
+  });
 </script>

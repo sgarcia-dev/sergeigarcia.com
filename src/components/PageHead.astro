@@ -14,14 +14,16 @@
  */
 interface Props {
   title: string;
-  band?: "yellow" | "cobalt" | "tomato";
+  band?: "yellow" | "cobalt" | "tomato" | "black";
   eyebrow?: string;
   vt?: string;
   lead?: string;
   size?: "h2" | "xl" | "post";
   progress?: boolean;
+  /** Names the site section, as data-section, for section-wide switches (the ink variant on Writing). */
+  section?: string;
 }
-const { title, band = "yellow", eyebrow, vt, lead, size = "h2", progress = false } = Astro.props;
+const { title, band = "yellow", eyebrow, vt, lead, size = "h2", progress = false, section } = Astro.props;
 const hasCover = Astro.slots.has("cover");
 // With a cover the text gets its own column; without one there is no wrapper at all.
 const Text = hasCover ? "div" : Fragment;
@@ -35,7 +37,7 @@ const textProps = hasCover ? { class: "ph-text" } : {};
     </div>
   )
 }
-<section class:list={["edge-b", `band-${band}`, "page-head"]}>
+<section class:list={["edge-b", `band-${band}`, "page-head"]} data-section={section}>
   <div class:list={["shell py-lg lg:py-xl", hasCover && "ph-with-cover"]}>
     <Text {...textProps}>
       {eyebrow && <p class="label mb-sm">{eyebrow}</p>}

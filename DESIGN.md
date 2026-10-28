@@ -146,12 +146,13 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   element that carries a view-transition-name.
 - Hit hover and press: 90ms transform and shadow.
 - **Band textures** (`src/styles/texture.css`, `TexturePick.astro`): every big
-  yellow, cobalt and tomato band gets one pattern per page load, picked at random
+  yellow, cobalt and tomato band, and the black Writing bands (never the footer), gets one pattern per page load, picked at random
   from dots-fade, dots-big, hatch and grid, never the same twice in a row, with a
   random drift direction at 13.9px/s. The texture is pinned to the viewport and
   clipped to the band's padding box, so it never touches a border. Rule: the
   texture tone always moves away from the text color (lighter on yellow and
-  tomato, darker on cobalt). Reduced motion keeps the texture, stops the drift.
+  tomato, darker on cobalt). The one exception is black: a gray a few steps lighter (#151515 to
+  #171717), barely visible, since nothing is darker. Reduced motion keeps the texture, stops the drift.
 - **Glyph reveal** (`src/scripts/motion.ts`): monospace text only (labels, the
   home hero facts, section intro lines). Letters go blank, ░, ▒, ▓, then real.
   Never on links, buttons, nav, headings, serif text or article body. No-JS shows
@@ -179,9 +180,10 @@ was picked by Sergei from live prototypes on 2026-10-13 (the frozen lab is the
   `?rtpos=header|strip`, `?rtm=compact|corner`, `?rtemoji=grow|trip|moon|none`,
   `?rtcopy=cheer|coach|quiet`, `?rtswap=glyph|plain`.
 - **Section colors** (`WRITING_BAND` and `ABOUT_BAND` in `src/lib/site.ts`): Writing (index, post
-  heads, home section) is cobalt and About is yellow (picked by Sergei, 2026-10-13; orange made the
-  writing section hard to read). Work stays yellow, Projects cobalt, 404 tomato. The marker and
-  row-hover colors in `lively.css` have per-band versions for yellow and cobalt.
+  heads, home section) is black since 2026-10-28 (Sergei wanted a cooler look for the blog; it was
+  cobalt from 2026-10-13, and orange before that was hard to read). About is yellow. Work stays
+  yellow, Projects cobalt, 404 tomato. The Writing bands carry `data-section="writing"`. The marker
+  and row-hover colors in `lively.css` have per-band versions for yellow, cobalt and black.
 - **Liveliness** (`src/styles/lively.css`, `src/scripts/lively.ts`): a pale
   marker that draws once, as the phrase scrolls into view, behind a few key phrases (`.lv-mark`; the
   block sits inside its own box and never overlaps the neighboring words; on cobalt it is full height so

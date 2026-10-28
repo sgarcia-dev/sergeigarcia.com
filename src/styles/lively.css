@@ -53,7 +53,8 @@
 .band-yellow .lv-mark--band {
   --lv-mark-color: rgba(255, 255, 255, 0.78);
 }
-.band-cobalt .lv-mark--band {
+.band-cobalt .lv-mark--band,
+.band-black .lv-mark--band {
   /* The old dark-blue block was almost invisible on cobalt. A yellow block with black text reads clearly.
      The text turns black here, so the block must sit behind every black letter: a full-height block, not
      the short one, or the tops of the letters sit on blue and cannot be read. 100% is the inline box

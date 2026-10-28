@@ -11,7 +11,7 @@ const drafts = posts.length === 0 ? await getAllPosts() : [];
 ---
 
 <Base title={PAGE_META.writing.title} description={PAGE_META.writing.description}>
-  <PageHead title="Writing" band={WRITING_BAND}
+  <PageHead title="Writing" band={WRITING_BAND} section="writing"
     lead="Notes on building software and working with AI coding agents, newest first."
   />
   <section class="edge-b" aria-label="Posts">

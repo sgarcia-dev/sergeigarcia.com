@@ -81,3 +81,13 @@ test("the editor applies a look, own colors and CSS, and the link never carries 
   expect((await attrs(page)).theme).toBeUndefined();
   await expect(page.locator("#sg-theme-css")).toHaveCount(0);
 });
+
+test("the Writing bands are black, with a texture layer, on the index, a post and home", async ({ page }) => {
+  for (const route of ["/writing/", "/writing/ai-raises-the-floor/", "/"]) {
+    await page.goto(route);
+    const band = page.locator('[data-section="writing"]').first();
+    expect(await band.evaluate((el) => getComputedStyle(el).backgroundColor), route).toBe("rgb(10, 10, 10)");
+    await expect(band.locator(":scope > .tex"), `${route} texture`).toHaveCount(1);
+  }
+  await expect(page.locator("footer > .tex"), "the footer stays plain").toHaveCount(0);
+});

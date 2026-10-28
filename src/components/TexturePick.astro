@@ -35,7 +35,8 @@
     root.style.setProperty("--tex-len", d[0] && d[1] ? "1.4142" : "1");
 
     // The small yellow cards (thumbnail fallback, type card) stay plain.
-    var bands = ".band-yellow, .band-cobalt, .band-tomato";
+    // Black bands get one only when they are a section band (Writing), never the footer.
+    var bands = ".band-yellow, .band-cobalt, .band-tomato, .band-black[data-section]";
     function addLayer(band) {
       if (band.matches(".shot-card, .type-card") || band.querySelector(":scope > .tex")) return;
       var layer = document.createElement("span");

@@ -56,7 +56,7 @@ const jsonLd = [
 ---
 
 <Base title={title} description={plain(summary)} ogType="article" jsonLd={jsonLd} readMinutes={minutes} preloadBody>
-  <PageHead title={title} band={WRITING_BAND} vt={vtName("posts", entry.id)} size="post" progress>
+  <PageHead title={title} band={WRITING_BAND} section="writing" vt={vtName("posts", entry.id)} size="post" progress>
     <p class="label mt-md">
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
     </p>
