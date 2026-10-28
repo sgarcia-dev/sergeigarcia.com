@@ -1,0 +1,45 @@
+<svg viewBox="0 0 560 654" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="arr-embeddings" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+  <!-- Source: worked example with toy 3-number vectors, not a measurement. The sketch draws the angles
+       from the cosines: A is 11.5 degrees from the query (cosine 0.98), B is 69.5 degrees (cosine 0.35).
+       No bar scale. Arrows are 190px long. -->
+  <text class="d-t d-sm" x="16" y="22">Meaning search: close meaning, close numbers</text>
+
+  <rect class="d-box" x="16" y="36" width="528" height="72" />
+  <text class="d-t" x="32" y="64">Query: "how hard should the model think?"</text>
+  <text class="d-t d-mono" x="32" y="92">[0.8, 0.1, 0.5]</text>
+
+  <!-- Angle sketch, shifted down 28 -->
+  <g transform="translate(0,28)">
+    <path class="d-line" d="M100,330 L255.6,221" marker-end="url(#arr-embeddings)" />
+    <path class="d-line" d="M100,330 L274.2,254.2" marker-end="url(#arr-embeddings)" />
+    <path class="d-line d-dash" d="M100,330 L52.4,146.1" marker-end="url(#arr-embeddings)" />
+    <path class="d-line" d="M173.7,278.4 A90,90 0 0 1 182.5,294.1" />
+    <path class="d-line" d="M149.2,295.6 A60,60 0 0 0 85,271.9" />
+
+    <rect class="d-cobalt" x="226" y="176" width="60" height="28" />
+    <text class="d-t d-t-light d-sm" x="256" y="196" text-anchor="middle">Query</text>
+    <rect class="d-yellow" x="292" y="240" width="152" height="28" />
+    <text class="d-t d-t-dark d-sm" x="368" y="260" text-anchor="middle">A: cosine 0.98</text>
+    <rect class="d-box" x="68" y="118" width="152" height="28" />
+    <text class="d-t d-sm" x="144" y="138" text-anchor="middle">B: cosine 0.35</text>
+  </g>
+
+  <text class="d-t d-sm" x="16" y="394">Smaller angle between arrows = closer meaning.</text>
+  <text class="d-t d-sm" x="16" y="414">Cosine: 1 = same direction, 0 = unrelated.</text>
+
+  <rect class="d-yellow" x="16" y="432" width="528" height="72" />
+  <text class="d-t d-t-dark d-b" x="32" y="460">A: Reasoning level: medium</text>
+  <text class="d-t d-t-dark d-mono" x="32" y="488">[0.7, 0.2, 0.6]  cosine 0.98</text>
+
+  <rect class="d-box" x="16" y="516" width="528" height="72" />
+  <text class="d-t d-b" x="32" y="544">B: Think-tank reading list</text>
+  <text class="d-t d-mono" x="32" y="572">[0.1, 0.9, 0.3]  cosine 0.35</text>
+
+  <text class="d-t d-sm" x="16" y="616">Toy vectors with 3 numbers. The real model uses 768.</text>
+  <text class="d-t d-sm" x="16" y="638">A shares no words with the query, but wins.</text>
+</svg>

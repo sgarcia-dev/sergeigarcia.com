@@ -1,91 +1,148 @@
 ---
-title: "My agents read 25 times less to find one fact"
-summary: "I timed my agents' local search against plain rg plus opening whole files. Search read about 25 times less text and found the right file three times as often."
-ogTitle: "My agents read ==25 times less== to find one fact"
+title: "My agents' search reads 25 times less to find one fact"
+summary: "How my agents' local search works, part by part, and what it saves. On 28 questions it read about 25 times less text than rg plus whole files. With a real agent, the gap was much smaller."
+ogTitle: "My agents' search reads ==25 times less== to find one fact"
 ogTitleShort: "==25 times less== to read"
-ogSummary: "Local search against rg plus whole files: ==25 times less text==, and the right file 7 times in 10 instead of 2."
-ogSummaryShort: "==25 times less text==, right file 7 in 10."
+ogSummary: "Search against rg plus whole files on 28 questions: ==25 times less text==, and the answer file 18 times instead of 3."
+ogSummaryShort: "==25 times less text==, answer 18 of 28 vs 3."
 pubDate: 2026-10-28
+updatedDate: 2026-10-28
 skills: ["AI agents", "Information retrieval", "Embeddings", "Context engineering", "LLM evals"]
 draft: false
 ---
 
 import Diagram from "../../components/Diagram.astro";
-import Routes from "../../components/diagrams/context-retrieval/Routes.astro";
-import Results from "../../components/diagrams/context-retrieval/Results.astro";
+import Headline from "../../components/diagrams/context-retrieval/Headline.astro";
+import RouteStats from "../../components/diagrams/context-retrieval/RouteStats.astro";
+import Passages from "../../components/diagrams/context-retrieval/Passages.astro";
+import Bm25 from "../../components/diagrams/context-retrieval/Bm25.astro";
+import Embeddings from "../../components/diagrams/context-retrieval/Embeddings.astro";
+import Fusion from "../../components/diagrams/context-retrieval/Fusion.astro";
+import OneSearch from "../../components/diagrams/context-retrieval/OneSearch.astro";
+import AgentRoute from "../../components/diagrams/context-retrieval/AgentRoute.astro";
 
-To answer one question, the route through my search tool read a median of about 3,100 tokens. Plain `rg` plus opening the top files read about 81,000. That is about 25 times less. Search also found the answer file 7 times out of 10. The `rg` route found it 2 times out of 10.
+On 28 questions, my search tool plus reading the cited lines took a median of about 3,500 tokens of text. Plain `rg` plus opening the top 3 files took about 84,800. That is about 25 times less. Search also read the answer file 18 times out of 28. The `rg` route read it 3 times.
 
-It is a small, scripted test of 10 questions, described below. But the gap is large.
+That is a scripted test. When I gave the same choice to real AI agents, the gap shrank to about a quarter fewer tokens. Both are below, with how the search works, one part at a time.
+
+<Diagram
+  caption="Scripted routes, 28 questions: search reads about 25 times less and finds the answer file six times as often."
+  label="Bar chart of median tokens read per question over 28 questions. rg, then open the top 3 files: 84,800 tokens, 339 kilobytes, found the answer file 3 of 28. Search with 8 results, then read the cited lines: 3,455 tokens, 13.8 kilobytes, found 18 of 28. Search with 3 results: 1,764 tokens, 7.1 kilobytes, found 14 of 28."
+>
+  <Headline />
+</Diagram>
 
 ## The problem: whole files for one fact
 
-My agents work from a folder of about 3,000 Markdown files: rules, procedures, specs and research notes. Most questions need one fact from one passage. "What effort does this role run at?" "Which checks must pass before publishing?"
+My agents work from a few thousand Markdown files: rules, procedures, specs and research notes. Most questions need one fact from one passage, such as "what effort does this worker run at?"
 
-The default loop is search by text, then open files. The agent picks a few words, runs `rg`, gets a long list of matching lines, and opens the files that look best. Each file it opens goes into its context in full, even if the answer is three lines. Context costs money and time, and a context full of near misses makes worse answers.
+The default loop is to search by text, then open files. Each file the agent opens goes into its context in full, even if the answer is three lines. Context costs money and time, and a context full of near misses makes worse answers. So the goal is to find the right lines and read little else.
 
-So the goal is not only to find the right file. It is to find the right lines and read nothing else.
+The [tour of my agent workspace](/writing/agents-workspace-tour/) shows the search tool from above. Here are its parts, each with a tiny example.
 
-## Five ways to find one fact
+## Part 1: files become passages
 
-I wrote about how the search tool is built in [the tour of my agent workspace](/writing/agents-workspace-tour/). Here is how each route works, side by side.
+The tool never returns whole files. It splits each file at every heading. A section longer than 1,800 characters is cut into windows that overlap by 200 characters, so a sentence on the edge is not lost. Each passage keeps its file path, heading and line range.
+
+Each file also gets a fingerprint, called a hash: a short code computed from the file's bytes that changes if any byte changes. The tool shows the first 12 characters of its SHA-256 hash. Later, it tells the agent whether the file changed since the search.
 
 <Diagram
-  caption="Five routes to one fact. My search uses the last two."
-  label="Diagram. Five ways to find one fact, side by side. Exact text with rg matches the exact string you typed and gives every matching line in every file. Words with BM25 ranks passages by shared words, and rare words count more. Meaning with embeddings turns each passage into a list of numbers, so close meaning is close numbers, and it finds paraphrases that share no words. Hybrid merges the words ranking and the meaning ranking by rank, using reciprocal rank fusion. An optional reranker could re-score the top results, but it is not built yet. Last, the agent opens the original and reads only the cited lines, and the file hash says if it changed since. The hybrid search is what my search tool does, and the last step is what the agent does next."
+  caption="One file becomes small passages with exact line ranges, all sharing one file hash."
+  label="Diagram. An example file with three headings becomes passages. The first two sections become one passage each, lines 1 to 11 and 12 to 30. A long section of 4,000 characters is cut into three windows: characters 0 to 1,800, 1,600 to 3,400, and 3,200 to 4,000, overlapping by 200. Rules: split at every heading, at most 1,800 characters, 200 characters of overlap, cut at a line break when it can. Every passage carries the same file hash, the first 12 characters of the SHA-256 of the whole file."
 >
-  <Routes />
+  <Passages />
 </Diagram>
 
-**Exact text.** `rg` finds every line that contains your string. It is fast and complete, but it does not rank. A common word matches hundreds of files.
+## Part 2: ranking by words (BM25)
 
-**Words.** BM25 is a classic ranking formula. It scores a passage by the words it shares with the question, and rare words count more than common ones. My tool uses the BM25 built into SQLite's full-text index. A word in a heading or title counts twice as much as a word in the body.
+BM25 is a classic formula that scores a passage by the words it shares with the question. Two ideas drive it. A word that appears in fewer passages counts more (its inverse document frequency, or idf), because it says more about the passage. And repeating a word helps less each time. My tool uses the [BM25 built into SQLite's full-text index](https://sqlite.org/fts5.html), which lets each field carry its own weight. A word in a heading or title counts twice as much as one in the body. The index also matches word forms, so "workers" matches "worker".
 
-**Meaning.** An embedding model turns a passage into a list of numbers, so that passages with similar meaning get similar numbers. This finds "how much effort" when the file says "reasoning level". Mine is a small local model, EmbeddingGemma, so nothing leaves my Mac.
+<Diagram
+  caption="A rare word in the question counts about three times more than a common one."
+  label="Worked example of BM25 on four tiny passages with the query words worker and effort. Worker appears in 3 of 4 passages, so its weight is 0.36. Effort appears in 1 of 4, so its weight is 1.20, using idf equals the natural log of N minus n plus 0.5 over n plus 0.5, plus 1. The passage with the heading Effort and the text Workers run at medium effort ranks first. Heading and title words count twice."
+>
+  <Bm25 />
+</Diagram>
 
-**Hybrid.** The tool runs both searches and merges the two rankings by position, not by raw score. This is called reciprocal rank fusion. A file near the top of both lists wins. A reranker is a second model that reads the top results again and re-orders them. I have not built one. An earlier test found it added about 5 points to the hit rate but cost about 4 seconds a search.
+## Part 3: ranking by meaning (embeddings)
 
-**Open the original.** The tool does not return whole files. It splits each file at its headings into passages of up to 1,800 characters. It returns 8 results by default, capped at 12,000 characters in all. Each result names the file, the exact line range and a 12-character fingerprint (hash) of the file. The agent then reads just those lines in the real file, and the fingerprint tells it if the file changed since the index saw it.
+Words fail when the question and the file use different words. An embedding model turns text into a list of numbers, so that texts with similar meaning get similar numbers. Search then compares the question's list to each passage's list by the angle between them, called cosine similarity, where 1 means the same direction.
+
+Mine is [EmbeddingGemma](https://ai.google.dev/gemma/docs/embeddinggemma), a small Google model that gives [768 numbers per passage](https://developers.googleblog.com/en/introducing-embeddinggemma/). It runs locally through Ollama, so nothing leaves my Mac.
+
+<Diagram
+  caption="The passage that shares no words with the question still wins on meaning."
+  label="Worked example with toy vectors of three numbers. The query how hard should the model think has vector 0.8, 0.1, 0.5. Passage A, Reasoning level: medium, has 0.7, 0.2, 0.6 and cosine 0.98. Passage B, Think-tank reading list, has 0.1, 0.9, 0.3 and cosine 0.35. A shares no words with the query but wins. The real model uses 768 numbers."
+>
+  <Embeddings />
+</Diagram>
+
+## Part 4: merging the two rankings
+
+The two searches score on different scales, so the tool ignores raw scores and merges by position. This is called [reciprocal rank fusion](https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf). Both lists rank files, by each file's best passage. Each list gives a file 1 / (k + rank), and the scores add up. The paper used k = 60. My tool uses k = 20, which favours top places more.
+
+<Diagram
+  caption="Results near the top of both lists rise above a result that tops only one."
+  label="Worked example of reciprocal rank fusion with k equals 20. The words list ranks A, B, C. The meaning list ranks C, A, D. A scores 1 over 21 plus 1 over 22, 0.093. C scores 1 over 23 plus 1 over 21, 0.091. B scores 1 over 22, 0.045. D scores 1 over 23, 0.043. Final order A, C, B, D. A and C are in both lists, so they rise."
+>
+  <Fusion />
+</Diagram>
+
+Merging is worth it. On my 180-question search test set, the right file was in the top five 62% of the time with both searches, against 49% for words alone and 48% for meaning alone. A reranker, a second model that re-reads the top results, could add more. An older test on a different question set found about 5 more points in the top five, at about 4 seconds a search. I have not built one.
+
+## Part 5: one search, end to end
+
+<Diagram
+  caption="A question becomes at most 8 passages with exact lines, then the agent reads only those lines."
+  label="Flow diagram. A question goes to two searches. Words: up to 200 passages, best one per file, top 50 files. Meaning: top 50 files by cosine. Both merge by rank with k equals 20. The tool returns the top 8 passages, 12,000 characters at most. A result card shows specs/agents-system/decisions.md lines 282 to 301, hash 600a7408c2a5, found by keyword. The agent opens the file and reads lines 282 to 301. If the hash is still 600a7408c2a5, the lines are current."
+>
+  <OneSearch />
+</Diagram>
+
+The last step matters. Another agent may edit the file after the search, and new passages get their meaning numbers in small batches. So the agent opens the original, reads just the cited lines, and checks the hash. If it changed, the agent reads the file again before it trusts the lines.
 
 ## The measurement
 
-My records had search quality scores but no test of context saved. So I ran one today.
+I took 28 questions from my search test set whose answers sit in the public parts of the system: rules, roles, model notes, connector docs and my evals notes. Each has a known answer file. A script ran each route once.
 
-I took the first 10 questions from my search test set whose answers sit in the public parts of the system: rules, roles, model notes, connector docs and my evals notes. I took at most 2 per area. Eight ask for a fact directly. Two use different words from the file. Each has a known answer file. A script ran both routes, not a live agent.
+- **Search route.** Run the search with its defaults (8 results), then read the cited lines of the answer file if it is in the top five, or of the first result, plus 10 lines either side. Two tool calls.
+- **`rg` route.** Take up to four keywords from the question by a fixed rule: the longest words of four or more letters, minus common words. Run `rg`, rank files by how many keywords they match, and open the top 3 whole. I capped the `rg` listing at 30,000 bytes, as agent tools cut long output, and skipped worker task folders. Four tool calls.
 
-For each question I ran two routes:
-
-- **Search route.** Run the search tool with its defaults, then read only the cited lines, plus 10 lines either side. If the answer file was in the top five, the script read its lines. A real agent has to pick it from the passages, but the read is small either way. Two tool calls.
-- **`rg` route.** Pick up to four keywords from the question by a fixed rule: the longest words of four or more letters, minus common words. Run `rg` over the rules, docs and spec folders, skipping worker task folders that hold long raw output. Rank files by how many keywords they match, and open the top 3 files whole. I capped the `rg` listing at 30,000 bytes, since agent tools cut long output. Four tool calls.
-
-I counted bytes read and estimated tokens as bytes divided by 4.
+"Found" means the answer file was in the top five results for search, or among the files opened for `rg`. Tokens are bytes divided by 4. The raw data, script and method are in my records.
 
 <Diagram
-  caption="Same 10 questions. Median text read, and how often the answer file was read."
-  label="Bar chart. Median bytes read per question over 10 questions. The rg route, which opens the top 3 files whole, read 325 kilobytes, about 81,000 tokens, and read the answer file for 2 of 10 questions. The search route, which reads only the cited lines, read 12.5 kilobytes, about 3,100 tokens, and found the answer file in its top five for 7 of 10 questions."
+  caption="Search finds the answer six times as often in half the tool calls, but each question takes about 10 times longer."
+  label="Three bar charts comparing the two scripted routes over 28 questions. Found the answer file: rg 3, search 18. Median time per question: rg 0.16 seconds, search 1.63 seconds. Tool calls per question: rg 4, search 2."
 >
-  <Results />
+  <RouteStats />
 </Diagram>
 
-The search route read a median of 12,545 bytes per question. The `rg` route read 324,700. Per question, the gap ran from 6 times to 48 times. Opening 5 files instead of 3 raised the `rg` median to about 502,000 bytes and still found only 2 answers.
+Per question, the middle half of search runs read 11,100 to 16,200 bytes. The middle half of `rg` runs read 275,000 to 408,000. With 3 results instead of 8, search read about half as much and still found the answer 14 times.
 
-Search put the answer file first for 6 questions and in the top five for 7. The `rg` route missed because common words like "worker" and "effort" match long research notes that rank above the short rule file that holds the answer.
+The `rg` route misses because common words match long research notes. On a question about evals, for example, it opened two long source notes and a long summary file. Those rank above the short rule file that holds the answer. With worker task folders left in, it found nothing at all.
 
-A cruder version, with no cap and task folders included, was far worse. There, the `rg` route read a median of 7.2 MB and found nothing. One large research results file matched almost every question and got opened each time.
+## With real agents, the gap is smaller
 
-A leaner setting helps more. With 3 results instead of 8, search read a median of 6,291 bytes, about 1,600 tokens, and still had the answer file in its top 3 for 6 of 10 questions.
+A fixed keyword rule is a weak stand-in for an agent. So I gave 10 of the questions to Claude Haiku twice: once with only Grep, Read and file listing, and once with only my search tool and Read. I counted the tokens it reported, its tool calls and its time, and checked that its answer named the right file.
 
-Search is slower per call. It took a median of 1.6 seconds, against 0.16 seconds for `rg`. Saving 78,000 tokens of reading is worth 1.5 seconds.
+<Diagram
+  caption="A real agent with search used about a quarter fewer tokens in about the same time, but named the exact answer file less often."
+  label="Bar charts for real Haiku agents on 10 questions, medians. Input tokens per question across all turns: Grep, Read and Glob 168,690; search then Read 130,670. Time per question: 14.6 seconds against 15.9 seconds. Tool calls: 4 against 3. Named the exact answer file: 8 against 6 of 10, or 9 each counting an alternate file that also holds the answer."
+>
+  <AgentRoute />
+</Diagram>
 
-**What this does not show.** Ten questions is a small sample, and most were direct. A good agent picks better words than my fixed rule and can read parts of files. So the real gap is smaller than in this test. But the direction matches how the files are shaped: answers are short, and the files around them are long.
+The search agent used a median of 23% fewer input tokens. But it named the exact answer file 6 times out of 10, against 8 for the Grep agent. Counting other files that also hold the answer, both got 9 of 10. The agent with Grep did far better than my fixed rule, because it picks its own words and follow-up searches. And most of each agent's tokens are its own fixed instructions, which it re-reads on every turn. So the saving per question is real but modest.
+
+## What this does not show
+
+- **Small samples.** 28 scripted questions and 10 agent questions, each run once. Times were not repeated.
+- **Mostly direct questions.** 23 of 28 ask in the file's own words. Only 5 use different words, where meaning search helps most.
+- **Found means the file, not the fact.** The script checks that the answer file was read, not that the cited lines held the answer.
+- **The search tool has been tuned on some of these questions.** So its found rate may be a little high.
 
 ## When plain rg is still the right call
 
-I still use `rg` every day. It is the right tool when:
+I still use `rg` every day. It wins when the text is exact, like a function name or an error message. It wins when you need every match, for example to rename something. And it is the only option for code, because my index covers Markdown only.
 
-- **The text is exact.** A function name, an error message, a config key. Exact match beats a ranking.
-- **You need every match.** Renaming something or checking that a word is gone everywhere. Search returns the top 8 files. `rg` returns all of them.
-- **The file is not Markdown.** My index only covers `.md` files. Code is `rg` territory.
-- **The file just changed.** Meaning vectors for new text are filled in as you search, in small batches, so they can lag.
-
-The rule my agents follow is short: search first, then open the original and check the lines before relying on them. For exact strings, skip the search and use `rg`.
+The rule my agents follow is short: search first, then open the original and check the lines before relying on them. For exact strings, use `rg`.

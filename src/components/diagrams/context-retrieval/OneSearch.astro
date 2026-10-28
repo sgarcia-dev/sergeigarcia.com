@@ -1,0 +1,56 @@
+<svg viewBox="0 0 560 706" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="arr-onesearch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+  <!-- Source: flow of one search call, with a real result card (specs/agents-system/decisions.md). Not a chart, no bar scale.
+       Yellow = the two steps the agent does itself. -->
+  <text class="d-t d-sm" x="16" y="22">One search, start to finish (yellow = the agent's steps)</text>
+
+  <rect class="d-box" x="140" y="36" width="280" height="44" />
+  <text class="d-t" x="280" y="64" text-anchor="middle">Question</text>
+
+  <path class="d-line" d="M240,80 L160,110" marker-end="url(#arr-onesearch)" />
+  <path class="d-line" d="M320,80 L400,110" marker-end="url(#arr-onesearch)" />
+
+  <rect class="d-box" x="16" y="112" width="256" height="112" />
+  <text class="d-t d-b" x="32" y="140">Words</text>
+  <text class="d-t d-sm" x="32" y="168">up to 200 passages,</text>
+  <text class="d-t d-sm" x="32" y="188">best one per file,</text>
+  <text class="d-t d-sm" x="32" y="208">top 50 files</text>
+
+  <rect class="d-box" x="288" y="112" width="256" height="112" />
+  <text class="d-t d-b" x="304" y="140">Meaning</text>
+  <text class="d-t d-sm" x="304" y="168">top 50 files</text>
+  <text class="d-t d-sm" x="304" y="188">by cosine</text>
+
+  <path class="d-line" d="M144,224 L144,262" marker-end="url(#arr-onesearch)" />
+  <path class="d-line" d="M416,224 L416,262" marker-end="url(#arr-onesearch)" />
+
+  <rect class="d-cobalt" x="16" y="264" width="528" height="48" />
+  <text class="d-t d-t-light" x="280" y="294" text-anchor="middle">Merge by rank (k = 20)</text>
+
+  <path class="d-line" d="M280,312 L280,340" marker-end="url(#arr-onesearch)" />
+
+  <rect class="d-box" x="16" y="342" width="528" height="48" />
+  <text class="d-t" x="280" y="372" text-anchor="middle">Top 8 passages, 12,000 characters at most</text>
+
+  <path class="d-line" d="M280,390 L280,440" marker-end="url(#arr-onesearch)" />
+  <text class="d-t d-sm" x="296" y="420">one of the 8 results</text>
+
+  <rect class="d-box" x="16" y="442" width="528" height="72" />
+  <text class="d-t d-mono" x="32" y="472">3. specs/agents-system/decisions.md#L282-L301</text>
+  <text class="d-t d-mono" x="61" y="498">hash 600a7408c2a5<tspan dx="19">(keyword)</tspan></text>
+
+  <path class="d-line" d="M280,514 L280,542" marker-end="url(#arr-onesearch)" />
+
+  <rect class="d-yellow" x="16" y="544" width="528" height="48" />
+  <text class="d-t d-t-dark" x="280" y="574" text-anchor="middle">Agent opens the file, reads lines 282 to 301</text>
+
+  <path class="d-line" d="M280,592 L280,620" marker-end="url(#arr-onesearch)" />
+
+  <rect class="d-yellow" x="16" y="622" width="528" height="68" />
+  <text class="d-t d-t-dark" x="280" y="650" text-anchor="middle">Hash still 600a7408c2a5?</text>
+  <text class="d-t d-t-dark d-sm" x="280" y="674" text-anchor="middle">Then the lines are current.</text>
+</svg>

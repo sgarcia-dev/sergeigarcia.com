@@ -1,0 +1,33 @@
+<svg viewBox="0 0 560 392" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <!-- Source: own measurement over 28 questions. Median tokens read per question.
+       Bar scale: linear, 84,800 tokens = 400px, so 1 token = 400 / 84,800 px. Bars start at x = 16. -->
+  <text class="d-t d-sm" x="16" y="22">Median tokens read per question (28 questions)</text>
+
+  <!-- Row 1: rg route -->
+  <text class="d-t" x="16" y="58">rg, then open the top 3 files</text>
+  <rect class="d-box" x="16" y="68" width="400" height="26" />
+  <text class="d-t d-mono" x="424" y="87">84,800 tokens</text>
+  <text class="d-t d-sm" x="16" y="118">339 KB, found the answer file 3 of 28</text>
+
+  <!-- Row 2: search, 8 results (3,455 tokens = 16.3px) -->
+  <text class="d-t" x="16" y="158">Search, 8 results, then read cited lines</text>
+  <rect class="d-yellow" x="16" y="168" width="16.3" height="26" />
+  <text class="d-t d-mono" x="40" y="187">3,455 tokens</text>
+  <text class="d-t d-sm" x="16" y="218">13.8 KB, found 18 of 28</text>
+
+  <!-- Row 3: search, 3 results (1,764 tokens = 8.3px) -->
+  <text class="d-t" x="16" y="258">Search, 3 results, then read cited lines</text>
+  <rect class="d-yellow" x="16" y="268" width="8.3" height="26" />
+  <text class="d-t d-mono" x="32" y="287">1,764 tokens</text>
+  <text class="d-t d-sm" x="16" y="318">7.1 KB, found 14 of 28</text>
+
+  <!-- X axis: tokens. x = 16 + tokens x 400 / 84,800 -->
+  <path class="d-line" d="M16,346 L416,346" />
+  <path class="d-line" d="M16,346 L16,354 M110.3,346 L110.3,354 M204.7,346 L204.7,354 M299.1,346 L299.1,354 M393.4,346 L393.4,354" />
+  <text class="d-t d-sm" x="16" y="376" text-anchor="middle">0</text>
+  <text class="d-t d-sm" x="110.3" y="376" text-anchor="middle">20k</text>
+  <text class="d-t d-sm" x="204.7" y="376" text-anchor="middle">40k</text>
+  <text class="d-t d-sm" x="299.1" y="376" text-anchor="middle">60k</text>
+  <text class="d-t d-sm" x="393.4" y="376" text-anchor="middle">80k</text>
+  <text class="d-t d-sm" x="436" y="376">tokens</text>
+</svg>

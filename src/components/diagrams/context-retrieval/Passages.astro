@@ -1,0 +1,70 @@
+<svg viewBox="0 0 560 856" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="arr-passages" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+    </marker>
+  </defs>
+  <!-- Source: worked example (example file name, not a measurement).
+       Bar scale for the long section: linear, 4,000 characters = 480px, so 1 character = 0.12px. Bars start at x = 16. -->
+  <text class="d-t d-sm" x="16" y="22">One file becomes passages (L = line number)</text>
+
+  <!-- The file -->
+  <rect class="d-box" x="16" y="36" width="528" height="124" />
+  <text class="d-t d-b" x="32" y="64">roles/reader.md</text>
+  <text class="d-t d-mono" x="32" y="92">L1</text>
+  <text class="d-t d-mono d-b" x="80" y="92"># Reader</text>
+  <text class="d-t d-mono" x="32" y="116">L12</text>
+  <text class="d-t d-mono d-b" x="80" y="116">## Effort</text>
+  <text class="d-t d-mono" x="32" y="140">L31</text>
+  <text class="d-t d-mono d-b" x="80" y="140">## Long section</text>
+  <text class="d-t d-sm" x="250" y="140">4,000 characters long</text>
+
+  <path class="d-line" d="M40,160 L40,206" marker-end="url(#arr-passages)" />
+  <text class="d-t d-sm" x="56" y="188">split at every heading</text>
+
+  <!-- Passages one and two -->
+  <rect class="d-yellow" x="16" y="208" width="528" height="36" />
+  <text class="d-t d-t-dark d-mono" x="32" y="232">P1  Reader  L1-L11</text>
+  <rect class="d-yellow" x="16" y="252" width="528" height="36" />
+  <text class="d-t d-t-dark d-mono" x="32" y="276">P2  Effort  L12-L30</text>
+
+  <!-- The long section, cut into windows -->
+  <text class="d-t d-b" x="16" y="316">Long section: 4,000 characters, cut into 3</text>
+  <text class="d-t d-sm" x="16" y="338">Scale: character position in the section</text>
+  <path class="d-line" d="M16,372 L496,372" />
+  <path class="d-line" d="M16,366 L16,372 M136,366 L136,372 M256,366 L256,372 M376,366 L376,372 M496,366 L496,372" />
+  <text class="d-t d-sm" x="16" y="360" text-anchor="middle">0</text>
+  <text class="d-t d-sm" x="136" y="360" text-anchor="middle">1,000</text>
+  <text class="d-t d-sm" x="256" y="360" text-anchor="middle">2,000</text>
+  <text class="d-t d-sm" x="376" y="360" text-anchor="middle">3,000</text>
+  <text class="d-t d-sm" x="496" y="360" text-anchor="middle">4,000</text>
+
+  <text class="d-t d-mono" x="16" y="406">P3  chars 0-1,800</text>
+  <rect class="d-yellow" x="16" y="414" width="216" height="24" />
+  <rect class="d-tomato" x="208" y="414" width="24" height="24" />
+
+  <text class="d-t d-mono" x="16" y="466">P4  chars 1,600-3,400</text>
+  <rect class="d-yellow" x="208" y="474" width="216" height="24" />
+  <rect class="d-tomato" x="208" y="474" width="24" height="24" />
+  <rect class="d-tomato" x="400" y="474" width="24" height="24" />
+
+  <text class="d-t d-mono" x="16" y="526">P5  chars 3,200-4,000</text>
+  <rect class="d-yellow" x="400" y="534" width="96" height="24" />
+  <rect class="d-tomato" x="400" y="534" width="24" height="24" />
+
+  <rect class="d-tomato" x="16" y="576" width="24" height="18" />
+  <text class="d-t d-sm" x="50" y="591">overlap: the same text sits in two passages</text>
+
+  <!-- Rules -->
+  <rect class="d-box" x="16" y="612" width="528" height="112" />
+  <text class="d-t d-b" x="32" y="640">Cutting rules</text>
+  <text class="d-t d-sm" x="32" y="664">max 1,800 characters</text>
+  <text class="d-t d-sm" x="32" y="686">200 characters of overlap</text>
+  <text class="d-t d-sm" x="32" y="708">cut at a line break when it can</text>
+
+  <!-- Hash band -->
+  <rect class="d-cobalt" x="16" y="744" width="528" height="96" />
+  <text class="d-t d-t-light d-mono d-b" x="32" y="772">hash 600a7408c2a5</text>
+  <text class="d-t d-t-light d-sm" x="32" y="798">= first 12 of SHA-256 of the whole file,</text>
+  <text class="d-t d-t-light d-sm" x="32" y="820">same on every passage</text>
+</svg>
