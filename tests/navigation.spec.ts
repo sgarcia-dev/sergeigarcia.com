@@ -104,8 +104,9 @@ test("nav does not move while an article loads", async ({ page }) => {
   await page.waitForTimeout(1000);
   const samples = await page.evaluate(() => (window as unknown as { __navX: number[] }).__navX);
   expect(samples.length, "frames sampled").toBeGreaterThan(3);
-  // 1px allows for the tiny width difference when the mono font finishes loading.
-  expect(Math.max(...samples) - Math.min(...samples), `nav x range over ${samples.length} frames`).toBeLessThan(1);
+  // 2px allows for the tiny width difference when the mono font finishes loading (about 1px with the
+  // five nav labels since "Hack this site" joined). The bug this guards against moved the nav ~270px.
+  expect(Math.max(...samples) - Math.min(...samples), `nav x range over ${samples.length} frames`).toBeLessThan(2);
 });
 
 test("list to detail and back plays a view transition every time", async ({ page }) => {

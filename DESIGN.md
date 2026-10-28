@@ -107,6 +107,8 @@ Built 2026-10-28 for live demos (Sergei let the agent make every call). No backe
   turn the band textures off (they are drawn in the original fills) and the marker becomes a bar.
 - **Visitor CSS** (localStorage `sg-theme-css`) runs only in that visitor's browser. Share links carry
   checked values only, never CSS: CSS from strangers can leak page data or fake the page.
+- **Nav:** "Hack this site" is the fifth nav item ("Hack" on phones, where buttons size to their
+  text; hidden under 360px, where five do not fit; the footer always links it).
 - **"Hacked" bar:** fixed bottom left on every page while a theme is on, with Edit and Reset
   (`?theme=off`, plain links, no JS).
 - **Tests:** `tests/theme.spec.ts` runs axe on home, a post and `/hack/` for every skin, light and

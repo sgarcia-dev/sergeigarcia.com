@@ -34,6 +34,8 @@ export const NAV = [
   { href: "/projects/", label: "Projects" },
   { href: "/writing/", label: "Writing" },
   { href: "/about/", label: "About" },
+  // "Hack this site" (DESIGN.md). Phones show the short label: five full labels do not fit one row.
+  { href: "/hack/", label: "Hack this site", short: "Hack" },
 ] as const;
 
 /**

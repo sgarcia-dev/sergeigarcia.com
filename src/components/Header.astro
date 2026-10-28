@@ -19,12 +19,19 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
       <Logo class="logo-mark" />
     </a>
     <nav aria-label="Primary" class="site-nav md:ml-auto">
-      <ul role="list" class="grid grid-cols-4 gap-xs md:flex md:gap-sm">
+      <ul role="list" class="flex gap-xs md:gap-sm">
         {
           NAV.map((item) => (
-            <li>
+            <li class="nav-item">
               <a class="hit hit-nav" href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
-                {item.label}
+                {"short" in item ? (
+                  <>
+                    <span class="nav-short">{item.short}</span>
+                    <span class="nav-long">{item.label}</span>
+                  </>
+                ) : (
+                  item.label
+                )}
               </a>
             </li>
           ))
@@ -52,6 +59,31 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
     display: block;
     height: 1.75rem;
     width: auto;
+  }
+  /* Phones: one row of five, each as wide as its text needs, sharing the spare room. The header height
+     stays the same (motion.css sizes the sticky header with fixed heights). */
+  .nav-item {
+    flex: 1 1 auto;
+  }
+  .nav-long {
+    display: none;
+  }
+  /* Under 360px even five short labels overflow, so the extra item goes (the footer still links it). */
+  @media (max-width: 22.49rem) {
+    .nav-item:has(.nav-short) {
+      display: none;
+    }
+  }
+  @media (min-width: 48rem) {
+    .nav-item {
+      flex: none;
+    }
+    .nav-short {
+      display: none;
+    }
+    .nav-long {
+      display: inline;
+    }
   }
   .vt-site-name {
     view-transition-name: site-name;
