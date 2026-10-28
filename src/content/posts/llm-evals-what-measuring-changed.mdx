@@ -1,0 +1,91 @@
+---
+title: "What measuring my AI pipeline changed"
+summary: "Small evals on a pipeline I built that finds and ranks job postings. One change tripled what it found at the same cost. Another cut tokens by 58%. One stopped a bad saving."
+ogTitle: "What ==measuring== my AI pipeline changed"
+ogTitleShort: "What ==measuring== changed"
+ogSummary: "One change ==tripled what it found== at the same cost. Another cut tokens by 58%."
+ogSummaryShort: "==Tripled what it found==, same cost."
+pubDate: 2026-10-28
+skills: ["LLM evals", "AI agents", "Prompt engineering", "Cost optimization", "Statistics"]
+draft: false
+---
+
+import Diagram from "../../components/Diagram.astro";
+import FindRate from "../../components/diagrams/llm-evals/FindRate.astro";
+import Tokens from "../../components/diagrams/llm-evals/Tokens.astro";
+import RankAgreement from "../../components/diagrams/llm-evals/RankAgreement.astro";
+
+You cannot improve what you do not measure. Here is what measuring changed in one of my pipelines. One prompt change, picked by an eval, found the right page three times as often at the same cost. Another cut input tokens by 58% and found more. A third eval stopped me from making a cheap change that would have quietly broken search.
+
+None of these came from a benchmark leaderboard. They came from fixed test sets of 10 to 84 items, run on my own pipeline. The largest one cost about a dollar.
+
+## The pipeline
+
+I built a pipeline that finds and ranks job postings for me. It reads incoming postings, looks for each job on the employer's own site, reads the page, pulls out the facts, and scores how well the job fits. Most steps are LLM calls. Each step can be done with a different model, prompt or effort level, and each choice changes cost, speed and quality.
+
+Without a measurement, every choice is a guess. A new prompt "looks better" on the three jobs you happen to check. So I built a small eval for each step that mattered.
+
+## Win 1: three times the hits, same cost
+
+One step searches the web for the employer's own posting, because it has better facts than a job board copy. The old version sent every job to an AI web search.
+
+The new version tried a free lookup on the employer's own hiring board first, skipped AI search for known recruiting agencies, and used a new prompt. I ran both on the same 84 jobs, 3 runs each, and split them into a tuning set of 47 and a held-out set of 37.
+
+<Diagram
+  caption="Share of held-out jobs where the employer's own posting was found."
+  label="Bar chart. Held-out set of 37 jobs, 3 runs each. Capped at 20 searches per run: old 9.9%, new 30.6%. Uncapped, every job searched: old 27.0%, new 43.2%. Uncapped, the new version cost 28% less."
+>
+  <FindRate />
+</Diagram>
+
+At the live limit of 20 searches per run, the held-out hit rate went from 9.9% to 30.6%. The 95% confidence interval on the gap was 7 to 35 points, so the gain is real, even if its exact size is not pinned down. Cost per run stayed the same, about 3 cents. Uncapped, the new version also found more on the held-out set (27.0% to 43.2%, a smaller and less certain gain) and cost 28% less, because the free lookup and the agency skip save paid searches.
+
+It was slower, though: about 4 minutes more per 84 jobs, because the free lookup is paced politely. The eval showed that trade clearly, so I took it on purpose.
+
+## Win 2: 58% fewer tokens, more found
+
+The same search step used a lot of tokens, so I measured where they went. They came from the number of model turns, not the number of jobs. Every turn resends the whole context, and opening a page adds the most.
+
+So I tested several prompt and batching variants on the same 18 jobs. The winner splits the work into two passes. First, a search-only pass with no page opens, three jobs per call. Then one retry with page opens, only for the jobs the first pass missed.
+
+<Diagram
+  caption="Input tokens to search the same 18 jobs."
+  label="Bar chart. One pass that opens pages: 2,331 thousand input tokens, found 7 of 18. Two passes, search first: 991 thousand input tokens, found 11 of 18."
+>
+  <Tokens />
+</Diagram>
+
+Input tokens fell from 2,331K to 991K, and it found 11 of 18 jobs instead of 7. The first pass was also about three times faster per job. Eighteen jobs is a small set, so I treat the hit count as a direction. The token cut is large enough not to need a careful test.
+
+## Win 3: a ranking that agrees with me
+
+Scoring is harder to measure, because "a good posting for me" has no answer key. So I made one. I rated 27 postings by hand, each with a range, and compared the pipeline's ranking with mine using Spearman correlation. It is 1.0 when two lists are in the same order and 0 when they are unrelated.
+
+<Diagram
+  caption="How closely the pipeline's ranking matched my own ratings. The old score was tested on a smaller set."
+  label="Bar chart. Spearman correlation with my ratings, where 1.0 means the same order. Old score on 17 jobs: 0.10. New score on all 27 rated jobs: 0.57. New score on 10 held-out jobs: 0.52."
+>
+  <RankAgreement />
+</Diagram>
+
+On the first 17 postings I rated, the old score had a correlation of 0.10 with my ratings, close to random. The new method asks the model only for plain facts from the posting, then applies written rules to turn those facts into a score. On all 27 rated jobs it reached 0.57, and 0.52 on the 10 I held out. That is not perfect. But I can now see when it is wrong and fix one rule, instead of rewording a prompt and hoping.
+
+## The eval that said no
+
+Evals also stop bad changes. Lower reasoning effort is cheaper and faster, so I tested high, medium and low on four tasks, about 1,100 answers for about $1. I set the rule before running anything: lower effort must not be worse than high by more than 5 points.
+
+For short tasks it made almost no difference. Sorting companies into bands scored 0.94 at high and 0.95 at medium, so that step moved to medium. But web search, which takes many steps, fell from 0.54 at high to 0.13 at low. The saving would have been under 5 cents per 300-job run. Without the eval I would have taken that saving and lost most of my search hits.
+
+## How I run them
+
+The method is small and the same each time:
+
+- **Fixed items.** The same jobs or pages for every option, so the only thing that changes is the option.
+- **A held-out set.** When the set is big enough, I tune on one part and report the other.
+- **Three runs each.** LLM outputs vary from run to run, so one run proves little.
+- **The bar is set first.** I write down what "not worse" means before I see a number.
+- **Report the gap, not the wins.** A gap with a range says how much better, not just which one won.
+
+Samples are small, from 10 to 84 items. Gaps of a few points can be noise, and I say so. The same method also picks the settings for my local search engine, which I wrote about in [the system behind all my AI work](/writing/agents-workspace-tour/).
+
+I don't measure everything. I recently switched a model to get a higher call limit, with no quality check, and I know that is a guess. But each change above is one I would have made differently, or not at all, if I had not measured it first.
