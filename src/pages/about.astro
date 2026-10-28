@@ -7,6 +7,8 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import PullQuote from "../components/PullQuote.astro";
+import Testimonials from "../components/Testimonials.astro";
+import { RECOMMENDATIONS_URL } from "../lib/testimonials";
 import YouTubeEmbed from "../components/YouTubeEmbed.astro";
 import { Picture } from "astro:assets";
 import { SITE, ABOUT_BAND } from "../lib/site";
@@ -213,6 +215,22 @@ const songs = [
         I walk teammates through new tools, I help whoever is stuck, and I care about the craft enough that it rubs off.
         I plan to keep it that way.
       </p>
+    </div>
+  </section>
+
+  <section id="kind-words" class="edge-b" aria-labelledby="about-words">
+    <div class="shell grid gap-md py-lg lg:grid-cols-12 lg:gap-lg lg:py-xl">
+      <div class="lg:col-span-5">
+        <p class="label">From LinkedIn</p>
+        <h2 id="about-words" class="sec-title font-display tracking-tight mt-xs">Kind words</h2>
+        <p class="mt-sm max-w-prose text-lg">What managers, teammates and people I mentored wrote about working with me.</p>
+      </div>
+      <div class="lg:col-span-7">
+        <Testimonials variant="full" />
+        <p class="mt-md">
+          <a class="hit" href={RECOMMENDATIONS_URL} rel="noopener"><Icon name="linkedin" />Read them in full on LinkedIn</a>
+        </p>
+      </div>
     </div>
   </section>
 

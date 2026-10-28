@@ -1,0 +1,79 @@
+---
+/**
+ * Quotes from LinkedIn recommendations, as a ruled list (the site's list language, not a card grid).
+ * Each row is a <figure>: the quote in a <blockquote> (it is someone else's words, with a source),
+ * then the name, their current title and how they know Sergei on separate lines.
+ *
+ * Props:
+ *   variant: "short" uses each entry's home-page line and skips entries without one;
+ *            "full" uses the longer About quote for every entry.
+ */
+import { TESTIMONIALS } from "../lib/testimonials";
+import { markHtml } from "../lib/mark";
+
+interface Props {
+  variant: "short" | "full";
+}
+const { variant } = Astro.props;
+const items = TESTIMONIALS.flatMap((t) => {
+  const text = variant === "short" ? t.short : t.full;
+  return text ? [{ ...t, text }] : [];
+});
+---
+
+<ul role="list" class:list={["quotes", `quotes--${variant}`]}>
+  {
+    items.map((t) => (
+      <li class="quote-row">
+        <figure>
+          <blockquote class="quote-text font-title">
+            <p set:html={markHtml(t.text)} />
+          </blockquote>
+          <figcaption class="quote-who">
+            <span class="quote-name">{t.name}</span>
+            <span class="quote-title text-muted">{t.title}</span>
+            <span class="label">{t.relation}, {t.year}</span>
+            {t.translatedFrom && <span class="label">Translated from {t.translatedFrom}</span>}
+          </figcaption>
+        </figure>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .quote-row {
+    padding-block: var(--spacing-md);
+    border-top: var(--rule-thin) solid var(--rule-color);
+  }
+  .quote-row:last-child {
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+  .quote-text {
+    font-size: var(--text-xl);
+    line-height: 1.3;
+    text-wrap: pretty;
+  }
+  /* The About quotes run to several sentences; a size down keeps them readable on phones. */
+  .quotes--full .quote-text {
+    font-size: var(--text-lg);
+    line-height: 1.4;
+  }
+  .quote-text p::before {
+    content: "\201C";
+    content: "\201C" / "";
+  }
+  .quote-text p::after {
+    content: "\201D";
+    content: "\201D" / "";
+  }
+  .quote-who {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+    margin-top: var(--spacing-sm);
+  }
+  .quote-name {
+    font-weight: 700;
+  }
+</style>
