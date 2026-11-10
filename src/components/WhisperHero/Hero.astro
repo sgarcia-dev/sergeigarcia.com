@@ -1,0 +1,27 @@
+---
+/**
+ * Whisper hero: an animated phone that plays a dictation loop.
+ * Drop it in with <Hero />. It takes no props. Width follows its container (max 340 px by default;
+ * set --wh-max on a parent or on .wh to change it). See README.md for the scene API.
+ */
+import "./hero.css";
+import { onDevice } from "./scenes";
+---
+
+<div class="wh" data-wh>
+  <div class="wh-stage" role="img" aria-label={onDevice.aria}>
+    <div class="wh-slot" aria-hidden="true"></div>
+  </div>
+  <div class="wh-meta">
+    <p class="wh-cap" aria-hidden="true"></p>
+    <div class="wh-dots" role="group" aria-label="Choose a scene"></div>
+  </div>
+</div>
+
+<script>
+  import { startHero } from "./engine/engine";
+  import { scenes } from "./scenes";
+
+  const root = document.querySelector<HTMLElement>("[data-wh]");
+  if (root) startHero(root, scenes);
+</script>
