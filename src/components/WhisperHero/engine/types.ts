@@ -29,8 +29,6 @@ export interface PhoneShape {
   bezel: number;
   /** Front camera: a punch hole at the top centre or left, a small notch, or none. */
   camera: "punch" | "punch-left" | "notch" | "none";
-  /** Height of the status bar. */
-  statusH: number;
 }
 
 export interface Msg {

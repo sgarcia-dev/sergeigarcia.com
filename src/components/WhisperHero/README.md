@@ -20,7 +20,7 @@ A scene is plain data plus timeline steps. Put it in `scenes/<name>.ts` and list
 {
   id, title, blurb, aria,        // caption (title + blurb) and screen reader text
   implemented: true,              // false = placeholder, loop skips it
-  phone:    { w, h, radius, bezel, camera: "punch"|"punch-left"|"notch"|"none", statusH },
+  phone:    { w, h, radius, bezel, camera: "punch"|"punch-left"|"notch"|"none" },
   chat:     { id: "wa", contact, status, dateChip, messages, placeholder, headerIcons, lead, trail, action },
   keyboard: { id: "sam", suggestions, toolbar, rows },   // rows of { id, label|icon, flex, kind }
   duration: 14800,                // ms, one run

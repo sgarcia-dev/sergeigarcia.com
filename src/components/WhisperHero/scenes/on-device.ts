@@ -33,7 +33,7 @@ const scene: Scene = {
   aria:
     "Scene one, on device: a person taps the floating microphone bubble over a chat, speaks, and the bubble shows recording, transcribing with Parakeet Ultra and cleaning up with Gemma 4 E2B. A second dictation is queued while the first finishes, both texts are added in order, and then holding the backspace key clears the text.",
   implemented: true,
-  phone: { w: 300, h: 640, radius: 30, bezel: 7, camera: "punch", statusH: 26 },
+  phone: { w: 300, h: 640, radius: 30, bezel: 7, camera: "punch" },
   chat: {
     ...chatWaLike,
     contact: "Maya",

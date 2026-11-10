@@ -35,7 +35,7 @@ const scene: Scene = {
   aria:
     "Scene three, cloud: a person taps the floating microphone bubble over a messages app, speaks, and the bubble shows recording, transcribing with Whisper Large V3 and cleaning up with Claude Haiku 5.5, both through OpenRouter. The text appears in the field, and then holding the backspace key clears it.",
   implemented: true,
-  phone: { w: 316, h: 612, radius: 46, bezel: 8, camera: "notch", statusH: 28 },
+  phone: { w: 316, h: 612, radius: 46, bezel: 8, camera: "notch" },
   chat: {
     ...chatGmLike,
     contact: "Dana",

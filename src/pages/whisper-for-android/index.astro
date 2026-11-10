@@ -139,6 +139,7 @@ const extras = [
   <section id="beta" class="beta-note" aria-labelledby="h-beta" data-reveal>
     <h2 id="h-beta">Private beta, invite only.</h2>
     <p>Whisper for Android is in beta, so rough edges are expected.</p>
+    <h3 class="contact-h">Contact</h3>
     <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
     <p class="legal-links"><a href={`${base}privacy/`}>Privacy</a> <a href={`${base}terms/`}>Terms</a></p>
   </section>
@@ -386,6 +387,10 @@ const extras = [
   .beta-note p {
     margin: 0 0 0.75rem;
     color: var(--muted);
+    font-size: 1.1rem;
+  }
+  .contact-h {
+    margin: 1.25rem 0 0.4rem;
     font-size: 1.1rem;
   }
   .legal-links {

@@ -6,15 +6,11 @@ import { Stack } from "./stack";
 
 const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] as string);
 
-function statusBar(): string {
-  return `<span class="tm">12:08</span><span class="ic"><svg viewBox="0 0 16 12" width="15" height="11" aria-hidden="true"><path d="M1 11l0-3M5 11V6M9 11V3.500M13 11V1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><svg viewBox="0 0 16 12" width="15" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M1.500 4.500a9 9 0 0113 0M4 7.200a5.600 5.600 0 018 0"/><circle cx="8" cy="10" r="1" fill="currentColor"/></svg><svg viewBox="0 0 22 12" width="20" height="11" aria-hidden="true"><rect x="1" y="1" width="17" height="10" rx="2.500" fill="none" stroke="currentColor" stroke-width="1.300" opacity=".7"/><rect x="2.500" y="2.500" width="11" height="7" rx="1.300" fill="currentColor"/><rect x="19" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".7"/></svg></span>`;
-}
-
 function chatHtml(c: ChatSkin): string {
   const msgs = c.messages
     .map((m) => `<div class="m ${m.from}"><span>${esc(m.text)}</span>${m.time ? `<i>${esc(m.time)}</i>` : ""}</div>`)
     .join("");
-  return `<div class="wh-status">${statusBar()}</div><div class="hd"><span class="bk">${icon("back", 20)}</span><span class="av"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="currentColor" opacity=".35"/><circle cx="12" cy="9.500" r="4" fill="currentColor" opacity=".7"/><path d="M4.500 20a7.500 7.500 0 0115 0" fill="currentColor" opacity=".7"/></svg></span>
+  return `<div class="hd"><span class="bk">${icon("back", 20)}</span><span class="av"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="currentColor" opacity=".35"/><circle cx="12" cy="9.500" r="4" fill="currentColor" opacity=".7"/><path d="M4.500 20a7.500 7.500 0 0115 0" fill="currentColor" opacity=".7"/></svg></span>
 <span class="nm"><b>${esc(c.contact)}</b><small>${esc(c.status)}</small></span><span class="ac">${c.headerIcons.map((i) => icon(i, 19)).join("")}</span></div>
 <div class="ls">${c.dateChip ? `<div class="dc">${esc(c.dateChip)}</div>` : ""}${msgs}</div>
 <div class="cp"><div class="fd">${c.lead.map((i) => `<span class="ld">${icon(i, 20)}</span>`).join("")}<div class="ti"><span class="tx"></span><i class="cr"></i><span class="ph">${esc(c.placeholder)}</span></div>${c.trail.map((i) => `<span class="tr">${icon(i, 20)}</span>`).join("")}</div>
@@ -35,7 +31,7 @@ function kbHtml(k: KeyboardSkin): string {
           .join("")}</div>`,
     )
     .join("");
-  return `${sug || tool}${sug ? tool : ""}${rows}<div class="wh-nav"><i></i></div>`;
+  return `${sug || tool}${sug ? tool : ""}${rows}`;
 }
 
 export interface PhoneView {
@@ -58,7 +54,6 @@ export function buildPhone(scene: Scene): PhoneView {
   root.style.setProperty("--pr", `${P.radius}px`);
   root.style.setProperty("--pb", `${P.bezel}px`);
   root.style.setProperty("--ps", `${Math.max(P.radius - P.bezel, 6)}px`);
-  root.style.setProperty("--st", `${P.statusH}px`);
   root.dataset.cam = P.camera;
   root.dataset.scene = scene.id;
   root.innerHTML = `<span class="sb s1"></span><span class="sb s2"></span><span class="sb s3"></span>

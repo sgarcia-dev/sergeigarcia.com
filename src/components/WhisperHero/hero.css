@@ -98,19 +98,6 @@
   user-select: none;
 }
 .wh-i { display: block; }
-.wh-status {
-  height: var(--st);
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 0 22px;
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--hd);
-  color: #e9edef;
-}
-.wh-status .ic { display: flex; gap: 5px; align-items: center; }
 
 /* Chat, generic layout. Skins set the variables. */
 .wh-chat { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--bg); }
@@ -171,8 +158,6 @@
 .wh-kb .k.accent { background: var(--acc); color: #fff; }
 .wh-kb .k.pad { background: none; }
 .wh-kb .k.dn { background: var(--keydn); transform: scale(0.93); }
-.wh-kb .wh-nav { height: 22px; display: grid; place-items: end center; }
-.wh-kb .wh-nav i { width: 98px; height: 4px; border-radius: 2px; background: #e6e6e8; opacity: 0.8; margin-bottom: 7px; }
 .wh-kb[data-skin="sam"] { --kb: #1b1b1d; --key: #2f2f32; --fnk: #262628; --kt: #f0f0f2; --kd: #b4b4ba; --acc: #3e82f7; --keydn: #54545a; }
 
 /* Bubbles, pills and the finger */
@@ -222,7 +207,7 @@
 
 /* Caption and scene dots */
 .wh-meta { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; text-align: center; }
-.wh-cap { margin: 0; font-size: 0.9rem; line-height: 1.4; opacity: 0.85; }
+.wh-cap { margin: 0; text-wrap: balance; font-size: 0.9rem; line-height: 1.4; opacity: 0.85; }
 .wh-cap b { display: block; font-weight: 650; font-size: 1rem; }
 .wh-dots { display: flex; gap: 8px; }
 .wh-dots[hidden] { display: none; }
@@ -257,7 +242,6 @@
 .wh-kb[data-skin="gb"] .k { border-radius: 10px; }
 .wh-kb[data-skin="gb"] .k.accent { color: #062e6f; border-radius: 20px; }
 .wh-kb[data-skin="gb"] .k.space { background: var(--key); }
-.wh-kb[data-skin="gb"] .wh-nav i { background: #c4c7c5; }
 /* Plain cloud (no slash) in the pill: this scene sends audio to the cloud. */
 .wh-phone[data-scene="cloud"] .wh-pill .pc path:last-child { display: none; }
 .wh-phone[data-scene="cloud"] .wh-pill { background: rgba(32, 38, 56, 0.96); }
