@@ -3,6 +3,7 @@ import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
 import { WHISPER } from "../../lib/whisperApp";
 import Hero from "../../components/WhisperHero/Hero.astro";
 import FeatureVideo from "../../components/FeatureVideo.astro";
+import PhoneFrame from "../../components/PhoneFrame.astro";
 
 const { name, contactEmail, base } = WHISPER;
 
@@ -12,71 +13,63 @@ const SHOT = { w: 1080, h: 2138 };
 
 const sections = [
   {
-    id: "bubble",
-    accent: "green",
-    title: "Works with any keyboard, in any app.",
-    body: "The bubble floats over Google Messages, or whatever you are in. Tap it, talk, and your words land in the text box.",
+    id: "bubble", accent: "green", title: "Speak wherever you type.",
+    body: "A floating bubble brings dictation to your text field.",
+    bullets: ["Tap to record and insert at the cursor.", "Drag the bubble to either edge.", "Keep dictating while earlier recordings process.", "Hold the bubble to edit text by voice."],
     alt: "Google Messages with the floating bubble recording while the user dictates.",
   },
   {
-    id: "home",
-    accent: "blue",
-    title: "One home for it all.",
-    body: "Dictation, files, voice memos, models and keys, all a tap away from the home screen.",
+    id: "home", accent: "blue", title: "Your voice, ready for any task.",
+    body: "Dictation, files and voice memos all have a home here.",
+    bullets: ["Record and transcribe voice memos.", "Find past dictations in History.", "Set up models, keys and your dictionary.", "Choose a clean-up style for your words."],
     alt: "The app home screen listing what the app supports.",
   },
   {
-    id: "models",
-    accent: "violet",
-    title: "Local or cloud. Your pick.",
-    body: "Browse many speech models. Run them on your phone, or send audio to a cloud provider.",
+    id: "models", accent: "violet", title: "Choose where your speech runs.",
+    body: "Pick an on-device model or a cloud provider.",
+    bullets: ["Run Parakeet, Whisper, Moonshine, Canary or Qwen3-ASR on your phone.", "See words as you speak with Nemotron live streaming.", "Choose a local backup for cloud transcription.", "Filter models by language or download status."],
     alt: "The model library with local and cloud speech models.",
   },
   {
-    id: "model-detail",
-    accent: "green",
-    title: "Know a model before you use it.",
-    body: "Preview any model to see its speed, accuracy, pros and cons.",
+    id: "model-detail", accent: "green", title: "Find the model that fits.",
+    body: "Compare the details before choosing a speech model.",
+    bullets: ["Compare speed, accuracy and language support.", "Check download size and memory needs.", "See dictionary support and model notes.", "Set a model as primary or local backup."],
     alt: "A model preview sheet with pros and cons.",
   },
   {
-    id: "keys",
-    accent: "blue",
-    title: "Bring your own keys.",
-    body: "Add keys for several providers. Your audio goes straight from your phone to the one you choose.",
+    id: "keys", accent: "blue", title: "Bring your own cloud keys.",
+    body: "Choose your provider and use your own account.",
+    bullets: ["Add keys for providers including OpenAI, Groq and Deepgram.", "Use OpenRouter for speech and clean-up.", "Store keys in encrypted preferences.", "Remove a key whenever you want."],
     alt: "The keys page with several cloud providers.",
   },
   {
-    id: "transcript",
-    accent: "violet",
-    title: "Files and voice memos, handled.",
-    body: "Transcribe audio files and memos, tell speakers apart, and clean the text up in the style you like.",
+    id: "transcript", accent: "violet", title: "Turn recordings into useful text.",
+    body: "Transcribe files and memos, then work with the result.",
+    bullets: ["Detect, rename and merge speakers.", "Transcribe a file again with another model.", "Search text and play audio alongside it.", "Export transcripts as text or subtitles."],
     alt: "A transcript with speaker labels and clean-up style choices.",
   },
   {
-    id: "quick-settings",
-    accent: "green",
-    title: "Make the bubble yours.",
-    body: "Quick settings let you tune the bubble and the app without digging through menus.",
+    id: "quick-settings", accent: "green", title: "Change dictation settings without leaving your app.",
+    body: "Open quick options from the bubble when you need them.",
+    bullets: ["Switch between local and cloud speech.", "Choose a clean-up style or language.", "Hide the bubble for minutes or in this app.", "Copy your last transcript."],
     alt: "Quick settings for the bubble and the app.",
   },
   {
-    id: "usage",
-    accent: "red",
-    title: "See what you spend.",
-    body: "The usage sheet shows your spend, so cloud costs never surprise you.",
+    id: "usage", accent: "red", title: "Keep an eye on usage and cost.",
+    body: "See your local and cloud requests in one place.",
+    bullets: ["Review reported or estimated spend.", "See usage across date ranges.", "Set price overrides for models.", "Export usage as CSV."],
     alt: "The usage sheet showing spend.",
   },
 ] as const;
 
 const extras = [
-  { tone: "green", title: "On-device models", text: "Dictate on your phone, even offline." },
-  { tone: "blue", title: "Live captions", text: "Streaming captions as you speak, with Nemotron." },
-  { tone: "violet", title: "Voice edit", text: "Hold the bubble and say how to change your text." },
-  { tone: "green", title: "12 clean-up styles", text: "Including Translate." },
-  { tone: "blue", title: "Custom dictionary", text: "Teach it your names and terms." },
-  { tone: "red", title: "Hide per app", text: "Keep the bubble out of apps where you do not want it." },
-  { tone: "violet", title: "Shake to send feedback", text: "Shake your phone to tell us what to fix." },
+  { tone: "green", icon: "◉", title: "On-device speech", text: "Dictate on your phone, even offline." },
+  { tone: "blue", icon: "≋", title: "Live streaming", text: "See words as you speak with Nemotron." },
+  { tone: "violet", icon: "✦", title: "Voice edit", text: "Hold the bubble and say what to change." },
+  { tone: "green", icon: "↻", title: "12 clean-up styles", text: "Polish your words or translate them." },
+  { tone: "blue", icon: "Aa", title: "Custom dictionary", text: "Fix sound-alike mistakes in your terms." },
+  { tone: "red", icon: "◌", title: "Bubble controls", text: "Set hold and corner gestures to suit you." },
+  { tone: "violet", icon: "↗", title: "Shake to send feedback", text: "Shake your phone to share feedback." },
 ] as const;
 ---
 
@@ -102,13 +95,14 @@ const extras = [
   {
     sections.map((s, i) => (
       <section class={`feature ${s.accent}${i % 2 ? " flip" : ""}`} aria-labelledby={`h-${s.id}`}>
-        <div class="copy" data-reveal>
+        <div class="copy">
           <span class="bar" aria-hidden="true"></span>
           <h2 id={`h-${s.id}`}>{s.title}</h2>
           <p>{s.body}</p>
+          <ul class="feature-list">{s.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
         </div>
-        <div class="shot" data-reveal>
-          <div class="phone" data-tilt>
+        <div class="shot">
+          <PhoneFrame>
             <FeatureVideo
               name={s.id}
               poster={`${base}shots/${s.id}.webp`}
@@ -116,18 +110,19 @@ const extras = [
               width={SHOT.w}
               height={SHOT.h}
             />
-          </div>
+          </PhoneFrame>
         </div>
       </section>
     ))
   }
 
   <section class="extras" aria-labelledby="h-extras">
-    <h2 id="h-extras" data-reveal>Everything else</h2>
+    <h2 id="h-extras">More ways to make it yours.</h2>
     <ul>
       {
         extras.map((e) => (
-          <li class={e.tone} data-reveal>
+          <li class={e.tone}>
+            <span class="extra-icon" aria-hidden="true">{e.icon}</span>
             <strong>{e.title}</strong>
             <span>{e.text}</span>
           </li>
@@ -265,44 +260,9 @@ const extras = [
     justify-items: center;
     padding: 1rem 0;
   }
-  .shot::before {
-    content: "";
-    position: absolute;
-    width: min(26rem, 100%);
-    aspect-ratio: 1;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.3), transparent 68%);
-    filter: blur(8px);
-    pointer-events: none;
-  }
-  .phone {
-    --rx: 0deg;
-    --ry: 0deg;
-    --ty: 0px;
-    position: relative;
-    width: min(74vw, 290px);
-    padding: 8px;
-    border-radius: 2.7rem;
-    background: linear-gradient(150deg, #4a5650 0%, #0d1210 38%, #1b2420 70%, #3c4741 100%);
-    box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.1),
-      inset 0 0 0 1px rgb(255 255 255 / 0.06),
-      var(--shadow),
-      0 0 90px -20px rgb(var(--accent-rgb) / 0.5);
-    transform: perspective(1100px) translateY(var(--ty)) rotateX(var(--rx)) rotateY(var(--ry));
-    transition: transform 0.18s ease-out;
-    will-change: transform;
-  }
-  .phone img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 2.2rem;
-    background: #050807;
-  }
+  .feature-list { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.75rem; }
+  .feature-list li { position: relative; padding-left: 1.35rem; color: var(--ink); }
+  .feature-list li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent); }
 
   /* Scroll reveals, only when JS runs and motion is allowed */
   @media (prefers-reduced-motion: no-preference) {
@@ -319,9 +279,6 @@ const extras = [
       transform: translateY(48px) scale(0.96);
     }
     :global(.js) .extras li[data-reveal]:nth-child(2n) { transition-delay: 0.08s; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .phone { transition: none; transform: none; }
   }
 
   /* Everything else */
@@ -340,26 +297,25 @@ const extras = [
     grid-template-columns: 1fr;
   }
   .extras li {
-    --accent-rgb: 148 212 177;
     display: grid;
     align-content: start;
-    gap: 0.2rem;
-    padding: 1.1rem 1.25rem 1.1rem 1.4rem;
-    border-radius: 1.1rem;
+    gap: 0.4rem;
+    padding: 1.5rem;
     border: 1px solid var(--line);
+    border-radius: 0.75rem;
     background: var(--surface);
-    position: relative;
-    overflow: hidden;
   }
-  .extras li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.9rem;
-    bottom: 0.9rem;
-    width: 4px;
-    border-radius: 0 3px 3px 0;
-    background: var(--accent);
+  .extras .extra-icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.55rem;
+    border: 1px solid var(--accent);
+    border-radius: 0.5rem;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.15rem;
   }
   .extras strong {
     font-family: var(--display);
@@ -408,9 +364,6 @@ const extras = [
     .extras ul {
       grid-template-columns: repeat(2, 1fr);
     }
-    .extras li:last-child {
-      grid-column: 1 / -1;
-    }
   }
   @media (min-width: 900px) {
     .hero-icon {
@@ -432,19 +385,13 @@ const extras = [
       padding: 5rem 0 2rem;
     }
     .feature .copy {
-      justify-self: end;
-      max-width: 30rem;
-    }
-    .feature.flip .copy {
       order: 2;
       justify-self: start;
+      max-width: 30rem;
     }
-    .feature.flip .shot {
-      order: 1;
-    }
-    .phone {
-      width: 340px;
-    }
+    .feature .shot { order: 1; }
+    .feature.flip .copy { order: 1; justify-self: end; }
+    .feature.flip .shot { order: 2; }
     .extras ul {
       grid-template-columns: repeat(3, 1fr);
     }
