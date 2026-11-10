@@ -10,7 +10,7 @@ test.skip(({ colorScheme }) => colorScheme !== "light", "same result in both col
 const SITE = "https://sergeigarcia.com";
 const DIST = "dist";
 // No image of their own: the 404 page and unlisted pages keep the default card.
-const NO_IMAGE = (route: string) => route === "/404.html" || route.startsWith("/lab/") || route.startsWith("/og-render/");
+const NO_IMAGE = (route: string) => route === "/404.html" || route.startsWith("/lab/") || route.startsWith("/og-render/") || route.startsWith("/whisper-for-android/");
 
 function builtRoutes(): string[] {
   const out: string[] = [];

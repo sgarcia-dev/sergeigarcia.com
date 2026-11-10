@@ -1,0 +1,49 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { WHISPER } from "../../lib/whisperApp";
+import { breadcrumbs } from "../../lib/seo";
+
+const { name, contactEmail, base, effective } = WHISPER;
+const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Terms", path: `${base}terms/` }])];
+---
+
+<Base
+  title={`Terms | ${name}`}
+  description={`Short terms for the ${name} beta.`}
+  jsonLd={jsonLd}
+  noindex
+>
+  <PageHead title="Terms" band="cobalt">
+    <p class="mt-md max-w-prose text-lg">Effective {effective}. {name} is in Beta, so these terms are short.</p>
+  </PageHead>
+
+  <section class="shell py-lg lg:py-xl" aria-label="Terms">
+    <div class="prose">
+      <h2>As is, no warranty</h2>
+      <p>{name} is provided "as is" and "as available", with no warranty of any kind. Beta software can have bugs. It may produce wrong text, lose text or stop working.</p>
+
+      <h2>Your API keys and providers</h2>
+      <p>You are responsible for your own API keys, for any costs your chosen providers charge, and for following those providers' terms. Keep your keys private.</p>
+
+      <h2>Acceptable use</h2>
+      <ul>
+      <li>Do not use {name} for anything unlawful.</li>
+      <li>Do not record people unless you have the consent the law requires.</li>
+      <li>Do not abuse providers, for example by breaking their usage rules.</li>
+      </ul>
+
+      <h2>Limitation of liability</h2>
+      <p>To the extent the law allows, the makers of {name} are not liable for indirect, incidental or consequential damages, or for lost data or profits, arising from your use of the app.</p>
+
+      <!-- TODO (Sergei): add a Governing law section (law and venue) once decided. Left out of the live page on purpose. -->
+
+      <h2>Changes</h2>
+      <p>We may update these terms. The effective date above shows the latest version.</p>
+
+      <h2>Contact</h2>
+      <p><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+      <p class="text-muted">These terms have not had legal review.</p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,122 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { WHISPER } from "../../lib/whisperApp";
+import { breadcrumbs } from "../../lib/seo";
+
+const { name, contactEmail, base, effective } = WHISPER;
+const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", path: `${base}privacy/` }])];
+---
+
+<Base
+  title={`Privacy policy | ${name}`}
+  description={`How ${name} handles your data. Nothing is stored on our servers.`}
+  jsonLd={jsonLd}
+  noindex
+>
+  <PageHead title="Privacy policy" band="cobalt">
+    <p class="mt-md max-w-prose text-lg">Effective {effective}. {name} is in Beta, invite only.</p>
+  </PageHead>
+
+  <section class="shell py-lg lg:py-xl" aria-label="Privacy policy">
+    <div class="prose">
+      <h2>What we collect</h2>
+      <p>Nothing on our servers. {name} has no accounts, no analytics, no crash reporting, no ads and no tracking SDKs.</p>
+
+      <h2>What stays on your phone</h2>
+      <ul>
+      <li>Dictation audio is recorded to a temporary file. The file is deleted after processing.</li>
+      <li>By default, a copy of the audio is kept in the app's private storage. You can turn this off.</li>
+      <li>History is stored in the app's private storage. It holds the raw text, the cleaned text, the AI output, the app the text was typed into, and the engine and model ids.</li>
+      <li>History is kept until you delete it or set limits. Limits can be a number of days or a count. You can also drop audio only, or turn audio off.</li>
+      <li>If you set an output folder, copies of your dictations are saved there. The app's retention settings do not delete those copies.</li>
+      <li>API keys are stored encrypted with Android Keystore. They are not put in history or logs.</li>
+      <li>App backup is off.</li>
+      </ul>
+
+      <h2>Local models</h2>
+      <p>Local models are downloaded from huggingface.co (<a href="https://huggingface.co/privacy">Hugging Face privacy policy</a>). Downloads are verified by checksum. If you enter an optional Hugging Face token, it is sent to Hugging Face.</p>
+      <p>Offline-only mode blocks cloud calls and downloads.</p>
+
+      <h2>Third-party providers you choose</h2>
+      <p>Cloud providers are optional. You choose them and you use your own API key. Your data goes only to the provider you select. It goes directly from your phone to that provider and never through our servers. Testing a key sends that key to that provider.</p>
+
+      <p><strong>Speech to text (your audio is sent):</strong></p>
+      <ul>
+      <li>OpenAI: <a href="https://openai.com/policies/privacy-policy">privacy policy</a></li>
+      <li>Groq: <a href="https://groq.com/privacy-policy">privacy policy</a></li>
+      <li>Deepgram: <a href="https://deepgram.com/privacy">privacy policy</a></li>
+      <li>OpenRouter: <a href="https://openrouter.ai/privacy">privacy policy</a></li>
+      <li>ElevenLabs: <a href="https://elevenlabs.io/privacy-policy">privacy policy</a></li>
+      <li>AssemblyAI: <a href="https://assemblyai.com/legal/privacy-policy">privacy policy</a></li>
+      <li>Soniox: <a href="https://soniox.com/privacy">privacy policy</a></li>
+      <li>Google Gemini: <a href="https://policies.google.com/privacy">privacy policy</a></li>
+      <li>Mistral: <a href="https://mistral.ai/terms#privacy-policy">privacy policy</a></li>
+      </ul>
+
+      <p><strong>AI clean-up and voice edit (transcript text and custom-dictionary hints are sent, no audio):</strong></p>
+      <ul>
+      <li>OpenRouter: <a href="https://openrouter.ai/privacy">privacy policy</a></li>
+      <li>OpenAI: <a href="https://openai.com/policies/privacy-policy">privacy policy</a></li>
+      <li>Groq: <a href="https://groq.com/privacy-policy">privacy policy</a></li>
+      <li>Google Gemini: <a href="https://policies.google.com/privacy">privacy policy</a></li>
+      <li>Anthropic: <a href="https://anthropic.com/legal/privacy">privacy policy</a></li>
+      </ul>
+
+      <p>Providers have their own policies. Some of them, for example Deepgram, ElevenLabs and the Gemini free tier, may use input to improve their models. Please read the policies of the providers you choose.</p>
+
+      <h2>Accessibility service</h2>
+      <p>{name} uses an Android accessibility service to find the focused text field and to insert or edit text.</p>
+      <ul>
+      <li>It reads field metadata to find the field: the app package, field id, type and position.</li>
+      <li>It reads field text only for the field you are dictating into or voice-editing, and only at that moment.</li>
+      <li>It skips password fields.</li>
+      <li>It writes text with set-text or with a clipboard paste. The clipboard may be used briefly.</li>
+      <li>The accessibility package has no network code.</li>
+      <li>Text leaves your phone only if you picked a cloud AI provider for voice edit or clean-up. For voice edit, only the selected text is sent.</li>
+      </ul>
+
+      <h2>Permissions and why</h2>
+      <table>
+      <tr><th>Permission</th><th>Why</th></tr>
+      <tr><td>Internet</td><td>Cloud providers, model downloads and key checks.</td></tr>
+      <tr><td>Microphone, and foreground service (microphone)</td><td>Recording your dictation.</td></tr>
+      <tr><td>Foreground service (data sync and media processing)</td><td>File transcription jobs.</td></tr>
+      <tr><td>Bluetooth connect</td><td>Showing Bluetooth microphone names.</td></tr>
+      <tr><td>Modify audio settings</td><td>Routing to a Bluetooth or headset microphone.</td></tr>
+      <tr><td>Notifications</td><td>Showing status.</td></tr>
+      <tr><td>Vibrate</td><td>Haptic feedback.</td></tr>
+      <tr><td>Query all packages</td><td>Per-app profiles, and showing app names in history.</td></tr>
+      <tr><td>Read media audio, and read external storage on old Android</td><td>Listing the audio files you choose to transcribe.</td></tr>
+      </table>
+
+      <h2>Feedback emails</h2>
+      <p>The app has no built-in feedback or diagnostics sender. If you email us, we only get what you send. We use it to reply to you. Please do not send API keys or private audio.</p>
+
+      <h2>Children</h2>
+      <p>{name} is not directed to children under 13.</p>
+
+      <h2>Changes</h2>
+      <p>We may update this policy. The effective date above shows the latest version.</p>
+
+      <h2>Contact</h2>
+      <p><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+    </div>
+  </section>
+
+<style>
+  /* Plain permissions table. Only tokens from global.css. */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--text-base);
+  }
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--spacing-xs) var(--spacing-2xs);
+    border-bottom: var(--rule-thin) solid var(--rule-color);
+  }
+</style>
+</Base>

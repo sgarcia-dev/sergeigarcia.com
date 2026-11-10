@@ -1,0 +1,57 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { WHISPER } from "../../lib/whisperApp";
+import { breadcrumbs } from "../../lib/seo";
+
+const { name, contactEmail, base } = WHISPER;
+const jsonLd = [breadcrumbs([{ name, path: base }])];
+const features = [
+  "On-device models, so dictation can work on your phone alone.",
+  "Bring your own key for cloud providers. Your data goes from your phone straight to the provider you pick.",
+  "Voice edit: select text, say what to change and it is rewritten.",
+  "Nothing is stored on our servers. There is an offline-only mode that blocks cloud calls.",
+];
+---
+
+<!--
+  Whisper for Android home page. Kept simple on purpose.
+  The name and email come from src/lib/whisperApp.ts. Facts here must match the privacy page.
+-->
+<Base
+  title={name}
+  description={`${name} is on-device and bring-your-own-key voice dictation for Android. It types what you say into any text field. Beta, invite only.`}
+  jsonLd={jsonLd}
+  noindex
+>
+  <PageHead title={name} band="cobalt">
+    <p class="mt-md max-w-prose text-lg">Beta, invite only.</p>
+  </PageHead>
+
+  <!-- PLACEHOLDER: branding. Empty on purpose. Add the app logo or icon here when it exists. -->
+
+  <section class="shell py-lg lg:py-xl" aria-label="About the app">
+    <div class="prose">
+      <p>
+        {name} is voice dictation for Android. It runs on your device or with your own cloud key. It types what you say
+        into any text field.
+      </p>
+
+      <h2>What it does</h2>
+      <ul>
+        {features.map((f) => <li>{f}</li>)}
+      </ul>
+
+      <!-- PLACEHOLDER: screenshots. Empty on purpose. Add 2 to 4 phone screenshots here, each with real alt text. -->
+
+      <!-- PLACEHOLDER: short walkthrough. Empty on purpose. Add a short video or step list here. No autoplay. -->
+
+      <h2>Contact</h2>
+      <p><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+      <p>
+        <a href={`${base}privacy/`}>Privacy policy</a><br />
+        <a href={`${base}terms/`}>Terms</a>
+      </p>
+    </div>
+  </section>
+</Base>
