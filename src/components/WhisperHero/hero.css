@@ -209,12 +209,16 @@
 .wh-meta { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px; text-align: center; }
 .wh-cap { margin: 0; text-wrap: balance; font-size: 0.9rem; line-height: 1.4; opacity: 0.85; }
 .wh-cap b { display: block; font-weight: 650; font-size: 1rem; }
-.wh-dots { display: flex; gap: 8px; }
+/* Keep the visible dots small, with full-size touch and keyboard targets. */
+.wh-dots { display: flex; gap: 0; }
 .wh-dots[hidden] { display: none; }
-.wh-dot { position: relative; width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; background: currentColor; opacity: 0.28; cursor: pointer; transition: width 0.2s ease, opacity 0.2s ease; }
-.wh-dot::after { content: ""; position: absolute; inset: -10px -4px; }
-.wh-dot[aria-current="true"] { width: 22px; background: var(--wh-accent); opacity: 1; }
-.wh-dot:focus-visible { outline: 2px solid var(--wh-accent); outline-offset: 3px; }
+.wh-dot { position: relative; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.wh-dot::after { content: ""; position: absolute; width: 8px; height: 8px; top: 50%; left: 50%; translate: -50% -50%; border-radius: 99px; background: currentColor; opacity: .4; }
+.wh-dot[aria-current="true"]::after { width: 22px; background: var(--wh-accent); opacity: 1; }
+.wh-dot:focus-visible { outline: 2px solid var(--wh-accent); outline-offset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .wh-dot::after { transition: width .25s cubic-bezier(.2, 0, 0, 1), opacity .25s ease; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .wh-slot { transition: none; }

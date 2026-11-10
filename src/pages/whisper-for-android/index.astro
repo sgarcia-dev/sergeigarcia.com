@@ -68,323 +68,169 @@ const extras = [
 >
   <section class="hero" aria-labelledby="title">
     <div class="hero-text">
-      <img class="hero-icon" src={`${base}icon-192.webp`} width="88" height="88" alt="" />
-      <h1 id="title">{name}</h1>
-      <p class="lead">Dictate into any app with a floating bubble. Local or cloud speech models.</p>
-      <p class="beta"><span class="pill">Private beta, invite only</span></p>
-      <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+      <p class="availability"><span></span> Private beta for Android</p>
+      <h1 id="title">Less typing.<br />More you.</h1>
+      <p class="lead">Your voice, in any app. Tap the bubble and let your words flow.</p>
+      <div class="hero-actions">
+        <a class="button" href="#beta">Get early access <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="#explore">Explore the app <span aria-hidden="true">↓</span></a>
+      </div>
+      <p class="hero-note">On your phone or in the cloud. Your choice.</p>
     </div>
-
     <div class="hero-demo">
+      <div class="hero-orbit" aria-hidden="true"></div>
       <Hero />
+      <span class="demo-label">A little bubble. A lot less typing.</span>
     </div>
   </section>
 
-  {
-    sections.map((s, i) => (
-      <section class={`feature ${s.accent}${i % 2 ? " flip" : ""}`} aria-labelledby={`h-${s.id}`}>
+  <div class="intro" id="explore">
+    <p class="section-label">From a thought to text</p>
+    <h2>Speak freely.<br />Make it yours.</h2>
+    <p>A quick reply. A voice memo. A whole recording. Start with your voice, then choose how to work with your words.</p>
+  </div>
+
+  <div class="features">
+    {sections.map((s, i) => (
+      <section class={`feature ${s.accent} ${i === 0 || i === 5 ? "wide" : ""}`} aria-labelledby={`h-${s.id}`}>
         <div class="copy">
-          <span class="bar" aria-hidden="true"></span>
+          <span class="feature-kind">{["Your everyday companion", "Local or cloud", "The details matter", "Your account, your choice", "Beyond dictation", "A clearer picture"][i]}</span>
           <h2 id={`h-${s.id}`}>{s.title}</h2>
           <p>{s.body}</p>
           <ul class="feature-list">{s.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
         </div>
         <div class="shot">
+          <div class="phone-surface" aria-hidden="true"></div>
           <PhoneFrame>
-            <FeatureVideo
-              name={s.id}
-              poster={`${base}shots/${s.id}.webp`}
-              alt={s.alt}
-              width={SHOT.w}
-              height={SHOT.h}
-            />
+            <FeatureVideo name={s.id} poster={`${base}shots/${s.id}.webp`} alt={s.alt} width={SHOT.w} height={SHOT.h} />
           </PhoneFrame>
         </div>
       </section>
-    ))
-  }
+    ))}
+  </div>
 
   <section class="extras" aria-labelledby="h-extras">
-    <h2 id="h-extras">More ways to make it yours.</h2>
-    <ul>
-      {
-        extras.map((e) => (
-          <li class={e.tone}>
-            <span class="extra-icon" aria-hidden="true">{e.icon}</span>
-            <strong>{e.title}</strong>
-            <span>{e.text}</span>
-          </li>
-        ))
-      }
-    </ul>
+    <div class="extras-heading"><p class="section-label">Small touches. Big difference.</p><h2 id="h-extras">Feels like<br />your app.</h2></div>
+    <ul>{extras.map((e) => (
+      <li class={e.tone}>
+        <span class="extra-icon" aria-hidden="true">{e.icon}</span>
+        <div><h3>{e.title}</h3><p>{e.text}</p></div>
+      </li>
+    ))}</ul>
   </section>
 
-  <section id="beta" class="beta-note" aria-labelledby="h-beta" data-reveal>
-    <h2 id="h-beta">Private beta, invite only.</h2>
-    <p>Whisper for Android is in beta, so rough edges are expected.</p>
-    <h3 class="contact-h">Contact</h3>
-    <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-    <p class="legal-links"><a href={`${base}privacy/`}>Privacy</a> <a href={`${base}terms/`}>Terms</a></p>
+  <section id="beta" class="beta-note" aria-labelledby="h-beta">
+    <div class="beta-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    <div><p class="section-label">Private beta, invite only</p><h2 id="h-beta">Give your thumbs<br />a little time off.</h2><p>{name} is in beta, so rough edges are expected.</p>
+    <a class="button" href={`mailto:${contactEmail}`}>Ask for an invite <span aria-hidden="true">↗</span></a>
+    <a class="email" href={`mailto:${contactEmail}`}>{contactEmail}</a></div>
   </section>
 </WhisperForAndroid>
 
 <style>
-  /* Accent per section */
-  .green { --accent: var(--green); --accent-rgb: 148 212 177; }
-  .blue { --accent: var(--blue); --accent-rgb: 138 180 248; }
-  .violet { --accent: var(--violet); --accent-rgb: 208 188 255; }
-  .red { --accent: var(--red-ink); --accent-rgb: 179 38 30; }
-
-  /* Hero */
-  .hero {
-    display: grid;
-    gap: 2.5rem;
-    padding: 2.5rem 0 1rem;
-    align-items: center;
-  }
-  .hero-icon {
-    display: block;
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    margin-bottom: 1.1rem;
-    box-shadow: 0 0 0 1px var(--line), 0 14px 40px -6px rgb(42 154 105 / 0.55);
-  }
-  h1 {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(2.7rem, 13vw, 5.6rem);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
-    margin: 0 0 1rem;
-    text-wrap: balance;
-  }
-  .lead {
-    font-size: clamp(1.15rem, 4.6vw, 1.5rem);
-    line-height: 1.4;
-    max-width: 30rem;
-    margin: 0 0 1.25rem;
-    color: var(--ink);
-  }
-  .beta {
-    margin: 0 0 0.75rem;
-  }
-  .pill {
-    display: inline-block;
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    border: 1px solid rgb(148 212 177 / 0.4);
-    background: rgb(148 212 177 / 0.12);
-    color: var(--green);
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .contact {
-    margin: 0;
-    color: var(--muted);
-    overflow-wrap: anywhere;
-  }
-
-  /* Animated phone demo. The hero component sizes itself to this box. */
-  .hero-demo {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    min-width: 0;
-    padding: 0.5rem 0;
-  }
-  .hero-demo::before {
-    content: "";
-    position: absolute;
-    width: min(30rem, 100%);
-    aspect-ratio: 1;
-    top: 46%;
-    left: 50%;
-    translate: -50% -50%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgb(148 212 177 / 0.26), transparent 68%);
-    filter: blur(10px);
-    pointer-events: none;
-  }
-  .hero-demo > :global(.wh) {
-    position: relative;
-  }
-
-  /* Feature sections */
-  .feature {
-    display: grid;
-    gap: 2rem;
-    align-items: center;
-    padding: 4.5rem 0 1rem;
-  }
-  .copy .bar {
-    display: block;
-    width: 3rem;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--accent);
-    margin-bottom: 1.1rem;
-    box-shadow: 0 0 20px 0 rgb(var(--accent-rgb) / 0.6);
-  }
-  h2 {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(2.1rem, 8.4vw, 3.9rem);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
-    margin: 0 0 1rem;
-    text-wrap: balance;
-  }
-  .copy p {
-    font-size: clamp(1.1rem, 4.2vw, 1.3rem);
-    line-height: 1.5;
-    color: var(--muted);
-    max-width: 28rem;
-    margin: 0;
-  }
-  .shot {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    padding: 1rem 0;
-  }
-  .feature-list { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.75rem; }
-  .feature-list li { position: relative; padding-left: 1.35rem; color: var(--ink); }
-  .feature-list li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--accent); }
-
-  /* Scroll reveals, only when JS runs and motion is allowed */
+  /* Product-specific tonal surfaces echo the app's mint, ocean and sand palettes. */
+  .green { --accent: var(--green); --tone: #293e32; }
+  .blue { --accent: #9eccec; --tone: #25383e; }
+  .violet { --accent: #b6c4ff; --tone: #303643; }
+  .red { --accent: #ebbe92; --tone: #42372b; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 500; }
+  h1, h2 { text-wrap: balance; }
+  h1 { font-size: clamp(4rem, 7.6vw, 7rem); line-height: .98; letter-spacing: -.065em; margin: 1.5rem 0; }
+  h2 { font-size: clamp(2.25rem, 4vw, 3.7rem); line-height: 1.08; letter-spacing: -.045em; margin: 0; }
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 2rem; padding: 3rem 1.5rem 4rem; }
+  .hero-text { position: relative; z-index: 1; }
+  .availability { display: flex; align-items: center; gap: .65rem; color: var(--green); font-size: .85rem; margin: 0; }
+  .availability span { width: .5rem; height: .5rem; background: var(--green); border-radius: 50%; }
+  .lead { max-width: 25rem; font-size: clamp(1.15rem, 2vw, 1.35rem); line-height: 1.55; color: var(--muted); margin: 1.5rem 0 2rem; }
+  .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+  .button { display: inline-flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 56px; padding: .9rem 1.5rem; border-radius: 2rem; background: var(--green); color: var(--on); text-decoration: none; font-weight: 650; }
+  .button span { font-size: 1.3rem; line-height: 1; }
+  .text-link { display: inline-flex; gap: .8rem; align-items: center; min-height: 48px; color: var(--ink); text-decoration: none; }
+  .text-link:hover { text-decoration: underline; }
+  .hero-note { margin: 1.2rem 0 0; color: var(--muted); font-size: .8rem; }
+  .hero-demo { position: relative; display: grid; place-items: center; padding: 1.5rem 0; min-width: 0; }
+  .hero-orbit { position: absolute; inset: 8% 2.5rem 9%; background: #23382b; border-radius: 48% 48% 44% 44%; transform: rotate(-8deg); }
+  .hero-demo > :global(.wh) { position: relative; --wh-max: 340px; --wh-accent: var(--green); }
+  .demo-label { position: relative; color: var(--muted); font-size: .75rem; margin-top: .75rem; }
+  .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 5rem; padding: 5rem 1.5rem 3rem; border-top: 1px solid var(--line); scroll-margin-top: 2rem; }
+  .section-label { font-size: .85rem; color: var(--green); margin: 0 0 1rem; }
+  .intro .section-label { grid-column: 1 / -1; margin: 0; }
+  .intro > p:last-child { align-self: end; max-width: 26rem; font-size: 1.15rem; color: var(--muted); margin: 0; }
+  .features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .feature { border-radius: 2.5rem; background: var(--surface); padding: 2.5rem 2.5rem 2rem; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .feature-kind { display: block; font-size: .8rem; color: var(--accent); margin-bottom: 1.5rem; }
+  .feature h2 { font-size: clamp(2rem, 3.1vw, 3rem); max-width: 17ch; }
+  .copy > p { color: var(--muted); font-size: 1.05rem; max-width: 29rem; margin: 1.25rem 0; }
+  .feature-list { list-style: none; padding: 0; margin: 1.5rem 0 2rem; display: grid; gap: .65rem; max-width: 29rem; font-size: .9rem; color: var(--muted); }
+  .feature-list li { padding-left: 1.4rem; position: relative; }
+  .feature-list li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); }
+  .shot { position: relative; display: grid; place-items: center; padding: 2rem 0 .75rem; margin-top: auto; isolation: isolate; }
+  .phone-surface { position: absolute; inset: 12% 0 0; border-radius: 12rem 12rem 2rem 2rem; background: var(--tone); z-index: -1; }
+  .wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; padding: 3rem 4rem; }
+  .wide .shot { margin: 0; }
+  .wide .phone-surface { inset: 8% -1rem; border-radius: 50% 50% 2rem 2rem; }
+  .wide:last-child .copy { order: 2; }
+  .wide:last-child .shot { order: 1; }
+  .wide:last-child .phone-surface { border-radius: 2rem 2rem 50% 50%; }
+  .extras { display: grid; grid-template-columns: .9fr 1.1fr; gap: 4rem; padding: 7rem 1.5rem; }
+  .extras ul { list-style: none; padding: 0; margin: 0; }
+  .extras li { display: flex; gap: 1.25rem; padding: 1.35rem 0; border-bottom: 1px solid var(--line); }
+  .extras li:first-child { padding-top: 0; }
+  .extra-icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--tone); color: var(--accent); flex: none; font-size: 1.2rem; }
+  .extras h3 { margin: 0; font-size: 1.15rem; }
+  .extras li p { margin: .25rem 0 0; color: var(--muted); font-size: .95rem; }
+  .beta-note { background: #aff1cc; color: #012112; border-radius: 3rem; padding: 4.5rem; display: grid; grid-template-columns: .65fr 1.35fr; align-items: center; gap: 4rem; scroll-margin-top: 2rem; }
+  .beta-note .section-label { color: #2c6a4b; }
+  .beta-note h2 { font-size: clamp(2.4rem, 4vw, 3.8rem); }
+  .beta-note p:not(.section-label) { margin: 1.25rem 0 1.75rem; max-width: 28rem; }
+  .beta-note .button { background: #013822; color: #aff1cc; }
+  .email { display: block; color: #013822; width: fit-content; margin-top: 1rem; font-size: .85rem; overflow-wrap: anywhere; }
+  .beta-symbol { width: 100%; aspect-ratio: 1; border-radius: 50%; background: #94d4b1; display: flex; justify-content: center; align-items: center; gap: 7%; }
+  .beta-symbol span { width: 7%; height: 24%; border-radius: 2rem; background: #0f5134; }
+  .beta-symbol span:nth-child(2), .beta-symbol span:nth-child(4) { height: 42%; }
+  .beta-symbol span:nth-child(3) { height: 58%; }
   @media (prefers-reduced-motion: no-preference) {
-    :global(.js) [data-reveal] {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-    }
-    :global(.js) [data-reveal].in {
-      opacity: 1;
-      transform: none;
-    }
-    :global(.js) .shot[data-reveal]:not(.in) {
-      transform: translateY(48px) scale(0.96);
-    }
-    :global(.js) .extras li[data-reveal]:nth-child(2n) { transition-delay: 0.08s; }
+    .button { transition: border-radius 350ms var(--ease), transform 350ms var(--ease), box-shadow 350ms var(--ease); }
+    .button:hover { border-radius: 1rem; transform: translateY(-2px); box-shadow: 0 6px 0 rgb(148 212 177 / .12); }
+    .button:active { transform: scale(.97); }
+    .hero-orbit { animation: settle 1.2s cubic-bezier(.2, 0, 0, 1) both; }
+    @keyframes settle { from { transform: rotate(0deg) scale(.92); border-radius: 35%; } to { transform: rotate(-8deg) scale(1); border-radius: 48% 48% 44% 44%; } }
+    .beta-note:hover .beta-symbol span { animation: voice 1s var(--ease) 2 alternate; }
+    .beta-note:hover .beta-symbol span:nth-child(2n) { animation-delay: .12s; }
+    @keyframes voice { 50% { transform: scaleY(.6); } }
   }
-
-  /* Everything else */
-  .extras {
-    padding: 6rem 0 1rem;
+  @media (max-width: 900px) {
+    .hero { padding-inline: .5rem; gap: 1rem; }
+    h1 { font-size: clamp(3.3rem, 8vw, 5rem); }
+    .hero-actions { gap: .5rem 1rem; }
+    .feature { padding: 2rem 1.5rem; }
+    .wide { gap: 2rem; }
+    .extras { gap: 2rem; }
+    .beta-note { padding: 3rem; gap: 2rem; }
   }
-  .extras h2 {
-    margin-bottom: 1.75rem;
-  }
-  .extras ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.9rem;
-    grid-template-columns: 1fr;
-  }
-  .extras li {
-    display: grid;
-    align-content: start;
-    gap: 0.4rem;
-    padding: 1.5rem;
-    border: 1px solid var(--line);
-    border-radius: 0.75rem;
-    background: var(--surface);
-  }
-  .extras .extra-icon {
-    display: grid;
-    place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-bottom: 0.55rem;
-    border: 1px solid var(--accent);
-    border-radius: 0.5rem;
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 1.15rem;
-  }
-  .extras strong {
-    font-family: var(--display);
-    font-size: 1.15rem;
-    letter-spacing: -0.01em;
-  }
-  .extras span {
-    color: var(--muted);
-  }
-
-  /* Beta note */
-  .beta-note {
-    margin: 5rem 0 1rem;
-    padding: 2.5rem 1.5rem;
-    border-radius: 2rem;
-    border: 1px solid var(--line);
-    background:
-      radial-gradient(30rem 16rem at 0% 0%, rgb(148 212 177 / 0.16), transparent 70%),
-      radial-gradient(26rem 16rem at 100% 100%, rgb(208 188 255 / 0.14), transparent 70%),
-      var(--surface);
-  }
-  .beta-note h2 {
-    font-size: clamp(1.9rem, 7vw, 3rem);
-  }
-  .beta-note p {
-    margin: 0 0 0.75rem;
-    color: var(--muted);
-    font-size: 1.1rem;
-  }
-  .contact-h {
-    margin: 1.25rem 0 0.4rem;
-    font-size: 1.1rem;
-  }
-  .legal-links {
-    display: flex;
-    gap: 1.25rem;
-    margin-top: 1rem;
-  }
-  .legal-links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  @media (min-width: 640px) {
-    .extras ul {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (min-width: 900px) {
-    .hero-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 18px;
-    }
-    .hero {
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 4rem;
-      padding: 4rem 0 2rem;
-    }
-    .hero-demo > :global(.wh) {
-      --wh-max: 380px;
-    }
-    .feature {
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      padding: 5rem 0 2rem;
-    }
-    .feature .copy {
-      order: 2;
-      justify-self: start;
-      max-width: 30rem;
-    }
-    .feature .shot { order: 1; }
-    .feature.flip .copy { order: 1; justify-self: end; }
-    .feature.flip .shot { order: 2; }
-    .extras ul {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .beta-note {
-      padding: 4rem 3.5rem;
-    }
+  @media (max-width: 650px) {
+    .hero { grid-template-columns: 1fr; padding: 2.5rem .25rem 3rem; gap: 2.5rem; }
+    h1 { font-size: clamp(3.8rem, 15vw, 5.5rem); margin: 1.25rem 0; }
+    .lead { font-size: 1.1rem; margin: 1.25rem 0 1.5rem; max-width: 21rem; }
+    .hero-demo { padding: 1rem .75rem; }
+    .hero-demo > :global(.wh) { --wh-max: 300px; }
+    .hero-orbit { inset: 9% 2.5rem 10%; }
+    .intro { grid-template-columns: 1fr; padding: 3rem .25rem 2rem; gap: 1rem; }
+    .intro > p:last-child { font-size: 1rem; }
+    .features { grid-template-columns: 1fr; gap: .75rem; }
+    .feature, .wide { display: flex; flex-direction: column; gap: 0; padding: 2rem 1.25rem 1.25rem; border-radius: 2rem; align-items: stretch; }
+    .feature h2 { font-size: 2.15rem; }
+    .feature-kind { margin-bottom: 1rem; }
+    .feature-list { margin-bottom: 1rem; }
+    .wide:last-child .copy, .wide:last-child .shot { order: initial; }
+    .shot { padding-top: 1.5rem; }
+    .wide .phone-surface, .phone-surface { inset: 12% 0 0; border-radius: 10rem 10rem 1.5rem 1.5rem; }
+    .shot :global(.phone-frame) { width: min(100% - 1.5rem, 280px); }
+    .extras { grid-template-columns: 1fr; padding: 4rem .25rem; gap: 2.5rem; }
+    .extras-heading h2 br { display: none; }
+    .beta-note { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.5rem; border-radius: 2rem; }
+    .beta-symbol { width: 5rem; }
+    .beta-note h2 { font-size: 2.4rem; }
+    .beta-note .button { min-height: 52px; }
   }
 </style>
