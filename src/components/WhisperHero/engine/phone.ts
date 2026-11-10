@@ -60,6 +60,7 @@ export function buildPhone(scene: Scene): PhoneView {
   root.style.setProperty("--ps", `${Math.max(P.radius - P.bezel, 6)}px`);
   root.style.setProperty("--st", `${P.statusH}px`);
   root.dataset.cam = P.camera;
+  root.dataset.scene = scene.id;
   root.innerHTML = `<span class="sb s1"></span><span class="sb s2"></span><span class="sb s3"></span>
 <div class="wh-screen">
 <div class="wh-chat" data-skin="${chat.id}">${chatHtml(chat)}</div>
