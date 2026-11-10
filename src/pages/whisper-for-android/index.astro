@@ -1,57 +1,238 @@
 ---
-import Base from "../../layouts/Base.astro";
-import PageHead from "../../components/PageHead.astro";
+import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
 import { WHISPER } from "../../lib/whisperApp";
-import { breadcrumbs } from "../../lib/seo";
 
-const { name, contactEmail, base } = WHISPER;
-const jsonLd = [breadcrumbs([{ name, path: base }])];
-const features = [
-  "On-device models, so dictation can work on your phone alone.",
-  "Bring your own key for cloud providers. Your data goes from your phone straight to the provider you pick.",
-  "Voice edit: select text, say what to change and it is rewritten.",
-  "Nothing is stored on our servers. There is an offline-only mode that blocks cloud calls.",
+const { name, contactEmail } = WHISPER;
+const dir = "/whisper-for-android/";
+
+// Real app screenshots, 720 x 1560 WebP. Alt text says what is on screen.
+const shots = [
+  { src: "bubble-recording", caption: "Tap the bubble and talk", alt: "A search field with the floating bubble recording, showing a red stop button and a Recording timer." },
+  { src: "bubble-transcribing", caption: "It turns speech into text", alt: "The floating bubble showing a Transcribing pill with the chosen model name." },
+  { src: "model-library", caption: "Local or cloud models", alt: "The Model library screen with Local and Cloud tabs and a list of speech models." },
+  { src: "model-pros-cons", caption: "Pros and cons for each model", alt: "A model preview for Parakeet Ultra with speed and accuracy ratings, pros and cons." },
+  { src: "transcribe-files", caption: "Transcribe audio files", alt: "The Transcribe sheet for an audio file, with a recommended model and a speaker detection switch." },
+  { src: "settings", caption: "Settings and feedback", alt: "The Advanced settings screen with model manager, styles, and a Send feedback row." },
+];
+
+const steps = [
+  { tone: "green", text: "Turn on the bubble." },
+  { tone: "red", text: "Tap it and speak. Tap again to finish." },
+  { tone: "violet", text: "Hold it to edit your text by voice." },
+  { tone: "blue", text: "Pick a local or cloud model." },
 ];
 ---
 
-<!--
-  Whisper for Android home page. Kept simple on purpose.
-  The name and email come from src/lib/whisperApp.ts. Facts here must match the privacy page.
--->
-<Base
+<WhisperForAndroid
   title={name}
-  description={`${name} is on-device and bring-your-own-key voice dictation for Android. It types what you say into any text field. Beta, invite only.`}
-  jsonLd={jsonLd}
-  noindex
+  fullTitle
+  description={`${name}: dictate into any app with a floating bubble. Local or cloud speech models. Private beta, invite only.`}
 >
-  <PageHead title={name} band="cobalt">
-    <p class="mt-md max-w-prose text-lg">Beta, invite only.</p>
-  </PageHead>
-
-  <!-- PLACEHOLDER: branding. Empty on purpose. Add the app logo or icon here when it exists. -->
-
-  <section class="shell py-lg lg:py-xl" aria-label="About the app">
-    <div class="prose">
-      <p>
-        {name} is voice dictation for Android. It runs on your device or with your own cloud key. It types what you say
-        into any text field.
-      </p>
-
-      <h2>What it does</h2>
-      <ul>
-        {features.map((f) => <li>{f}</li>)}
-      </ul>
-
-      <!-- PLACEHOLDER: screenshots. Empty on purpose. Add 2 to 4 phone screenshots here, each with real alt text. -->
-
-      <!-- PLACEHOLDER: short walkthrough. Empty on purpose. Add a short video or step list here. No autoplay. -->
-
-      <h2>Contact</h2>
-      <p><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-      <p>
-        <a href={`${base}privacy/`}>Privacy policy</a><br />
-        <a href={`${base}terms/`}>Terms</a>
-      </p>
-    </div>
+  <section class="hero" aria-labelledby="title">
+    <svg class="big-mark" viewBox="0 0 96 96" width="88" height="88" aria-hidden="true" focusable="false">
+      <circle cx="48" cy="48" r="48" class="g"></circle>
+      <g class="w">
+        <rect x="24" y="39" width="9" height="18" rx="4.5"></rect>
+        <rect x="39" y="27" width="9" height="42" rx="4.5"></rect>
+        <rect x="54" y="36" width="9" height="24" rx="4.5"></rect>
+        <rect x="69" y="43.5" width="6" height="9" rx="3"></rect>
+      </g>
+      <circle cx="78" cy="18" r="7" class="r"></circle>
+      <circle cx="84" cy="36" r="5" class="b"></circle>
+      <circle cx="72" cy="6" r="4" class="v"></circle>
+    </svg>
+    <h1 id="title">{name}</h1>
+    <p class="lead">Dictate into any app with a floating bubble. Local or cloud speech models.</p>
+    <p class="beta"><span class="pill">Private beta, invite only</span></p>
+    <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
   </section>
-</Base>
+
+  <section aria-labelledby="shots-h">
+    <h2 id="shots-h">See it</h2>
+    <ul class="shots">
+      {
+        shots.map((s, i) => (
+          <li>
+            <figure>
+              <img
+                src={`${dir}${s.src}.webp`}
+                alt={s.alt}
+                width="720"
+                height="1560"
+                loading={i < 2 ? "eager" : "lazy"}
+                decoding="async"
+              />
+              <figcaption>{s.caption}</figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      {
+        steps.map((s, i) => (
+          <li class={s.tone}>
+            <span class="n" aria-hidden="true">{i + 1}</span>
+            <span>{s.text}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</WhisperForAndroid>
+
+<style>
+  h2 {
+    font-size: 1.15rem;
+    margin: 2.5rem 0 1rem;
+    letter-spacing: -0.01em;
+  }
+  .hero {
+    padding: 1.75rem 0 0.5rem;
+  }
+  .big-mark {
+    display: block;
+    margin-bottom: 1rem;
+    overflow: visible;
+  }
+  .big-mark .g {
+    fill: var(--green);
+  }
+  .big-mark .w {
+    fill: var(--on);
+  }
+  .big-mark .r {
+    fill: var(--red);
+  }
+  .big-mark .b {
+    fill: var(--blue);
+  }
+  .big-mark .v {
+    fill: var(--violet);
+  }
+  h1 {
+    font-size: clamp(2rem, 9vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.75rem;
+  }
+  .lead {
+    font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+    line-height: 1.4;
+    max-width: 30rem;
+    margin: 0 0 1rem;
+  }
+  .beta {
+    margin: 0 0 0.75rem;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--green-soft);
+    color: var(--green);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .contact {
+    margin: 0;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  /* Screenshots: a swipe row on phones, a grid on wide screens. */
+  .shots {
+    list-style: none;
+    margin: 0 -1.25rem;
+    padding: 0.25rem 1.25rem 1rem;
+    display: flex;
+    gap: 0.9rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 1.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .shots li {
+    flex: 0 0 min(62%, 15rem);
+    scroll-snap-align: start;
+  }
+  figure {
+    margin: 0;
+  }
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 720 / 1560;
+    border-radius: 1.25rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  @media (min-width: 52rem) {
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      margin: 0;
+      padding: 0.25rem 0 1rem;
+      overflow: visible;
+      gap: 1rem;
+    }
+    .shots li {
+      flex: none;
+    }
+    figcaption {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Walkthrough */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    max-width: 34rem;
+  }
+  .steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 0.8rem 1rem;
+    font-size: 1.05rem;
+  }
+  .n {
+    flex: none;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--on);
+    background: var(--green);
+  }
+  .steps .red .n {
+    background: var(--red);
+  }
+  .steps .violet .n {
+    background: var(--violet);
+  }
+  .steps .blue .n {
+    background: var(--blue);
+  }
+</style>

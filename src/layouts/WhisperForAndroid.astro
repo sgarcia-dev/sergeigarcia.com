@@ -1,0 +1,272 @@
+---
+/**
+ * Standalone layout for /whisper-for-android/ (home, privacy, terms).
+ * It does not use the personal site's layout, header, footer, fonts or scripts.
+ * The app name and contact email come from src/lib/whisperApp.ts, the single constant.
+ * No external scripts, no tracking. System font stack. Light and dark by prefers-color-scheme.
+ */
+import { WHISPER } from "../lib/whisperApp";
+
+interface Props {
+  /** Page title. The app name is appended unless `fullTitle` is set. */
+  title: string;
+  description: string;
+  fullTitle?: boolean;
+}
+
+const { title, description, fullTitle = false } = Astro.props;
+const { name, contactEmail, base } = WHISPER;
+const pageTitle = fullTitle ? title : `${title} | ${name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const favicon =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2c6a4b"/><g fill="#fff"><rect x="8" y="13" width="3" height="6" rx="1.5"/><rect x="13" y="9" width="3" height="14" rx="1.5"/><rect x="18" y="12" width="3" height="8" rx="1.5"/></g></svg>',
+  );
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#2c6a4b" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1511" media="(prefers-color-scheme: dark)" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={favicon} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <a class="brand" href={base} aria-label={`${name}, home`}>
+        <svg class="mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
+          <circle cx="16" cy="16" r="16" class="mark-bg"></circle>
+          <g fill="#fff">
+            <rect x="8" y="13" width="3" height="6" rx="1.5"></rect>
+            <rect x="13" y="9" width="3" height="14" rx="1.5"></rect>
+            <rect x="18" y="12" width="3" height="8" rx="1.5"></rect>
+            <rect x="23" y="14.5" width="2.2" height="3" rx="1.1"></rect>
+          </g>
+        </svg>
+        <span class="word">{name}</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="foot">
+      <nav aria-label="Legal">
+        <a href={`${base}privacy/`}>Privacy</a>
+        <a href={`${base}terms/`}>Terms</a>
+        <a href={`mailto:${contactEmail}`}>Contact</a>
+      </nav>
+      <p>Beta. Invite only.</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f5f9f6;
+    --surface: #ffffff;
+    --ink: #15201a;
+    --muted: #4a5a51;
+    --line: #d9e4dd;
+    --green: #2c6a4b;
+    --green-soft: #dcefe4;
+    --red: #b3261e;
+    --blue: #1f5fa8;
+    --violet: #6a3fa0;
+    --on: #ffffff;
+    --link: #2c6a4b;
+    --shadow: 0 1px 2px rgb(20 40 30 / 0.08), 0 8px 24px rgb(20 40 30 / 0.1);
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1511;
+      --surface: #16201a;
+      --ink: #e7f0ea;
+      --muted: #a7b8ad;
+      --line: #28362d;
+      --green: #94d4b1;
+      --green-soft: #1d3326;
+      --red: #ffb4ab;
+      --blue: #a8c8ff;
+      --violet: #d6bcff;
+      --on: #10170f;
+      --link: #94d4b1;
+      --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.4);
+    }
+  }
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  a {
+    color: var(--link);
+    text-underline-offset: 0.18em;
+  }
+  a:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .skip {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--surface);
+    padding: 0.5rem 1rem;
+    z-index: 10;
+  }
+  .skip:focus {
+    left: 0.5rem;
+    top: 0.5rem;
+  }
+
+  /* Header and brand */
+  .top {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1rem 1.25rem 0;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    min-height: 44px;
+  }
+  .mark {
+    flex: none;
+  }
+  .mark-bg {
+    fill: var(--green);
+  }
+  .mark g {
+    fill: var(--on);
+  }
+  .word {
+    font-size: 1.05rem;
+  }
+
+  main {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 3rem;
+  }
+
+  /* Footer */
+  .foot {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 2.5rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .foot nav {
+    display: flex;
+    gap: 0.25rem 1.25rem;
+    flex-wrap: wrap;
+  }
+  .foot a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .foot p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Privacy and terms text */
+  .doc {
+    max-width: 44rem;
+    padding-top: 1.5rem;
+  }
+  .doc h1 {
+    font-size: clamp(1.9rem, 7vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0 0.75rem;
+  }
+  .doc .lede {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem;
+  }
+  .doc h2 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+    margin: 2rem 0 0.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+  .doc p,
+  .doc li {
+    overflow-wrap: anywhere;
+  }
+  .doc ul {
+    padding-left: 1.25rem;
+  }
+  .doc li {
+    margin: 0.35rem 0;
+  }
+  .doc table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    display: block;
+    overflow-x: auto;
+  }
+  .doc th,
+  .doc td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .doc th {
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .doc .muted {
+    color: var(--muted);
+  }
+</style>

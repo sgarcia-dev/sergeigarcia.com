@@ -1,25 +1,17 @@
 ---
-import Base from "../../layouts/Base.astro";
-import PageHead from "../../components/PageHead.astro";
+import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
 import { WHISPER } from "../../lib/whisperApp";
-import { breadcrumbs } from "../../lib/seo";
 
-const { name, contactEmail, base, effective } = WHISPER;
-const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", path: `${base}privacy/` }])];
+const { name, contactEmail, effective } = WHISPER;
 ---
 
-<Base
-  title={`Privacy policy | ${name}`}
+<WhisperForAndroid
+  title="Privacy policy"
   description={`How ${name} handles your data. Nothing is stored on our servers.`}
-  jsonLd={jsonLd}
-  noindex
 >
-  <PageHead title="Privacy policy" band="cobalt">
-    <p class="mt-md max-w-prose text-lg">Effective {effective}. {name} is in Beta, invite only.</p>
-  </PageHead>
-
-  <section class="shell py-lg lg:py-xl" aria-label="Privacy policy">
-    <div class="prose">
+  <article class="doc" aria-label="Privacy policy">
+    <h1>Privacy policy</h1>
+    <p class="lede">Effective {effective}. {name} is in Beta, invite only.</p>
       <h2>What we collect</h2>
       <p>Nothing on our servers. {name} has no accounts, no analytics, no crash reporting, no ads and no tracking SDKs.</p>
 
@@ -112,22 +104,5 @@ const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", pat
 
       <h2>Contact</h2>
       <p><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-    </div>
-  </section>
-
-<style>
-  /* Plain permissions table. Only tokens from global.css. */
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: var(--text-base);
-  }
-  th,
-  td {
-    text-align: left;
-    vertical-align: top;
-    padding: var(--spacing-xs) var(--spacing-2xs);
-    border-bottom: var(--rule-thin) solid var(--rule-color);
-  }
-</style>
-</Base>
+  </article>
+</WhisperForAndroid>
