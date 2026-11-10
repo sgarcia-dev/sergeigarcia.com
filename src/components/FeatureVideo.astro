@@ -1,0 +1,183 @@
+---
+/**
+ * A short looping screen recording that sits where a phone screenshot sits.
+ *
+ * Frame decision: the phone frame (.phone, with its tilt and glow) lives in the whisper-for-android
+ * page, so this component does NOT draw one. It renders only the media and is meant to be placed
+ * inside the page's `<div class="phone" data-tilt>` in place of the `<img>`. It rounds its own
+ * corners (2.2rem) to match the screen inside that frame and fills the frame width.
+ *
+ * Files: /whisper-for-android/video/NAME.webm, then NAME.mp4. Sources are set lazily by the
+ * script below. The poster stays as a still image when the reader prefers reduced motion, has
+ * Save-Data on, is on a 2g connection, or when the video fails to load.
+ *
+ * Props:
+ *   name    File name without extension, for example "bubble".
+ *   poster  URL of the still image shown before and instead of the video.
+ *   alt     Describes the screen. The video itself is hidden from screen readers.
+ *   label   Optional small pill over the bottom of the screen, for example "See it in action".
+ *   width, height  Pixel size of the poster. Sets the fixed aspect ratio so nothing shifts.
+ *                  Defaults to the screenshot size used on the page (1080 by 2138).
+ */
+interface Props {
+  name: string;
+  poster: string;
+  alt: string;
+  label?: string;
+  width?: number;
+  height?: number;
+}
+const { name, poster, alt, label, width = 1080, height = 2138 } = Astro.props;
+const dir = "/whisper-for-android/video/";
+---
+
+<div class="fv" data-feature-video style={`aspect-ratio: ${width} / ${height};`}>
+  <img class="fv-poster" src={poster} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+  <video
+    class="fv-video"
+    muted
+    playsinline
+    loop
+    preload="none"
+    poster={poster}
+    aria-hidden="true"
+    tabindex="-1"
+    disablepictureinpicture
+    data-webm={`${dir}${name}.webm`}
+    data-mp4={`${dir}${name}.mp4`}></video>
+  {label && <span class="fv-label" aria-hidden="true">{label}</span>}
+</div>
+
+<style>
+  .fv {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 2.2rem;
+    background: #050807;
+  }
+  .fv-poster,
+  .fv-video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .fv-video {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .fv.is-ready .fv-video {
+    opacity: 1;
+  }
+  .fv.is-static .fv-video {
+    display: none;
+  }
+  .fv-label {
+    position: absolute;
+    left: 50%;
+    bottom: 0.9rem;
+    transform: translateX(-50%);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: rgb(5 8 7 / 0.72);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fv-video {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // One shared script for every instance on the page. Astro bundles it once.
+  const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-feature-video]"));
+
+  const conn = (navigator as any).connection;
+  const keepPoster =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    !!conn?.saveData ||
+    conn?.effectiveType === "2g" ||
+    conn?.effectiveType === "slow-2g";
+
+  if (keepPoster || !("IntersectionObserver" in window)) {
+    nodes.forEach((n) => n.classList.add("is-static"));
+  } else {
+    const loaded = new WeakSet<HTMLVideoElement>();
+
+    const fail = (box: HTMLElement) => box.classList.add("is-static");
+
+    const load = (box: HTMLElement, video: HTMLVideoElement) => {
+      if (loaded.has(video)) return;
+      loaded.add(video);
+      const sources: Array<[string | undefined, string]> = [
+        [video.dataset.webm, "video/webm"],
+        [video.dataset.mp4, "video/mp4"],
+      ];
+      sources.forEach(([src, type], i) => {
+        if (!src) return;
+        const s = document.createElement("source");
+        s.src = src;
+        s.type = type;
+        // A source error does not bubble. Give up only when the last source fails.
+        if (i === sources.length - 1) s.addEventListener("error", () => fail(box));
+        video.appendChild(s);
+      });
+      const ready = () => box.classList.add("is-ready");
+      video.addEventListener("loadeddata", ready, { once: true });
+      video.addEventListener("playing", ready, { once: true });
+      video.addEventListener("error", () => fail(box));
+      video.load();
+    };
+
+    // Observer 1: start loading well before the video scrolls into view.
+    const loader = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const box = e.target as HTMLElement;
+          const video = box.querySelector<HTMLVideoElement>("video");
+          if (video) load(box, video);
+          loader.unobserve(box);
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+
+    // Observer 2: play only when at least half is visible, pause otherwise.
+    const player = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const box = e.target as HTMLElement;
+          const video = box.querySelector<HTMLVideoElement>("video");
+          if (!video || box.classList.contains("is-static")) continue;
+          if (e.isIntersecting && e.intersectionRatio >= 0.5) {
+            load(box, video);
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        }
+      },
+      { threshold: [0, 0.5, 1] },
+    );
+
+    nodes.forEach((n) => {
+      loader.observe(n);
+      player.observe(n);
+    });
+  }
+</script>

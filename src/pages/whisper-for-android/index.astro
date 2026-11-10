@@ -2,6 +2,7 @@
 import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
 import { WHISPER } from "../../lib/whisperApp";
 import Hero from "../../components/WhisperHero/Hero.astro";
+import FeatureVideo from "../../components/FeatureVideo.astro";
 
 const { name, contactEmail, base } = WHISPER;
 
@@ -108,13 +109,12 @@ const extras = [
         </div>
         <div class="shot" data-reveal>
           <div class="phone" data-tilt>
-            <img
-              src={`${base}shots/${s.id}.webp`}
+            <FeatureVideo
+              name={s.id}
+              poster={`${base}shots/${s.id}.webp`}
               alt={s.alt}
               width={SHOT.w}
               height={SHOT.h}
-              loading="lazy"
-              decoding="async"
             />
           </div>
         </div>
