@@ -235,3 +235,43 @@
   .wh-slot { transition: none; }
   .wh-chat .cr, .wh-chat .nw { animation: none; }
 }
+
+/* Scene 2 (live streaming): Telegram-like chat skin "tg", Gboard-like keyboard skin "gbl", streaming blue pill. No logos. */
+.wh-chat[data-skin="tg"] {
+  --hd: #17212b; --bg: #0e1621; --in: #182533; --out: #2b5278; --tx: #f5f5f5; --sub: #7d8e9e;
+  --fd: #17212b; --act: #6ab3f3; --actx: #0e1621; --chip: rgba(23, 33, 43, 0.85);
+}
+.wh-chat[data-skin="tg"] .av { color: #6ab3f3; }
+.wh-chat[data-skin="tg"] .nm small { color: #6ab3f3; }
+.wh-chat[data-skin="tg"] .ls {
+  background-image: radial-gradient(rgba(106, 179, 243, 0.05) 1px, transparent 1.6px), linear-gradient(170deg, #101c2a, #0b121b 70%);
+  background-size: 17px 17px, 100% 100%;
+}
+.wh-chat[data-skin="tg"] .m { border-radius: 14px; }
+.wh-chat[data-skin="tg"] .m.them { border-top-left-radius: 14px; border-bottom-left-radius: 4px; }
+.wh-chat[data-skin="tg"] .m.me { border-top-right-radius: 14px; border-bottom-right-radius: 4px; }
+.wh-chat[data-skin="tg"] .cp { background: var(--hd); padding: 3px 4px 4px 6px; align-items: center; gap: 2px; }
+.wh-chat[data-skin="tg"] .fd { background: transparent; border-radius: 0; padding: 4px 0; min-height: 38px; align-items: center; }
+.wh-chat[data-skin="tg"] .ab { background: none; color: var(--act); border-radius: 0; width: 38px; height: 38px; }
+.wh-chat[data-skin="tg"] .ab svg { width: 24px; height: 24px; }
+.wh-chat[data-skin="tg"] .cr { background: var(--act); }
+.wh-chat[data-skin="tg"] .lv { opacity: 0.55; }
+
+.wh-kb[data-skin="gbl"] { --kb: #1c1d20; --key: #3a3c40; --fnk: #2a2c2f; --kt: #e8eaed; --kd: #9aa0a6; --acc: #8ab4f8; --keydn: #5b5e63; padding: 4px 4px 0; gap: 6px; }
+.wh-kb[data-skin="gbl"] .tb { color: #c4c7cc; height: 32px; padding: 0 4px; }
+.wh-kb[data-skin="gbl"] .rw { height: 42px; gap: 5px; }
+.wh-kb[data-skin="gbl"] .k { border-radius: 10px; font-size: 17px; }
+.wh-kb[data-skin="gbl"] .k.fn { font-size: 14px; }
+.wh-kb[data-skin="gbl"] .k.space { border-radius: 20px; background: #3a3c40; }
+.wh-kb[data-skin="gbl"] .k.accent { border-radius: 21px; background: #8ab4f8; color: #0b2a52; }
+.wh-kb[data-skin="gbl"] .k.dn { background: var(--keydn); }
+
+/* A rounder phone body with a cool blue-graphite edge (only the scene with the "tg" chat). */
+.wh-phone:has(.wh-chat[data-skin="tg"]) { background: linear-gradient(145deg, #5b6677, #1b2029 38%, #3a4350 70%, #171b22); }
+
+/* While the live model streams, the bubble is blue and so is its pill. */
+.wh-screen:has(.wh-chat[data-skin="tg"]) .wh-pill[data-st="transcribing"] {
+  background: rgba(20, 38, 70, 0.97);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(138, 180, 248, 0.5);
+}
+.wh-screen:has(.wh-chat[data-skin="tg"]) .wh-pill[data-st="transcribing"] .pi { color: #8ab4f8; opacity: 1; }
