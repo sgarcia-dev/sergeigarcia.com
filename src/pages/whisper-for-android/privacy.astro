@@ -49,9 +49,9 @@ const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", pat
       <li>OpenRouter: <a href="https://openrouter.ai/privacy">privacy policy</a></li>
       <li>ElevenLabs: <a href="https://elevenlabs.io/privacy-policy">privacy policy</a></li>
       <li>AssemblyAI: <a href="https://assemblyai.com/legal/privacy-policy">privacy policy</a></li>
-      <li>Soniox: <a href="https://soniox.com/privacy">privacy policy</a></li>
+      <li>Soniox: <a href="https://soniox.com/policies/privacy-policy">privacy policy</a></li>
       <li>Google Gemini: <a href="https://policies.google.com/privacy">privacy policy</a></li>
-      <li>Mistral: <a href="https://mistral.ai/terms#privacy-policy">privacy policy</a></li>
+      <li>Mistral: <a href="https://legal.mistral.ai/terms/privacy-policy/">privacy policy</a></li>
       </ul>
 
       <p><strong>AI clean-up and voice edit (transcript text and custom-dictionary hints are sent, no audio):</strong></p>
@@ -91,7 +91,17 @@ const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", pat
       </table>
 
       <h2>Feedback emails</h2>
-      <p>The app has no built-in feedback or diagnostics sender. If you email us, we only get what you send. We use it to reply to you. Please do not send API keys or private audio.</p>
+      <p>{name} has a "Send feedback" screen. You can open it from a Settings row, or by shaking your phone while the app is open. You can turn the shake off in Settings.</p>
+      <ul>
+      <li>It opens your own email app with a prefilled email to {contactEmail}. The app sends nothing itself. Nothing is sent unless you press send in your email app.</li>
+      <li>You choose "Just my message" or "Message plus diagnostics". The screen shows exactly what the email will contain.</li>
+      <li>Diagnostics are the app version, the Android version, your device model, the speech and clean-up model ids, whether speech is local or cloud, and the last few app errors if there are any. Key-like text in those errors is hidden.</li>
+      <li>Diagnostics never include API keys, audio, transcripts or text from your fields.</li>
+      </ul>
+      <p>Your email app and email provider handle the email as usual. We only get what you send, including your email address. We use it to reply to you. Please do not send API keys or private audio.</p>
+
+      <h2>App updates</h2>
+      <p>When you install {name} from Google Play, the app uses the Google Play in-app update service to check for new versions. Google Play handles this check and the download under <a href="https://policies.google.com/privacy">Google's privacy policy</a>. We do not get any data from it.</p>
 
       <h2>Children</h2>
       <p>{name} is not directed to children under 13.</p>
