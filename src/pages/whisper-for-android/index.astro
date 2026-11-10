@@ -2,25 +2,80 @@
 import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
 import { WHISPER } from "../../lib/whisperApp";
 
-const { name, contactEmail } = WHISPER;
-const dir = "/whisper-for-android/";
+const { name, contactEmail, base } = WHISPER;
 
-// Real app screenshots, 720 x 1560 WebP. Alt text says what is on screen.
-const shots = [
-  { src: "bubble-recording", caption: "Tap the bubble and talk", alt: "A search field with the floating bubble recording, showing a red stop button and a Recording timer." },
-  { src: "bubble-transcribing", caption: "It turns speech into text", alt: "The floating bubble showing a Transcribing pill with the chosen model name." },
-  { src: "model-library", caption: "Local or cloud models", alt: "The Model library screen with Local and Cloud tabs and a list of speech models." },
-  { src: "model-pros-cons", caption: "Pros and cons for each model", alt: "A model preview for Parakeet Ultra with speed and accuracy ratings, pros and cons." },
-  { src: "transcribe-files", caption: "Transcribe audio files", alt: "The Transcribe sheet for an audio file, with a recommended model and a speaker detection switch." },
-  { src: "settings", caption: "Settings and feedback", alt: "The Advanced settings screen with model manager, styles, and a Send feedback row." },
-];
+// Screenshot files live in public/whisper-for-android/shots/. Set width and height to the real
+// pixel size of each file so the browser reserves the right space. The phone frame follows the ratio.
+const SHOT = { w: 1080, h: 2138 };
 
-const steps = [
-  { tone: "green", text: "Turn on the bubble." },
-  { tone: "red", text: "Tap it and speak. Tap again to finish." },
-  { tone: "violet", text: "Hold it to edit your text by voice." },
-  { tone: "blue", text: "Pick a local or cloud model." },
-];
+const sections = [
+  {
+    id: "bubble",
+    accent: "green",
+    title: "Works with any keyboard, in any app.",
+    body: "The bubble floats over Google Messages, or whatever you are in. Tap it, talk, and your words land in the text box.",
+    alt: "Google Messages with the floating bubble recording while the user dictates.",
+  },
+  {
+    id: "home",
+    accent: "blue",
+    title: "One home for it all.",
+    body: "Dictation, files, voice memos, models and keys, all a tap away from the home screen.",
+    alt: "The app home screen listing what the app supports.",
+  },
+  {
+    id: "models",
+    accent: "violet",
+    title: "Local or cloud. Your pick.",
+    body: "Browse many speech models. Run them on your phone, or send audio to a cloud provider.",
+    alt: "The model library with local and cloud speech models.",
+  },
+  {
+    id: "model-detail",
+    accent: "green",
+    title: "Know a model before you use it.",
+    body: "Preview any model to see its speed, accuracy, pros and cons.",
+    alt: "A model preview sheet with pros and cons.",
+  },
+  {
+    id: "keys",
+    accent: "blue",
+    title: "Bring your own keys.",
+    body: "Add keys for several providers. Your audio goes straight from your phone to the one you choose.",
+    alt: "The keys page with several cloud providers.",
+  },
+  {
+    id: "transcript",
+    accent: "violet",
+    title: "Files and voice memos, handled.",
+    body: "Transcribe audio files and memos, tell speakers apart, and clean the text up in the style you like.",
+    alt: "A transcript with speaker labels and clean-up style choices.",
+  },
+  {
+    id: "quick-settings",
+    accent: "green",
+    title: "Make the bubble yours.",
+    body: "Quick settings let you tune the bubble and the app without digging through menus.",
+    alt: "Quick settings for the bubble and the app.",
+  },
+  {
+    id: "usage",
+    accent: "red",
+    title: "See what you spend.",
+    body: "The usage sheet shows your spend, so cloud costs never surprise you.",
+    alt: "The usage sheet showing spend.",
+  },
+] as const;
+
+const extras = [
+  { tone: "green", title: "On-device models", text: "Dictate on your phone, even offline." },
+  { tone: "blue", title: "Live captions", text: "Streaming captions as you speak, with Nemotron." },
+  { tone: "violet", title: "Voice edit", text: "Hold the bubble and say how to change your text." },
+  { tone: "green", title: "12 clean-up styles", text: "Including Translate." },
+  { tone: "blue", title: "Custom dictionary", text: "Teach it your names and terms." },
+  { tone: "red", title: "Hide per app", text: "Keep the bubble out of apps where you do not want it." },
+  { tone: "violet", title: "Shake to send feedback", text: "Shake your phone to tell us what to fix." },
+] as const;
 ---
 
 <WhisperForAndroid
@@ -29,111 +84,132 @@ const steps = [
   description={`${name}: dictate into any app with a floating bubble. Local or cloud speech models. Private beta, invite only.`}
 >
   <section class="hero" aria-labelledby="title">
-    <svg class="big-mark" viewBox="0 0 96 96" width="88" height="88" aria-hidden="true" focusable="false">
-      <circle cx="48" cy="48" r="48" class="g"></circle>
-      <g class="w">
-        <rect x="24" y="39" width="9" height="18" rx="4.5"></rect>
-        <rect x="39" y="27" width="9" height="42" rx="4.5"></rect>
-        <rect x="54" y="36" width="9" height="24" rx="4.5"></rect>
-        <rect x="69" y="43.5" width="6" height="9" rx="3"></rect>
-      </g>
-      <circle cx="78" cy="18" r="7" class="r"></circle>
-      <circle cx="84" cy="36" r="5" class="b"></circle>
-      <circle cx="72" cy="6" r="4" class="v"></circle>
-    </svg>
-    <h1 id="title">{name}</h1>
-    <p class="lead">Dictate into any app with a floating bubble. Local or cloud speech models.</p>
-    <p class="beta"><span class="pill">Private beta, invite only</span></p>
-    <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+    <div class="hero-text">
+      <img class="hero-icon" src={`${base}icon-192.webp`} width="88" height="88" alt="" />
+      <h1 id="title">{name}</h1>
+      <p class="lead">Dictate into any app with a floating bubble. Local or cloud speech models.</p>
+      <p class="beta"><span class="pill">Private beta, invite only</span></p>
+      <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <div class="orb-wrap">
+        <div class="orb">
+          <span class="layer base"><svg viewBox="0 0 24 24" width="38" height="38"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a6 6 0 0 1-12 0H4.5a7.5 7.5 0 0 0 6.75 7.46V22h1.5v-3.04A7.5 7.5 0 0 0 19.5 11.5Z" fill="currentColor"></path></svg></span>
+          <span class="layer rec">
+            <svg viewBox="0 0 24 24" width="38" height="38"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a6 6 0 0 1-12 0H4.5a7.5 7.5 0 0 0 6.75 7.46V22h1.5v-3.04A7.5 7.5 0 0 0 19.5 11.5Z" fill="currentColor"></path></svg>
+          </span>
+          <span class="layer tr"><span class="spin"></span></span>
+          <span class="layer done">
+            <svg viewBox="0 0 24 24" width="40" height="40"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </span>
+        </div>
+        <div class="state-pill">
+          <span class="s s1">Ready</span>
+          <span class="s s2">Recording</span>
+          <span class="s s3">Transcribing</span>
+          <span class="s s4">Done</span>
+        </div>
+      </div>
+      <div class="lines">
+        <i></i><i></i><i></i>
+      </div>
+    </div>
   </section>
 
-  <section aria-labelledby="shots-h">
-    <h2 id="shots-h">See it</h2>
-    <ul class="shots">
+  {
+    sections.map((s, i) => (
+      <section class={`feature ${s.accent}${i % 2 ? " flip" : ""}`} aria-labelledby={`h-${s.id}`}>
+        <div class="copy" data-reveal>
+          <span class="bar" aria-hidden="true"></span>
+          <h2 id={`h-${s.id}`}>{s.title}</h2>
+          <p>{s.body}</p>
+        </div>
+        <div class="shot" data-reveal>
+          <div class="phone" data-tilt>
+            <img
+              src={`${base}shots/${s.id}.webp`}
+              alt={s.alt}
+              width={SHOT.w}
+              height={SHOT.h}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="extras" aria-labelledby="h-extras">
+    <h2 id="h-extras" data-reveal>Everything else</h2>
+    <ul>
       {
-        shots.map((s, i) => (
-          <li>
-            <figure>
-              <img
-                src={`${dir}${s.src}.webp`}
-                alt={s.alt}
-                width="720"
-                height="1560"
-                loading={i < 2 ? "eager" : "lazy"}
-                decoding="async"
-              />
-              <figcaption>{s.caption}</figcaption>
-            </figure>
+        extras.map((e) => (
+          <li class={e.tone} data-reveal>
+            <strong>{e.title}</strong>
+            <span>{e.text}</span>
           </li>
         ))
       }
     </ul>
   </section>
 
-  <section aria-labelledby="how-h">
-    <h2 id="how-h">How it works</h2>
-    <ol class="steps">
-      {
-        steps.map((s, i) => (
-          <li class={s.tone}>
-            <span class="n" aria-hidden="true">{i + 1}</span>
-            <span>{s.text}</span>
-          </li>
-        ))
-      }
-    </ol>
+  <section id="beta" class="beta-note" aria-labelledby="h-beta" data-reveal>
+    <h2 id="h-beta">Private beta, invite only.</h2>
+    <p>Whisper for Android is in beta, so rough edges are expected.</p>
+    <p class="contact">Want in? <a href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+    <p class="legal-links"><a href={`${base}privacy/`}>Privacy</a> <a href={`${base}terms/`}>Terms</a></p>
   </section>
 </WhisperForAndroid>
 
 <style>
-  h2 {
-    font-size: 1.15rem;
-    margin: 2.5rem 0 1rem;
-    letter-spacing: -0.01em;
-  }
+  /* Accent per section */
+  .green { --accent: var(--green); --accent-rgb: 148 212 177; }
+  .blue { --accent: var(--blue); --accent-rgb: 138 180 248; }
+  .violet { --accent: var(--violet); --accent-rgb: 208 188 255; }
+  .red { --accent: var(--red-ink); --accent-rgb: 179 38 30; }
+
+  /* Hero */
   .hero {
-    padding: 1.75rem 0 0.5rem;
+    display: grid;
+    gap: 2.5rem;
+    padding: 2.5rem 0 1rem;
+    align-items: center;
   }
-  .big-mark {
+  .hero-icon {
     display: block;
-    margin-bottom: 1rem;
-    overflow: visible;
-  }
-  .big-mark .g {
-    fill: var(--green);
-  }
-  .big-mark .w {
-    fill: var(--on);
-  }
-  .big-mark .r {
-    fill: var(--red);
-  }
-  .big-mark .b {
-    fill: var(--blue);
-  }
-  .big-mark .v {
-    fill: var(--violet);
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    margin-bottom: 1.1rem;
+    box-shadow: 0 0 0 1px var(--line), 0 14px 40px -6px rgb(42 154 105 / 0.55);
   }
   h1 {
-    font-size: clamp(2rem, 9vw, 3.4rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.75rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.7rem, 13vw, 5.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    margin: 0 0 1rem;
+    text-wrap: balance;
   }
   .lead {
-    font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+    font-size: clamp(1.15rem, 4.6vw, 1.5rem);
     line-height: 1.4;
     max-width: 30rem;
-    margin: 0 0 1rem;
+    margin: 0 0 1.25rem;
+    color: var(--ink);
   }
   .beta {
     margin: 0 0 0.75rem;
   }
   .pill {
     display: inline-block;
-    padding: 0.3rem 0.8rem;
+    padding: 0.35rem 0.9rem;
     border-radius: 999px;
-    background: var(--green-soft);
+    border: 1px solid rgb(148 212 177 / 0.4);
+    background: rgb(148 212 177 / 0.12);
     color: var(--green);
     font-weight: 600;
     font-size: 0.95rem;
@@ -144,95 +220,393 @@ const steps = [
     overflow-wrap: anywhere;
   }
 
-  /* Screenshots: a swipe row on phones, a grid on wide screens. */
-  .shots {
-    list-style: none;
-    margin: 0 -1.25rem;
-    padding: 0.25rem 1.25rem 1rem;
-    display: flex;
-    gap: 0.9rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 1.25rem;
-    -webkit-overflow-scrolling: touch;
+  /* Animated bubble: ready, recording, transcribing, done. Loops. */
+  .stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    padding: 2.5rem 1rem;
+    border-radius: 2rem;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(18rem 14rem at 50% 30%, rgb(148 212 177 / 0.14), transparent 70%),
+      var(--surface);
+    overflow: hidden;
   }
-  .shots li {
-    flex: 0 0 min(62%, 15rem);
-    scroll-snap-align: start;
+  .orb-wrap {
+    display: grid;
+    justify-items: center;
+    gap: 2.1rem;
   }
-  figure {
+  .orb {
+    --d: 9s;
+    position: relative;
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    color: var(--on);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+  .base {
+    background: var(--green);
+    box-shadow: 0 0 60px -4px rgb(148 212 177 / 0.55);
+  }
+  .rec {
+    background: #b3261e;
+    color: #fff;
+    box-shadow: 0 0 60px -4px rgb(179 38 30 / 0.7);
+    opacity: 0;
+    animation: l-rec var(--d) infinite;
+  }
+  .rec::before,
+  .rec::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgb(255 138 128 / 0.8);
+    animation: ring 1.4s ease-out infinite;
+  }
+  .rec::after {
+    animation-delay: 0.7s;
+  }
+  .tr {
+    background: var(--blue);
+    box-shadow: 0 0 60px -4px rgb(138 180 248 / 0.6);
+    opacity: 0;
+    animation: l-tr var(--d) infinite;
+  }
+  .spin {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 4px solid rgb(6 19 12 / 0.25);
+    border-top-color: #06130c;
+    animation: spin 0.9s linear infinite;
+  }
+  .done {
+    background: var(--green);
+    box-shadow: 0 0 70px 0 rgb(148 212 177 / 0.7);
+    animation: l-done var(--d) infinite;
+  }
+  .done svg {
+    animation: pop var(--d) infinite;
+  }
+  .state-pill {
+    display: grid;
+    min-width: 8.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .s {
+    grid-area: 1 / 1;
+    opacity: 0;
+  }
+  .s1 { animation: p1 var(--d, 9s) infinite; }
+  .s2 { animation: p2 var(--d, 9s) infinite; color: var(--red-ink); }
+  .s3 { animation: p3 var(--d, 9s) infinite; color: var(--blue); }
+  .s4 { animation: p4 var(--d, 9s) infinite; color: var(--green); }
+  .orb-wrap { --d: 9s; }
+  .lines {
+    display: grid;
+    gap: 0.55rem;
+    width: min(100%, 17rem);
+  }
+  .lines i {
+    position: relative;
+    display: block;
+    height: 10px;
+    border-radius: 6px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .lines i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--green);
+    opacity: 0.6;
+    transform-origin: left;
+    animation: type var(--d, 9s) infinite;
+  }
+  .stage { --d: 9s; }
+  .lines i:nth-child(2) { width: 82%; }
+  .lines i:nth-child(3) { width: 55%; }
+  .lines i:nth-child(2)::after { animation-delay: 0.15s; }
+  .lines i:nth-child(3)::after { animation-delay: 0.3s; }
+
+  @keyframes l-rec {
+    0%, 12% { opacity: 0; }
+    16%, 48% { opacity: 1; }
+    52%, 100% { opacity: 0; }
+  }
+  @keyframes l-tr {
+    0%, 48% { opacity: 0; }
+    52%, 72% { opacity: 1; }
+    76%, 100% { opacity: 0; }
+  }
+  @keyframes l-done {
+    0% { opacity: 1; }
+    6%, 70% { opacity: 0; }
+    76%, 100% { opacity: 1; }
+  }
+  @keyframes pop {
+    0%, 70% { transform: scale(0.6); }
+    80% { transform: scale(1.15); }
+    86%, 100% { transform: scale(1); }
+  }
+  @keyframes ring {
+    from { transform: scale(1); opacity: 0.9; }
+    to { transform: scale(1.7); opacity: 0; }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes p1 { 0%, 4% { opacity: 0; } 8%, 12% { opacity: 1; } 15%, 100% { opacity: 0; } }
+  @keyframes p2 { 0%, 14% { opacity: 0; } 18%, 46% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes p3 { 0%, 50% { opacity: 0; } 54%, 70% { opacity: 1; } 74%, 100% { opacity: 0; } }
+  @keyframes p4 { 0%, 4% { opacity: 1; } 8%, 74% { opacity: 0; } 78%, 100% { opacity: 1; } }
+  @keyframes type {
+    0%, 4% { transform: scaleX(1); }
+    10%, 74% { transform: scaleX(0); }
+    90%, 100% { transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rec, .tr, .s1, .s2, .s3, .rec::before, .rec::after, .spin { animation: none; }
+    .rec, .tr { display: none; }
+    .s1, .s2, .s3 { display: none; }
+    .done, .done svg, .s4, .lines i::after { animation: none; opacity: 1; transform: none; }
+  }
+
+  /* Feature sections */
+  .feature {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding: 4.5rem 0 1rem;
+  }
+  .copy .bar {
+    display: block;
+    width: 3rem;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    margin-bottom: 1.1rem;
+    box-shadow: 0 0 20px 0 rgb(var(--accent-rgb) / 0.6);
+  }
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 8.4vw, 3.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 0 0 1rem;
+    text-wrap: balance;
+  }
+  .copy p {
+    font-size: clamp(1.1rem, 4.2vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 28rem;
     margin: 0;
   }
-  figure img {
+  .shot {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding: 1rem 0;
+  }
+  .shot::before {
+    content: "";
+    position: absolute;
+    width: min(26rem, 100%);
+    aspect-ratio: 1;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.3), transparent 68%);
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  .phone {
+    --rx: 0deg;
+    --ry: 0deg;
+    --ty: 0px;
+    position: relative;
+    width: min(74vw, 290px);
+    padding: 8px;
+    border-radius: 2.7rem;
+    background: linear-gradient(150deg, #4a5650 0%, #0d1210 38%, #1b2420 70%, #3c4741 100%);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06),
+      var(--shadow),
+      0 0 90px -20px rgb(var(--accent-rgb) / 0.5);
+    transform: perspective(1100px) translateY(var(--ty)) rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 0.18s ease-out;
+    will-change: transform;
+  }
+  .phone img {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 720 / 1560;
-    border-radius: 1.25rem;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    box-shadow: var(--shadow);
-  }
-  figcaption {
-    margin-top: 0.6rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  @media (min-width: 52rem) {
-    .shots {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      margin: 0;
-      padding: 0.25rem 0 1rem;
-      overflow: visible;
-      gap: 1rem;
-    }
-    .shots li {
-      flex: none;
-    }
-    figcaption {
-      font-size: 0.875rem;
-    }
+    border-radius: 2.2rem;
+    background: #050807;
   }
 
-  /* Walkthrough */
-  .steps {
+  /* Scroll reveals, only when JS runs and motion is allowed */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-reveal] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    :global(.js) [data-reveal].in {
+      opacity: 1;
+      transform: none;
+    }
+    :global(.js) .shot[data-reveal]:not(.in) {
+      transform: translateY(48px) scale(0.96);
+    }
+    :global(.js) .extras li[data-reveal]:nth-child(2n) { transition-delay: 0.08s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone { transition: none; transform: none; }
+  }
+
+  /* Everything else */
+  .extras {
+    padding: 6rem 0 1rem;
+  }
+  .extras h2 {
+    margin-bottom: 1.75rem;
+  }
+  .extras ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.75rem;
-    max-width: 34rem;
-  }
-  .steps li {
-    display: flex;
-    align-items: center;
     gap: 0.9rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 1rem;
-    padding: 0.8rem 1rem;
-    font-size: 1.05rem;
+    grid-template-columns: 1fr;
   }
-  .n {
-    flex: none;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 50%;
+  .extras li {
+    --accent-rgb: 148 212 177;
     display: grid;
-    place-items: center;
-    font-weight: 700;
-    color: var(--on);
-    background: var(--green);
+    align-content: start;
+    gap: 0.2rem;
+    padding: 1.1rem 1.25rem 1.1rem 1.4rem;
+    border-radius: 1.1rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
   }
-  .steps .red .n {
-    background: var(--red);
+  .extras li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.9rem;
+    bottom: 0.9rem;
+    width: 4px;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent);
   }
-  .steps .violet .n {
-    background: var(--violet);
+  .extras strong {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
   }
-  .steps .blue .n {
-    background: var(--blue);
+  .extras span {
+    color: var(--muted);
+  }
+
+  /* Beta note */
+  .beta-note {
+    margin: 5rem 0 1rem;
+    padding: 2.5rem 1.5rem;
+    border-radius: 2rem;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(30rem 16rem at 0% 0%, rgb(148 212 177 / 0.16), transparent 70%),
+      radial-gradient(26rem 16rem at 100% 100%, rgb(208 188 255 / 0.14), transparent 70%),
+      var(--surface);
+  }
+  .beta-note h2 {
+    font-size: clamp(1.9rem, 7vw, 3rem);
+  }
+  .beta-note p {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+  .legal-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .legal-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  @media (min-width: 640px) {
+    .extras ul {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .extras li:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 900px) {
+    .hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+    }
+    .hero {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 4rem;
+      padding: 5rem 0 2rem;
+    }
+    .feature {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding: 5rem 0 2rem;
+    }
+    .feature .copy {
+      justify-self: end;
+      max-width: 30rem;
+    }
+    .feature.flip .copy {
+      order: 2;
+      justify-self: start;
+    }
+    .feature.flip .shot {
+      order: 1;
+    }
+    .phone {
+      width: 340px;
+    }
+    .extras ul {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .beta-note {
+      padding: 4rem 3.5rem;
+    }
   }
 </style>
