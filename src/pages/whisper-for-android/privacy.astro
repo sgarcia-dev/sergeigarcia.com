@@ -54,7 +54,7 @@ const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", pat
       <li>Mistral: <a href="https://legal.mistral.ai/terms/privacy-policy/">privacy policy</a></li>
       </ul>
 
-      <p><strong>AI clean-up and voice edit (transcript text and custom-dictionary hints are sent, no audio):</strong></p>
+      <p><strong>AI clean-up and voice edit (dictated text, the text you are editing with voice edit, and custom-dictionary hints are sent, no audio):</strong></p>
       <ul>
       <li>OpenRouter: <a href="https://openrouter.ai/privacy">privacy policy</a></li>
       <li>OpenAI: <a href="https://openai.com/policies/privacy-policy">privacy policy</a></li>
@@ -66,14 +66,15 @@ const jsonLd = [breadcrumbs([{ name, path: base }, { name: "Privacy policy", pat
       <p>Providers have their own policies. Some of them, for example Deepgram, ElevenLabs and the Gemini free tier, may use input to improve their models. Please read the policies of the providers you choose.</p>
 
       <h2>Accessibility service</h2>
-      <p>{name} uses an Android accessibility service to find the focused text field and to insert or edit text.</p>
+      <p>{name} uses an Android accessibility service to type your dictated words into other apps and to edit text by voice. It is the same as the disclosure shown in the app before you turn it on.</p>
       <ul>
-      <li>It reads field metadata to find the field: the app package, field id, type and position.</li>
-      <li>It reads field text only for the field you are dictating into or voice-editing, and only at that moment.</li>
-      <li>It skips password fields.</li>
-      <li>It writes text with set-text or with a clipboard paste. The clipboard may be used briefly.</li>
-      <li>The accessibility package has no network code.</li>
-      <li>Text leaves your phone only if you picked a cloud AI provider for voice edit or clean-up. For voice edit, only the selected text is sent.</li>
+      <li>What it reads: only the text field you have focused. It reads that field's text to insert your words at the cursor, and for voice edit to get the text you want changed. It also sees which app the field is in, the field id, type and position on screen.</li>
+      <li>It does not read other text on your screen. It skips password fields.</li>
+      <li>It writes text with set-text or with a clipboard paste. The clipboard may be used briefly. If typing into a field fails, the text may be placed on the clipboard.</li>
+      <li>What stays on your phone: your dictation history (see above). Voice edit text is not saved in history. It is held only in memory so Undo works, and is never written to storage.</li>
+      <li>What is sent: text leaves your phone only when you use voice edit, or clean-up with a cloud AI model. It goes to the cloud provider you chose, with your own API key. For voice edit that is the selected text in the field, or all the text in the field if nothing is selected (up to 4,000 characters). For clean-up it is only the text you dictated. With a model on your phone, nothing leaves it.</li>
+      <li>Your audio goes only to the cloud speech provider you chose, if you chose one.</li>
+      <li>Nothing from the accessibility service is ever sent to the developer. The accessibility package has no network code.</li>
       </ul>
 
       <h2>Permissions and why</h2>
