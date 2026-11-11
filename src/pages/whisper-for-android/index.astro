@@ -131,6 +131,36 @@ const extras = [
     ))}</ul>
   </section>
 
+  <section class="faq" aria-labelledby="h-faq">
+    <div><p class="section-label">Questions</p><h2 id="h-faq">Good to know</h2></div>
+    <div class="faq-list">
+      <details>
+        <summary>Is it free?</summary>
+        <p>Most of the app is free, and it will stay that way. Dictation is too useful to lock behind a paywall. A small set of extra features will unlock with a one-time purchase. No subscription is needed to use the app.</p>
+      </details>
+      <details>
+        <summary>Do I need an API key?</summary>
+        <p>No. On-device models are free and work offline once downloaded. Cloud models are optional. Today they use your own key from the provider you choose.</p>
+      </details>
+      <details>
+        <summary>Will there be a subscription?</summary>
+        <p>An optional subscription is in the works for people who want cloud models without setting up keys. It will be completely optional. Everything else stays free or a one-time purchase.</p>
+      </details>
+      <details>
+        <summary>Does my audio leave my phone?</summary>
+        <p>Not with on-device models. If you pick a cloud model, your audio and text go only to that provider, under their data policy. There are no analytics and no server of my own.</p>
+      </details>
+      <details>
+        <summary>Which phones does it run on?</summary>
+        <p>Android 10 or newer. On-device models run best on recent phones with 6 GB of memory or more; older phones can use smaller models or the cloud.</p>
+      </details>
+      <details>
+        <summary>When is it on Google Play?</summary>
+        <p>It is in a private beta now. Ask for an invite and I will send you a link. A Play Store listing is coming.</p>
+      </details>
+    </div>
+  </section>
+
   <section id="beta" class="beta-note" aria-labelledby="h-beta">
     <div class="beta-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
     <div><p class="section-label">Private beta, invite only</p><h2 id="h-beta">Try it on your phone</h2><p>I use it every day and I am still smoothing the rough edges. Email me for an invite and tell me what you want to transcribe.</p>
@@ -184,13 +214,19 @@ const extras = [
   .wide:last-child .copy { order: 2; }
   .wide:last-child .shot { order: 1; }
   .wide:last-child .phone-surface { border-radius: 2rem 2rem 50% 50%; }
-  .extras { display: grid; grid-template-columns: .9fr 1.1fr; gap: 4rem; padding: 7rem 1.5rem; }
+  .extras, .faq { display: grid; grid-template-columns: .9fr 1.1fr; gap: 4rem; padding: 7rem 1.5rem; }
   .extras ul { list-style: none; padding: 0; margin: 0; }
   .extras li { display: flex; gap: 1.25rem; padding: 1.35rem 0; border-bottom: 1px solid var(--line); }
   .extras li:first-child { padding-top: 0; }
   .extra-icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--tone); color: var(--accent); flex: none; font-size: 1.2rem; }
   .extras h3 { margin: 0; font-size: 1.15rem; }
   .extras li p { margin: .25rem 0 0; color: var(--muted); font-size: .95rem; }
+  .faq { border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { padding: 1.35rem 0; cursor: pointer; font-family: var(--display); font-weight: 500; font-size: 1.15rem; }
+  .faq summary::marker { color: var(--green); }
+  .faq details:first-child summary { padding-top: 0; }
+  .faq details p { margin: 0 0 1.35rem; color: var(--muted); font-size: .95rem; }
   .beta-note { background: #aff1cc; color: #012112; border-radius: 3rem; padding: 4.5rem; display: grid; grid-template-columns: .65fr 1.35fr; align-items: center; gap: 4rem; scroll-margin-top: 2rem; }
   .beta-note .section-label { color: #2c6a4b; }
   .beta-note h2 { font-size: clamp(2.4rem, 4vw, 3.8rem); }
@@ -217,7 +253,7 @@ const extras = [
     .hero-actions { gap: .5rem 1rem; }
     .feature { padding: 2rem 1.5rem; }
     .wide { gap: 2rem; }
-    .extras { gap: 2rem; }
+    .extras, .faq { gap: 2rem; }
     .beta-note { padding: 3rem; gap: 2rem; }
   }
   @media (max-width: 650px) {
@@ -238,7 +274,7 @@ const extras = [
     .shot { padding-top: 1.5rem; }
     .wide .phone-surface, .phone-surface { inset: 12% 0 0; border-radius: 10rem 10rem 1.5rem 1.5rem; }
     .shot :global(.phone-frame) { width: min(100% - 1.5rem, 280px); }
-    .extras { grid-template-columns: 1fr; padding: 4rem .25rem; gap: 2.5rem; }
+    .extras, .faq { grid-template-columns: 1fr; padding: 4rem .25rem; gap: 2.5rem; }
     .extras-heading h2 br { display: none; }
     .beta-note { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.5rem; border-radius: 2rem; }
     .beta-symbol { width: 5rem; }
