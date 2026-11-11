@@ -13,81 +13,81 @@ const SHOT = { w: 1080, h: 2138 };
 
 const sections = [
   {
-    id: "home", accent: "blue", title: "Start talking. Keep the text.",
-    eyebrow: "Speak",
-    body: "Dictate a reply now, or record a voice memo to transcribe later. Your past dictations stay within reach.",
-    bullets: ["Use Speak to dictate inside the app.", "Keep the Bubble available over other apps.", "Find earlier text in Dictations.", "Record ideas in Memos and transcribe them when you’re ready."],
-    label: "Speak and saved recordings",
+    id: "home", accent: "blue", title: "Talk now, or record for later",
+    eyebrow: "Speak, memos, recordings",
+    body: "Tap the bubble and talk into any app. Or record a voice memo and transcribe it when you are ready. Everything you said stays in one list.",
+    bullets: ["Dictate over any app with the floating bubble.", "Record ideas in Memos.", "Bring in recordings from your phone’s recorder app, such as Samsung Voice Recorder.", "Find earlier text in Dictations."],
+    label: "Dictation and memos in one place",
     alt: "App home screen with dictation, voice memos and setup options.",
   },
   {
-    id: "models", accent: "violet", title: "Dictate without a connection",
-    eyebrow: "Models",
-    body: "Download a speech model once, then use it offline for free. On-device transcription keeps the audio on your phone.",
-    bullets: ["Moonshine tiny English is about 44 MB.", "Whisper tiny English is about 104 MB.", "Parakeet TDT 0.6B v3 supports multilingual speech.", "Nemotron 3.5 Live shows words while you speak."],
+    id: "models", accent: "violet", title: "New models, on your phone",
+    eyebrow: "On-device models",
+    body: "Download a speech model once and use it offline, for free. When a better one comes out that a phone can run, I add it.",
+    bullets: ["Parakeet TDT 0.6B v3 for many languages.", "Nemotron 3.5 Live shows words while you speak.", "Whisper and Moonshine for small downloads.", "Qwen3 ASR when accuracy matters more than speed."],
     label: "Browse speech models",
     alt: "Model library showing on-device and cloud speech models.",
   },
   {
-    id: "model-detail", accent: "green", title: "Know what fits your phone",
-    eyebrow: "Before you download",
-    body: "Check a model’s download size, memory needs and supported languages before choosing it. Speed and accuracy ratings are guides, not measurements on your phone.",
-    bullets: ["Read each model’s strengths and limits.", "Check its dictionary support.", "Choose your main speech model.", "Keep a downloaded backup for cloud failures."],
+    id: "model-detail", accent: "green", title: "Pick a model in seconds",
+    eyebrow: "Picking a model",
+    body: "No wall of confusing names. Every model gets simple scores for quality and speed, plus size and memory, so you see how they compare at a glance. Scores are a guide, not a test on your phone.",
+    bullets: ["See size and memory before you download.", "Check languages and dictionary support.", "Read each model’s strengths and limits.", "Keep a downloaded backup for when the cloud fails."],
     label: "Check a model’s details",
     alt: "Model detail sheet with ratings, download size and model notes.",
   },
   {
-    id: "keys", accent: "blue", title: "Use the account you already have",
-    eyebrow: "Cloud models",
-    body: "Add your own API key for providers such as OpenAI, Groq or Deepgram. Cloud requests go to the provider you choose and may incur charges on that account.",
-    bullets: ["One OpenRouter key works for speech and Polish.", "Keys are stored in encrypted preferences on your phone.", "Remove a saved key whenever you want.", "Use Offline only to block cloud processing after downloading your models."],
+    id: "keys", accent: "blue", title: "You decide where your data goes",
+    eyebrow: "Cloud, only if you want it",
+    body: "Cloud is optional. When you want more accuracy or speed, pick the provider and the exact model. Pay them as you go, as little or as much as you use. Their data policy applies, and the app warns you when a provider may train on your audio.",
+    bullets: ["Groq, OpenAI, Deepgram, Mistral, OpenRouter and more.", "One OpenRouter key covers speech and Polish.", "Keys stay encrypted on your phone.", "Offline only blocks every cloud request.", "An optional subscription is coming later, so you can skip keys."],
     label: "Add your provider’s key",
     alt: "API key settings listing supported cloud providers.",
   },
   {
-    id: "transcript", accent: "violet", title: "Find what someone actually said",
-    eyebrow: "Files and Memos",
-    body: "Turn a meeting recording into text you can search. Find speakers on your phone, then give their labels names you recognise.",
-    bullets: ["Rename speakers or merge duplicate labels.", "Play the recording alongside the transcript.", "Try another speech model and compare versions.", "Export folder transcripts as text or subtitles."],
+    id: "transcript", accent: "violet", title: "Know who said what",
+    eyebrow: "Files and meetings",
+    body: "Transcribe meetings and recordings on your phone. It finds the speakers on the device, and you give them names. Watch a folder and new recordings get transcribed overnight while the phone charges.",
+    bullets: ["Rename speakers or merge duplicates.", "Play the audio next to the text.", "Run another model and compare versions.", "Export as text or subtitles."],
     label: "Read a transcript with speakers",
     alt: "Recording transcript with speaker labels and text clean-up choices.",
   },
   {
-    id: "usage", accent: "red", title: "See where the requests went",
+    id: "usage", accent: "red", title: "Keep cloud spend low",
     eyebrow: "Usage",
-    body: "Check which models you used and what cloud requests cost. Costs are reported or estimated; missing prices are marked as unknown.",
-    bullets: ["Review on-device and cloud requests together.", "Choose the date range to inspect.", "Set your own model rates for future estimates.", "Export the usage record as CSV."],
+    body: "If you use cloud models, the Usage screen shows what each request cost. On-device runs are listed too. Prices a provider does not report are marked as unknown.",
+    bullets: ["See on-device and cloud requests together.", "Pick the dates you want to check.", "Set your own rates for future estimates.", "Export the record as CSV."],
     label: "Review usage and cost",
     alt: "Usage view showing model activity and cloud spending.",
   },
 ] as const;
 
 const extras = [
-  { tone: "green", icon: "◉", title: "On-device speech", text: "Download a speech model before you go offline. No cloud key needed." },
-  { tone: "blue", icon: "≋", title: "Live words", text: "Nemotron 3.5 Live lets you read along while you speak." },
-  { tone: "violet", icon: "✦", title: "Edit by voice", text: "Hold the bubble over a text field and say “make it shorter”. Voice editing needs a configured Polish model." },
-  { tone: "green", icon: "↻", title: "12 Polish styles", text: "Use Clean up for punctuation and fillers, or Email for a draft with a greeting. Translate lets you choose the output language." },
-  { tone: "blue", icon: "Aa", title: "Your own dictionary", text: "Add names and specialist terms to help correct sound-alike mistakes." },
-  { tone: "red", icon: "◌", title: "Bubble gestures", text: "Choose what a hold does and assign actions to the screen corners." },
-  { tone: "violet", icon: "↗", title: "Send feedback", text: "Shake your phone to open feedback when something needs attention." },
+  { tone: "green", icon: "◉", title: "Clean-up on your phone", text: "Small on-device models such as Gemma and Qwen fix punctuation and filler words. No cloud needed." },
+  { tone: "blue", icon: "↻", title: "Ramble, then organize", text: "Think out loud, as messy as you like. Organize my thoughts, Summary or Action items turn it into notes you will not forget." },
+  { tone: "violet", icon: "≋", title: "Live words", text: "Nemotron 3.5 Live lets you read along while you speak." },
+  { tone: "green", icon: "✦", title: "Edit by voice", text: "Hold the bubble over a text field and say “make it shorter”. This needs a Polish model." },
+  { tone: "blue", icon: "Aa", title: "Your own dictionary", text: "Add names and specialist terms so sound-alike mistakes get fixed." },
+  { tone: "red", icon: "◌", title: "Bubble gestures", text: "Choose what a hold does and give each screen corner an action." },
+  { tone: "violet", icon: "○", title: "No tracking", text: "No analytics and no server of my own. The app only talks to the model providers you choose." },
 ] as const;
 ---
 
 <WhisperForAndroid
-  title={`${name} | Dictate anywhere`}
+  title={`${name} | Private speech on your phone`}
   fullTitle
-  description="Dictate into any Android app with a floating bubble. Free offline speech models, or cloud models with your own key. Private beta."
+  description="Dictation, voice memos and file transcription in one Android app. Speech models run on your phone. Cloud models are optional, from the provider you choose. Private beta."
 >
   <section class="hero" aria-labelledby="title">
     <div class="hero-text">
       <p class="availability"><span></span> Private beta for Android</p>
-      <h1 id="title">Type less.<br />Say what you mean.</h1>
-      <p class="lead">That reply is easier to say than type. Tap the floating bubble, speak, and put your words into the app you already have open.</p>
+      <h1 id="title">All your speech. One private app.</h1>
+      <p class="lead">Dictation, voice memos and meeting transcripts live in one app. The models run on your phone, so your words never have to leave it.</p>
       <div class="hero-actions">
         <a class="button" href={inviteHref}>Ask for an invite <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#explore">See how it works <span aria-hidden="true">↓</span></a>
       </div>
-      <p class="hero-note">On-device speech models are free and work offline after download. Cloud models need your own API key.</p>
+      <p class="hero-note">On-device models are free and work offline. Cloud models are optional and use your own key for now.</p>
     </div>
     <div class="hero-demo">
       <div class="hero-orbit" aria-hidden="true"></div>
@@ -97,9 +97,9 @@ const extras = [
   </section>
 
   <div class="intro" id="explore">
-    <p class="section-label">Built for everyday dictation</p>
-    <h2>A place for unfinished thoughts</h2>
-    <p>I built this for the messages that take too long to thumb out. It also gives you somewhere to talk through an idea and come back to the words later.</p>
+    <p class="section-label">Why I built it</p>
+    <h2>Put your idle phone to work</h2>
+    <p>Your phone has a fast processor, a GPU and memory to spare. Most nights it just sits on the charger. Hand it your recordings and wake up to transcripts. With on-device models, nothing ever leaves the phone.</p>
   </div>
 
   <div class="features">
@@ -133,7 +133,7 @@ const extras = [
 
   <section id="beta" class="beta-note" aria-labelledby="h-beta">
     <div class="beta-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-    <div><p class="section-label">Private beta, invite only</p><h2 id="h-beta">Try it on your phone</h2><p>I’m still working through the rough edges. Email me for an invite, and tell me what you’d like to dictate.</p>
+    <div><p class="section-label">Private beta, invite only</p><h2 id="h-beta">Try it on your phone</h2><p>I use it every day and I am still smoothing the rough edges. Email me for an invite and tell me what you want to transcribe.</p>
     <a class="button" href={inviteHref}>Ask for an invite <span aria-hidden="true">↗</span></a>
     <a class="email" href={inviteHref}>{WHISPER.inviteEmail}</a></div>
   </section>
