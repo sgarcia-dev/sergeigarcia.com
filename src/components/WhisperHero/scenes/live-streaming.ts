@@ -56,10 +56,10 @@ const A = FINGER_ARRIVE;
 
 const scene: Scene = {
   id: "live-streaming",
-  title: "Live streaming",
-  blurb: "Words appear as you speak, with Nemotron 3.5 Live on this phone.",
+  title: "Live words",
+  blurb: "Nemotron 3.5 Live shows words as you speak, on your phone.",
   aria:
-    "Scene two, live streaming: a person taps the floating microphone bubble over a chat and speaks. The pill shows Nemotron 3.5 Live, and the words appear in the message field while the person is still talking, with no clean-up step. A tap stops the recording, the text settles, and then holding the backspace key clears it.",
+    "Animated demo of live dictation with Nemotron 3.5 Live over a chat.",
   implemented: true,
   phone: { w: 296, h: 620, radius: 52, bezel: 8, camera: "punch" },
   chat: {
