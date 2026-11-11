@@ -5,7 +5,7 @@
  */
 export const WHISPER = {
   name: "Whisper for Android",
-  contactEmail: "feedback@androidwhisper.com",
+  contactEmail: "apps@sergeigarcia.com",
   inviteEmail: "apps@sergeigarcia.com",
   base: "/whisper-for-android/",
   effective: "10 November 2026",
