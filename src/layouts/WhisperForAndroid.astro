@@ -6,7 +6,7 @@
  * No external scripts, no tracking. Uses the app's dark mint palette.
  * Headings use the self-hosted Space Grotesk file the site already ships.
  */
-import { WHISPER } from "../lib/whisperApp";
+import { WHISPER, inviteHref } from "../lib/whisperApp";
 import spaceUrl from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 
 interface Props {
@@ -55,7 +55,7 @@ const fontFace = `@font-face{font-family:"WfaDisplay";font-style:normal;font-dis
         <img class="mark" src={`${base}icon-192.webp`} width="36" height="36" alt="" />
         <span class="word">{name}</span>
       </a>
-      <a class="top-cta" href={`${base}#beta`}>Ask for an invite</a>
+      <a class="top-cta" href={inviteHref}>Ask for an invite</a>
     </header>
 
     <main id="main">

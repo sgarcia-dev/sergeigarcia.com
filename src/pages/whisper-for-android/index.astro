@@ -1,6 +1,6 @@
 ---
 import WhisperForAndroid from "../../layouts/WhisperForAndroid.astro";
-import { WHISPER } from "../../lib/whisperApp";
+import { WHISPER, inviteHref } from "../../lib/whisperApp";
 import Hero from "../../components/WhisperHero/Hero.astro";
 import FeatureVideo from "../../components/FeatureVideo.astro";
 import PhoneFrame from "../../components/PhoneFrame.astro";
@@ -84,7 +84,7 @@ const extras = [
       <h1 id="title">Type less.<br />Say what you mean.</h1>
       <p class="lead">That reply is easier to say than type. Tap the floating bubble, speak, and put your words into the app you already have open.</p>
       <div class="hero-actions">
-        <a class="button" href="#beta">Ask for an invite <span aria-hidden="true">↗</span></a>
+        <a class="button" href={inviteHref}>Ask for an invite <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#explore">See how it works <span aria-hidden="true">↓</span></a>
       </div>
       <p class="hero-note">On-device speech models are free and work offline after download. Cloud models need your own API key.</p>
@@ -134,8 +134,8 @@ const extras = [
   <section id="beta" class="beta-note" aria-labelledby="h-beta">
     <div class="beta-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
     <div><p class="section-label">Private beta, invite only</p><h2 id="h-beta">Try it on your phone</h2><p>I’m still working through the rough edges. Email me for an invite, and tell me what you’d like to dictate.</p>
-    <a class="button" href={`mailto:${contactEmail}`}>Ask for an invite <span aria-hidden="true">↗</span></a>
-    <a class="email" href={`mailto:${contactEmail}`}>{contactEmail}</a></div>
+    <a class="button" href={inviteHref}>Ask for an invite <span aria-hidden="true">↗</span></a>
+    <a class="email" href={inviteHref}>{WHISPER.inviteEmail}</a></div>
   </section>
 </WhisperForAndroid>
 
