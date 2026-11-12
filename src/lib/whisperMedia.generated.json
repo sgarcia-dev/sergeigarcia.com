@@ -6,5 +6,9 @@
   "transcript": {
     "name": "r7/transcript",
     "poster": "/whisper-for-android/video/r7/transcript.webp"
+  },
+  "home": {
+    "name": "r7/home",
+    "poster": "/whisper-for-android/video/r7/home.webp"
   }
 }
