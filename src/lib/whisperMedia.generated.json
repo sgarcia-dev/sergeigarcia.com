@@ -1,22 +1,22 @@
 {
   "polish": {
-    "name": "r7/polish",
+    "name": "r8/polish",
     "poster": "/whisper-for-android/video/r7/polish.webp"
   },
   "transcript": {
-    "name": "r7/transcript",
+    "name": "r8/transcript",
     "poster": "/whisper-for-android/video/r7/transcript.webp"
   },
   "home": {
-    "name": "r7/home",
+    "name": "r8/home",
     "poster": "/whisper-for-android/video/r7/home.webp"
   },
   "models": {
-    "name": "r7/models",
+    "name": "r8/models",
     "poster": "/whisper-for-android/video/r7/models.webp"
   },
   "usage": {
-    "name": "r7/usage",
+    "name": "r8/usage",
     "poster": "/whisper-for-android/video/r7/usage.webp"
   }
 }
