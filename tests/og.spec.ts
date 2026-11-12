@@ -10,7 +10,8 @@ test.skip(({ colorScheme }) => colorScheme !== "light", "same result in both col
 const SITE = "https://sergeigarcia.com";
 const DIST = "dist";
 // No image of their own: the 404 page and unlisted pages keep the default card.
-const NO_IMAGE = (route: string) => route === "/404.html" || route.startsWith("/lab/") || route.startsWith("/og-render/") || route.startsWith("/whisper-for-android/");
+// The automation policy uses the default card; the old product name is a redirect.
+const NO_IMAGE = (route: string) => route === "/404.html" || route === "/automation-privacy/" || route.startsWith("/lab/") || route.startsWith("/og-render/") || route.startsWith("/whisper-for-android/") || route.startsWith("/whisper-suite/");
 
 function builtRoutes(): string[] {
   const out: string[] = [];

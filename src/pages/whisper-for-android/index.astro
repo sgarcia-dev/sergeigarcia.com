@@ -4,8 +4,9 @@ import { WHISPER, inviteHref } from "../../lib/whisperApp";
 import Hero from "../../components/WhisperHero/Hero.astro";
 import FeatureVideo from "../../components/FeatureVideo.astro";
 import PhoneFrame from "../../components/PhoneFrame.astro";
+import { whisperMedia, bubbleMedia } from "../../lib/whisperMedia";
 
-const { name, contactEmail, base } = WHISPER;
+const { name } = WHISPER;
 
 // Screenshot files live in public/whisper-for-android/shots/. Set width and height to the real
 // pixel size of each file so the browser reserves the right space. The phone frame follows the ratio.
@@ -14,48 +15,48 @@ const SHOT = { w: 1080, h: 2138 };
 const sections = [
   {
     id: "home", accent: "blue", title: "Talk now, or record for later",
-    eyebrow: "Speak, memos, recordings",
-    body: "Tap the bubble and talk into any app. Or record a voice memo and transcribe it when you are ready. Everything you said stays in one list.",
-    bullets: ["Dictate over any app with the floating bubble.", "Record ideas in Memos.", "Bring in recordings from your phone’s recorder app, such as Samsung Voice Recorder.", "Find earlier text in Dictations."],
-    label: "Dictation and memos in one place",
-    alt: "App home screen with dictation, voice memos and setup options.",
+    eyebrow: "Dictations, memos, files",
+    body: "Dictate now, save a voice memo, or bring in a recording. Home brings your Dictations, Memos and Files together, with a separate list for each.",
+    bullets: ["Speak into the apps you use with the floating bubble.", "Record ideas in Memos.", "Bring in recordings from your phone’s recorder app, such as Samsung Voice Recorder.", "Find earlier text in Dictations."],
+    label: "Dictations, memos and files",
+    alt: "App home screen with dictation, voice memos and file recordings.",
   },
   {
-    id: "models", accent: "violet", title: "New models, on your phone",
-    eyebrow: "On-device models",
-    body: "Download a speech model once and use it offline, for free. When a better one comes out that a phone can run, I add it.",
-    bullets: ["Parakeet TDT 0.6B v3 for many languages.", "Nemotron 3.5 Live shows words while you speak.", "Whisper and Moonshine for small downloads.", "Qwen3 ASR when accuracy matters more than speed."],
+    id: "models", accent: "violet", title: "Pick the model that fits",
+    eyebrow: "On-device and cloud models",
+    body: "Compare local and cloud models before you choose. See quality and speed guides, download size and memory, then read each model’s strengths and limits. Scores are a guide, not a test on your phone.",
+    bullets: ["Filter the library to on-device models, or see local and cloud together.", "Check languages, live transcription and dictionary support.", "See what needs a download or your provider’s key.", "Keep a downloaded backup for when the cloud fails."],
     label: "Browse speech models",
     alt: "Model library showing on-device and cloud speech models.",
   },
   {
-    id: "model-detail", accent: "green", title: "Pick a model in seconds",
-    eyebrow: "Picking a model",
-    body: "No wall of confusing names. Every model gets simple scores for quality and speed, plus size and memory, so you see how they compare at a glance. Scores are a guide, not a test on your phone.",
-    bullets: ["See size and memory before you download.", "Check languages and dictionary support.", "Read each model’s strengths and limits.", "Keep a downloaded backup for when the cloud fails."],
-    label: "Check a model’s details",
-    alt: "Model detail sheet with ratings, download size and model notes.",
+    id: "polish", accent: "green", title: "Turn a ramble into clear notes",
+    eyebrow: "Polish and clean-up",
+    body: "Think out loud, as messy as you like. Organize my thoughts turns a ramble into clear notes. Give a meeting transcript structure with action items and owners.",
+    bullets: ["Compare Before and After before keeping an edit.", "Clean up punctuation and filler words on your phone.", "Summarize a long call or pull out the next steps.", "Choose an on-device or optional cloud Polish model."],
+    label: "From a ramble to next steps",
+    alt: "Polish preview comparing a garden-planning ramble with clear notes, then action items from a transcript.",
   },
   {
     id: "keys", accent: "blue", title: "You decide where your data goes",
     eyebrow: "Cloud, only if you want it",
     body: "Cloud is optional. When you want more accuracy or speed, pick the provider and the exact model. Pay them as you go, as little or as much as you use. Their data policy applies, and the app warns you when a provider may train on your audio.",
-    bullets: ["Groq, OpenAI, Deepgram, Mistral, OpenRouter and more.", "One OpenRouter key covers speech and Polish.", "Keys stay encrypted on your phone.", "Offline only blocks every cloud request.", "An optional subscription is coming later, so you can skip keys."],
-    label: "Add your provider’s key",
-    alt: "API key settings listing supported cloud providers.",
+    bullets: ["Offline only blocks every cloud request.", "On-device models keep audio and text on your phone.", "Groq, OpenAI, Deepgram, Mistral, OpenRouter and more.", "Keys stay encrypted on your phone."],
+    label: "Keep it on your phone",
+    alt: "Settings for on-device privacy and optional cloud providers.",
   },
   {
     id: "transcript", accent: "violet", title: "Know who said what",
     eyebrow: "Files and meetings",
-    body: "Transcribe meetings and recordings on your phone. It finds the speakers on the device, and you give them names. Watch a folder and new recordings get transcribed overnight while the phone charges.",
-    bullets: ["Rename speakers or merge duplicates.", "Play the audio next to the text.", "Run another model and compare versions.", "Export as text or subtitles."],
+    body: "Transcribe voice memos, meetings and files privately on your phone, or choose a cloud model for higher accuracy. Long recordings can wait for the night, while your phone charges and is idle.",
+    bullets: ["Detect and name speakers with supported models.", "Play and scrub the audio next to the text.", "Compare model results in Past attempts.", "Queue recordings and export text or subtitles."],
     label: "Read a transcript with speakers",
-    alt: "Recording transcript with speaker labels and text clean-up choices.",
+    alt: "Recording transcript with speaker labels and audio playback.",
   },
   {
     id: "usage", accent: "red", title: "Keep cloud spend low",
     eyebrow: "Usage",
-    body: "If you use cloud models, the Usage screen shows what each request cost. On-device runs are listed too. Prices a provider does not report are marked as unknown.",
+    body: "Everything that runs on your phone works without a subscription. Cloud models are always optional. If you use them, Usage shows what each request costs, with reported and estimated prices labeled. Unavailable prices are marked as unknown.",
     bullets: ["See on-device and cloud requests together.", "Pick the dates you want to check.", "Set your own rates for future estimates.", "Export the record as CSV."],
     label: "Review usage and cost",
     alt: "Usage view showing model activity and cloud spending.",
@@ -63,12 +64,7 @@ const sections = [
 ] as const;
 
 const extras = [
-  { tone: "green", icon: "◉", title: "Clean-up on your phone", text: "Small on-device models such as Gemma and Qwen fix punctuation and filler words. No cloud needed." },
-  { tone: "blue", icon: "↻", title: "Ramble, then organize", text: "Think out loud, as messy as you like. Organize my thoughts, Summary or Action items turn it into notes you will not forget." },
-  { tone: "violet", icon: "≋", title: "Live words", text: "Nemotron 3.5 Live lets you read along while you speak." },
-  { tone: "green", icon: "✦", title: "Edit by voice", text: "Hold the bubble over a text field and say “make it shorter”. This needs a Polish model." },
   { tone: "blue", icon: "Aa", title: "Your own dictionary", text: "Add names and specialist terms so sound-alike mistakes get fixed." },
-  { tone: "red", icon: "◌", title: "Bubble gestures", text: "Choose what a hold does and give each screen corner an action." },
   { tone: "violet", icon: "○", title: "No tracking", text: "No analytics and no server of my own. The app only talks to the model providers you choose." },
 ] as const;
 ---
@@ -82,7 +78,7 @@ const extras = [
     <div class="hero-text">
       <p class="availability"><span></span> Private beta for Android</p>
       <h1 id="title">All your speech. One private app.</h1>
-      <p class="lead">Dictation, voice memos and meeting transcripts live in one app. The models run on your phone, so your words never have to leave it.</p>
+      <p class="lead">Speak into the apps you use, watch live transcription fully on your phone, and edit text by voice. Dictation, voice memos and meeting transcripts live in one private app.</p>
       <div class="hero-actions">
         <a class="button" href={inviteHref}>Ask for an invite <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="#explore">See how it works <span aria-hidden="true">↓</span></a>
@@ -91,8 +87,12 @@ const extras = [
     </div>
     <div class="hero-demo">
       <div class="hero-orbit" aria-hidden="true"></div>
-      <Hero />
-      <span class="demo-label">Dictation without leaving the conversation.</span>
+      {bubbleMedia ? (
+        <PhoneFrame>
+          <FeatureVideo name={bubbleMedia.name} poster={bubbleMedia.poster} alt="Live on-device dictation into a message, followed by an edit spoken through the bubble." width={SHOT.w} height={SHOT.h} />
+        </PhoneFrame>
+      ) : <Hero />}
+      <span class="demo-label">Speak, read live words, and edit by voice.</span>
     </div>
   </section>
 
@@ -114,7 +114,7 @@ const extras = [
         <div class="shot">
           <div class="phone-surface" aria-hidden="true"></div>
           <PhoneFrame>
-            <FeatureVideo name={s.id} poster={`${base}shots/${s.id}.webp`} alt={s.alt} label={s.label} width={SHOT.w} height={SHOT.h} />
+            <FeatureVideo name={whisperMedia(s.id).name} poster={whisperMedia(s.id).poster} alt={s.id === "polish" && whisperMedia(s.id).name === "model-detail" ? "Model detail sheet with ratings, download size and model notes." : s.alt} label={s.id === "polish" && whisperMedia(s.id).name === "model-detail" ? "Check a model’s details" : s.label} width={SHOT.w} height={SHOT.h} />
           </PhoneFrame>
         </div>
       </section>
@@ -136,7 +136,7 @@ const extras = [
     <div class="faq-list">
       <details>
         <summary>Is it free?</summary>
-        <p>Most of the app is free, and it will stay that way. Dictation is too useful to lock behind a paywall. A small set of extra features will unlock with a one-time purchase. No subscription is needed to use the app.</p>
+        <p>Everything that runs on your phone works without a subscription. Cloud models are always optional.</p>
       </details>
       <details>
         <summary>Do I need an API key?</summary>
@@ -144,7 +144,7 @@ const extras = [
       </details>
       <details>
         <summary>Will there be a subscription?</summary>
-        <p>An optional subscription is in the works for people who want cloud models without setting up keys. It will be completely optional. Everything else stays free or a one-time purchase.</p>
+        <p>Everything that runs on your phone works without a subscription. Cloud models are always optional. An optional cloud model plan is in the works for people who would rather skip setting up provider keys.</p>
       </details>
       <details>
         <summary>Does my audio leave my phone?</summary>
@@ -197,6 +197,8 @@ const extras = [
   .hero-demo { position: relative; display: grid; place-items: center; padding: 1.5rem 0; min-width: 0; }
   .hero-orbit { position: absolute; inset: 8% 2.5rem 9%; background: #23382b; border-radius: 48% 48% 44% 44%; transform: rotate(-8deg); }
   .hero-demo > :global(.wh) { position: relative; --wh-max: 340px; --wh-accent: var(--green); }
+  /* Keep the recorded hero phone at the existing animated phone's width. */
+  .hero-demo > :global(.phone-frame) { width: min(74vw, 340px); }
   .demo-label { position: relative; color: var(--muted); font-size: .75rem; margin-top: .75rem; }
   .intro { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 5rem; padding: 5rem 1.5rem 3rem; border-top: 1px solid var(--line); scroll-margin-top: 2rem; }
   .section-label { font-size: .85rem; color: var(--green); margin: 0 0 1rem; }
