@@ -1,1 +1,10 @@
-{}
+{
+  "polish": {
+    "name": "r7/polish",
+    "poster": "/whisper-for-android/video/r7/polish.webp"
+  },
+  "transcript": {
+    "name": "r7/transcript",
+    "poster": "/whisper-for-android/video/r7/transcript.webp"
+  }
+}
