@@ -14,5 +14,9 @@
   "models": {
     "name": "r7/models",
     "poster": "/whisper-for-android/video/r7/models.webp"
+  },
+  "usage": {
+    "name": "r7/usage",
+    "poster": "/whisper-for-android/video/r7/usage.webp"
   }
 }
