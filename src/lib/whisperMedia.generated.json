@@ -10,5 +10,9 @@
   "home": {
     "name": "r7/home",
     "poster": "/whisper-for-android/video/r7/home.webp"
+  },
+  "models": {
+    "name": "r7/models",
+    "poster": "/whisper-for-android/video/r7/models.webp"
   }
 }
