@@ -46,6 +46,9 @@ const dir = "/whisper-for-android/video/";
     data-webm={`${dir}${name}.webm`}
     data-mp4={`${dir}${name}.mp4`}></video>
   {label && <span class="fv-label" aria-hidden="true">{label}</span>}
+  <button class="fv-play" type="button" aria-label="Play the screen recording" hidden>
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+  </button>
 </div>
 
 <style>
@@ -95,6 +98,33 @@ const dir = "/whisper-for-android/video/";
     white-space: nowrap;
     pointer-events: none;
   }
+  .fv-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(5 8 7 / 0.72);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+    color: #fff;
+    cursor: pointer;
+  }
+  .fv-play[hidden] {
+    display: none;
+  }
+  .fv-play:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+  .fv.is-tap .fv-video {
+    display: block;
+  }
   @media (prefers-reduced-motion: reduce) {
     .fv-video {
       transition: none;
@@ -113,36 +143,66 @@ const dir = "/whisper-for-android/video/";
     conn?.effectiveType === "2g" ||
     conn?.effectiveType === "slow-2g";
 
+  const loaded = new WeakSet<HTMLVideoElement>();
+
+  const fail = (box: HTMLElement) => {
+    box.classList.remove("is-tap");
+    box.classList.add("is-static");
+    const btn = box.querySelector<HTMLButtonElement>(".fv-play");
+    if (btn) btn.hidden = true;
+  };
+
+  const load = (box: HTMLElement, video: HTMLVideoElement) => {
+    if (loaded.has(video)) return;
+    loaded.add(video);
+    const sources: Array<[string | undefined, string]> = [
+      [video.dataset.webm, "video/webm"],
+      [video.dataset.mp4, "video/mp4"],
+    ];
+    sources.forEach(([src, type], i) => {
+      if (!src) return;
+      const s = document.createElement("source");
+      s.src = src;
+      s.type = type;
+      // A source error does not bubble. Give up only when the last source fails.
+      if (i === sources.length - 1) s.addEventListener("error", () => fail(box));
+      video.appendChild(s);
+    });
+    const ready = () => box.classList.add("is-ready");
+    video.addEventListener("loadeddata", ready, { once: true });
+    video.addEventListener("playing", ready, { once: true });
+    video.addEventListener("error", () => fail(box));
+    video.load();
+  };
+
   if (keepPoster || !("IntersectionObserver" in window)) {
-    nodes.forEach((n) => n.classList.add("is-static"));
-  } else {
-    const loaded = new WeakSet<HTMLVideoElement>();
-
-    const fail = (box: HTMLElement) => box.classList.add("is-static");
-
-    const load = (box: HTMLElement, video: HTMLVideoElement) => {
-      if (loaded.has(video)) return;
-      loaded.add(video);
-      const sources: Array<[string | undefined, string]> = [
-        [video.dataset.webm, "video/webm"],
-        [video.dataset.mp4, "video/mp4"],
-      ];
-      sources.forEach(([src, type], i) => {
-        if (!src) return;
-        const s = document.createElement("source");
-        s.src = src;
-        s.type = type;
-        // A source error does not bubble. Give up only when the last source fails.
-        if (i === sources.length - 1) s.addEventListener("error", () => fail(box));
-        video.appendChild(s);
+    // Reduced motion, Save-Data or no observer: never autoplay. Show the still with a play
+    // button; a tap plays that one recording (and a second tap pauses it).
+    nodes.forEach((box) => {
+      box.classList.add("is-static");
+      const video = box.querySelector<HTMLVideoElement>("video");
+      const btn = box.querySelector<HTMLButtonElement>(".fv-play");
+      if (!video || !btn) return;
+      btn.hidden = false;
+      btn.addEventListener("click", () => {
+        if (!loaded.has(video)) {
+          box.classList.remove("is-static");
+          box.classList.add("is-tap");
+          load(box, video);
+        }
+        if (video.paused) {
+          video.play().then(() => {
+            btn.hidden = true;
+          }).catch(() => {});
+        }
       });
-      const ready = () => box.classList.add("is-ready");
-      video.addEventListener("loadeddata", ready, { once: true });
-      video.addEventListener("playing", ready, { once: true });
-      video.addEventListener("error", () => fail(box));
-      video.load();
-    };
-
+      video.addEventListener("click", () => {
+        video.pause();
+        btn.hidden = false;
+      });
+      video.style.pointerEvents = "auto";
+    });
+  } else {
     // Observer 1: start loading well before the video scrolls into view.
     const loader = new IntersectionObserver(
       (entries) => {
