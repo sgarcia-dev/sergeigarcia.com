@@ -134,7 +134,14 @@ const dir = "/whisper-for-android/video/";
 
 <script>
   // One shared script for every instance on the page. Astro bundles it once.
+  //
+  // Autoplay is a best effort: a phone can refuse it (power saving, browser policy), be slow
+  // to load it, or fail to decode one format. So every video gets a play button that appears
+  // whenever the video is not actually playing a few seconds after it came into view, and a
+  // tap always works. Reduced motion and Save-Data never autoplay; they get the button at once.
+  // Add ?fvdebug to the URL to print each video's state on the page.
   const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-feature-video]"));
+  const debug = new URLSearchParams(location.search).has("fvdebug");
 
   const conn = (navigator as any).connection;
   const keepPoster =
@@ -142,102 +149,156 @@ const dir = "/whisper-for-android/video/";
     !!conn?.saveData ||
     conn?.effectiveType === "2g" ||
     conn?.effectiveType === "slow-2g";
+  const canObserve = "IntersectionObserver" in window;
 
-  const loaded = new WeakSet<HTMLVideoElement>();
+  const parts = (box: HTMLElement) => ({
+    video: box.querySelector<HTMLVideoElement>("video")!,
+    btn: box.querySelector<HTMLButtonElement>(".fv-play"),
+  });
 
-  const fail = (box: HTMLElement) => {
-    box.classList.remove("is-tap");
-    box.classList.add("is-static");
-    const btn = box.querySelector<HTMLButtonElement>(".fv-play");
+  const showButton = (box: HTMLElement) => {
+    const { btn } = parts(box);
+    if (btn && !box.classList.contains("is-failed")) btn.hidden = false;
+  };
+  const hideButton = (box: HTMLElement) => {
+    const { btn } = parts(box);
     if (btn) btn.hidden = true;
   };
 
-  const load = (box: HTMLElement, video: HTMLVideoElement) => {
-    if (loaded.has(video)) return;
-    loaded.add(video);
-    const sources: Array<[string | undefined, string]> = [
+  // Try each source in order; move on when one cannot load or decode.
+  const sourcesOf = (video: HTMLVideoElement) =>
+    [
       [video.dataset.webm, "video/webm"],
       [video.dataset.mp4, "video/mp4"],
-    ];
-    sources.forEach(([src, type], i) => {
-      if (!src) return;
-      const s = document.createElement("source");
-      s.src = src;
-      s.type = type;
-      // A source error does not bubble. Give up only when the last source fails.
-      if (i === sources.length - 1) s.addEventListener("error", () => fail(box));
-      video.appendChild(s);
+    ].filter(([src, type]) => src && video.canPlayType(type!) !== "") as Array<[string, string]>;
+
+  const started = new WeakSet<HTMLVideoElement>();
+  const start = (box: HTMLElement) => {
+    const { video } = parts(box);
+    if (started.has(video)) return;
+    started.add(video);
+    const list = sourcesOf(video);
+    let i = 0;
+    const next = () => {
+      if (i >= list.length) {
+        box.classList.add("is-failed", "is-static");
+        hideButton(box);
+        return;
+      }
+      video.src = list[i++][0];
+      video.load();
+    };
+    video.addEventListener("error", () => {
+      const wasPlaying = !video.paused;
+      next();
+      if (wasPlaying || box.dataset.wantPlay) play(box);
     });
     const ready = () => box.classList.add("is-ready");
-    video.addEventListener("loadeddata", ready, { once: true });
-    video.addEventListener("playing", ready, { once: true });
-    video.addEventListener("error", () => fail(box));
-    video.load();
+    video.addEventListener("loadeddata", ready);
+    video.addEventListener("playing", () => {
+      ready();
+      hideButton(box);
+    });
+    video.addEventListener("pause", () => {
+      if (box.dataset.inView) showButton(box);
+    });
+    next();
   };
 
-  if (keepPoster || !("IntersectionObserver" in window)) {
-    // Reduced motion, Save-Data or no observer: never autoplay. Show the still with a play
-    // button; a tap plays that one recording (and a second tap pauses it).
-    nodes.forEach((box) => {
-      box.classList.add("is-static");
-      const video = box.querySelector<HTMLVideoElement>("video");
-      const btn = box.querySelector<HTMLButtonElement>(".fv-play");
-      if (!video || !btn) return;
-      btn.hidden = false;
-      btn.addEventListener("click", () => {
-        if (!loaded.has(video)) {
-          box.classList.remove("is-static");
-          box.classList.add("is-tap");
-          load(box, video);
-        }
-        if (video.paused) {
-          video.play().then(() => {
-            btn.hidden = true;
-          }).catch(() => {});
-        }
-      });
-      video.addEventListener("click", () => {
-        video.pause();
-        btn.hidden = false;
-      });
-      video.style.pointerEvents = "auto";
+  const play = (box: HTMLElement) => {
+    const { video } = parts(box);
+    if (box.classList.contains("is-failed")) return;
+    start(box);
+    box.classList.remove("is-static");
+    box.dataset.wantPlay = "1";
+    video.play().catch(() => showButton(box));
+  };
+
+  nodes.forEach((box) => {
+    const { video, btn } = parts(box);
+    if (!video) return;
+    // A tap on the button, or anywhere on the screen while paused, plays this video.
+    const onTap = () => {
+      if (video.paused) play(box);
+      else video.pause();
+    };
+    btn?.addEventListener("click", onTap);
+    box.addEventListener("click", (e) => {
+      if (e.target !== btn && !btn?.contains(e.target as Node)) onTap();
     });
-  } else {
-    // Observer 1: start loading well before the video scrolls into view.
+    box.style.cursor = "pointer";
+    if (keepPoster || !canObserve) {
+      box.classList.add("is-static");
+      showButton(box);
+    }
+  });
+
+  if (!keepPoster && canObserve) {
+    // Start loading well before a video scrolls into view.
     const loader = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          const box = e.target as HTMLElement;
-          const video = box.querySelector<HTMLVideoElement>("video");
-          if (video) load(box, video);
-          loader.unobserve(box);
+          start(e.target as HTMLElement);
+          loader.unobserve(e.target);
         }
       },
       { rootMargin: "600px 0px" },
     );
 
-    // Observer 2: play only when at least half is visible, pause otherwise.
+    // Play when half of the video, or half of the screen, is covered by it; pause otherwise.
+    // If it is still not playing 2.5 s after coming into view, offer the play button.
+    const timers = new WeakMap<HTMLElement, number>();
     const player = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           const box = e.target as HTMLElement;
-          const video = box.querySelector<HTMLVideoElement>("video");
-          if (!video || box.classList.contains("is-static")) continue;
-          if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-            load(box, video);
-            video.play().catch(() => {});
+          const { video } = parts(box);
+          const rootH = e.rootBounds?.height || window.innerHeight;
+          const visible = e.isIntersecting && (e.intersectionRatio >= 0.5 || e.intersectionRect.height >= rootH * 0.5);
+          if (visible) {
+            if (box.dataset.inView) continue;
+            box.dataset.inView = "1";
+            play(box);
+            clearTimeout(timers.get(box));
+            timers.set(box, window.setTimeout(() => {
+              if (box.dataset.inView && (video.paused || video.readyState < 3)) showButton(box);
+            }, 2500));
           } else {
-            video.pause();
+            delete box.dataset.inView;
+            clearTimeout(timers.get(box));
+            if (!video.paused) video.pause();
           }
         }
       },
-      { threshold: [0, 0.5, 1] },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] },
     );
 
     nodes.forEach((n) => {
       loader.observe(n);
       player.observe(n);
+    });
+  }
+
+  if (debug) {
+    nodes.forEach((box) => {
+      const { video, btn } = parts(box);
+      const tag = document.createElement("pre");
+      tag.style.cssText =
+        "position:absolute;left:4px;right:4px;top:4px;margin:0;padding:4px;font:10px/1.3 monospace;color:#fff;background:rgb(0 0 0 / 0.7);border-radius:6px;white-space:pre-wrap;z-index:5;pointer-events:none";
+      box.appendChild(tag);
+      const conn2 = (navigator as any).connection;
+      const tick = () => {
+        tag.textContent =
+          `${(video.currentSrc || "no src").split("/video/")[1] || video.currentSrc || "no src"}\n` +
+          `paused=${video.paused} t=${video.currentTime.toFixed(1)} ready=${video.readyState} net=${video.networkState}` +
+          ` err=${video.error ? video.error.code + " " + (video.error.message || "") : "none"}\n` +
+          `class=${box.className} button=${btn && !btn.hidden} inView=${!!box.dataset.inView}\n` +
+          `reduce=${matchMedia("(prefers-reduced-motion: reduce)").matches} saveData=${!!conn2?.saveData} net=${conn2?.effectiveType ?? "?"}` +
+          ` webm=${video.canPlayType("video/webm") || "no"} mp4=${video.canPlayType("video/mp4") || "no"}`;
+      };
+      tick();
+      window.setInterval(tick, 500);
     });
   }
 </script>
